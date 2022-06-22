@@ -1,4 +1,4 @@
-
+'use strict'
 
 async function bookAppointment(userId, doctorId, slotStartTime) {
     try{
@@ -19,7 +19,8 @@ async function getSchedule(doctorId) {
         // send response
         // Possible response strucutre
         // {
-        //     "Monday": [0800,0830,0900,0930,1500,1530,1600],
+        //     "slotTime": 30
+        //     "Monday": {0800:{"isBooked": true/false},0830,0900,0930,1500,1530,1600,
         //     "Tuesday": /...
         //     ...
         // }

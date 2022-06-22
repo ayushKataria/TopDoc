@@ -20,4 +20,4 @@ for doctor in doctor_data:
     es_db.index(index = "doctor", document=doctor)
 
 # for user in user_data:
-#     es_db.index(index = "user", document=doctor)
+#     es_db.index(index = "user", document=user)
