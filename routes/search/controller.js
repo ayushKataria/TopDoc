@@ -1,5 +1,6 @@
 const esdb = require("../../ESUtils/elasticSearch");
 
+
 async function getSearchDetails(body){
     
     try{
@@ -25,25 +26,33 @@ async function getSearchDetails(body){
             params.boolFilter=true
             //console.log("in if")
             for (var key in body.filters) {
-                console.log("key : ",key)
+                // console.log("key : ",key)
                 if(body.filters[key].length >0){
-                    console.log("chal de bhai2",body.filters[key][0]);
+                    // console.log("chal de bhai2",body.filters[key][0]);
                     params = generateFilterStructure(params,key,body.filters[key][0])
                     
                 }
             }
         }
-        let result = await esdb.templateSearch(params, esIndex,esTemplate)
-        return result;
+        let dataObj = await esdb.templateSearch(params, esIndex,esTemplate)
+        let output ={
+
+        }
+
+        output.hits=dataObj.hits.total.value
+        output.result = dataObj.hits.hits.map((e)=>{return e._source})
+       
+        return output;
 
     }catch(err){}  
 }
 
 function generateFilterStructure(params, key, value) {
-    console.log("chal de bhai3",);
+    // console.log("chal de bhai3",);
+    // let suffix = key.substring(1);
     
     try {
-        params['filter' + key.charAt(0).toUpperCase()] = true
+        params['filter' + key.charAt(0).toUpperCase()+key.slice(1)] = true
         params[ key + 'Value'] = value
     } catch (error) {
         log.error('error', error)
