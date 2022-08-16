@@ -5,8 +5,8 @@ async function getSearchDetails(body){
     
     try{
        
-        let esIndex = "doctor"
-        let esTemplate = "doctorTemplate"
+        let esIndex = "doctor4"
+        let esTemplate = "doctor_template"
         let params = {}
         params.fromValue = body.pageNo * body.pageSize
         params.sizeValue = body.pageSize
@@ -34,18 +34,52 @@ async function getSearchDetails(body){
                 }
             }
         }
-        let dataObj = await esdb.templateSearch(params, esIndex,esTemplate)
-        let output ={
-
+        let output = {
+           
         }
 
-        output.hits=dataObj.hits.total.value
-        output.result = dataObj.hits.hits.map((e)=>{return e._source})
-       
+        let dataOb = await esdb.templateSearch(params, esIndex, esTemplate)
+        output.hits = dataOb.hits.total.value
+        output.result=dataOb.hits.hits.map((e)=>{return e._source})//.map ,.filter ,.reduce
+        
         return output;
 
     }catch(err){}  
 }
+
+// type: string;
+    
+//   name: string;
+//   degrees: string;
+    
+    // serviceType: string;
+    
+//   address: string;
+//   rating: number;
+    
+    // ratingCount: number;
+    
+//   distance: string;
+    
+//   bestReviewTag: string;
+//   isVideoAllowed:boolean;
+//   searchImage: string;
+    
+//   feedbacks: string[];
+    
+//   appointmentDetail: IAppointmentDetail;
+    
+// }
+// interface IAppointmentDetail {
+//   firstWeek: IWeek[];
+//   secondWeek: IWeek[];
+// }
+// interface IWeek {
+//   day: string;
+//   date: string;
+//   year: string;
+//   noOfApp: string;
+// }
 
 function generateFilterStructure(params, key, value) {
     // console.log("chal de bhai3",);
@@ -62,4 +96,6 @@ function generateFilterStructure(params, key, value) {
     return params;
 }
 
-module.exports={getSearchDetails};
+module.exports = {
+    getSearchDetails
+  };

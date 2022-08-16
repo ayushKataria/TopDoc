@@ -1,10 +1,10 @@
 doctor_mappings = {
     "mappings": {
         "properties": {
-            "docImageUrl":{
+            "profImageUrl":{
                 "enabled" : false
             },
-            "tags" : {
+            "reviewTags" : {
                 "type": "nested",
                 "properties": {
                     "tagName": {
@@ -54,24 +54,16 @@ doctor_mappings = {
                         "type": "keyword"
                     },
                     "schedule": {
+                        "type": "nested",
                 "properties": {
-                    "day": {
+                    "from": {
                         "type": "keyword"
                     },
-                    "slotTimeInMinutes": {
-                        "type": "long"
+                    "to": {
+                        "type": "keyword"
                     },
-                    "workingTime": {
-                        "properties": {
-                            "endTime": {
-                                "type": "date",
-                                "format": "basic_time_no_millis"
-                            },
-                            "startTime": {
-                                "type": "date",
-                                "format": "basic_time_no_millis"
-                            }
-                        }
+                    "duration": {
+                        "type": "keyword"
                     }
                 }
             }
@@ -497,6 +489,33 @@ user_mappings = {
             },
             "state" : {
             "type" : "keyword"
+            }
+            "medicalDetails" :{
+                "type":"nested",
+                "properties" :{
+                    "sNo":{
+                        "type":"long"
+                    },
+                    "name":{
+                        "type":"keyword"
+                    },
+                    "bmi":{
+                        "type" :"float"
+                    },
+                    "heartRate":{
+                        "type":"float"
+                    },
+                    "fbcStatus":{
+                        "type":"long"
+                    },
+                    "weight":{
+                        "type":"keyword"
+                    },
+                    "orderDate":{
+                    "type" : "date",
+                    "format" : "yyyyMMdd'T'HHmmss.SSSZ"
+                    }
+                }
             }
         }
     }

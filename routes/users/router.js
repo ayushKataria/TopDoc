@@ -1,5 +1,8 @@
 var router = require('express').Router()
 var controller = require('./controller')
+const _ = require("underscore");
+const docController = require('../doctors/controller')
+const userAttributeList = require("./constants/addMedicalDetailsAttribute");
 function test(req, res) {
     res.send("APP SUCCESS")
 }
@@ -53,5 +56,57 @@ router.post('/login',function(req,res){
     }
 })
 
-module.exports = router
 
+
+
+//Upload profile Image
+function addMedicalDetails(req, res) { 
+    // console.log(req.body)
+    let id;
+    let role;
+    let obj;
+    const userAttributes = userAttributeList.userAttributes;
+    const medicalDetailsAttributes = userAttributeList.userMedicalDetailsAttributes;
+  Object.keys(req.body).forEach(key => {
+    if (!userAttributes.includes(key)) { 
+      res.status(400).send("bad request , unknown attribute found in request");
+    }
+  })
+    
+    console.log(req.body.medicalDetails)
+    req.body.medicalDetails.forEach((medicalDetails) => { 
+        console.log("inside")
+        Object.keys(medicalDetails).forEach(key => {
+            if (!medicalDetailsAttributes.includes(key)) { 
+              res.status(400).send("bad request , unknown attribute found in request");
+            }
+          })
+       
+    })
+  if (req.body.hasOwnProperty("id") == false || req.body.id == null || req.body.id == "") {
+    res.status(400).send("bad request , id cannot be empty");
+  } else if (req.body.hasOwnProperty("role") == false || req.body.role == null || req.body.role == "") {
+    res.status(400).send("bad request , role cannot be empty");
+  }
+
+else { 
+    id = req.body.id;
+    role = req.body.role;
+    obj = req.body;
+    obj = _.omit(obj, "id","role");
+  }
+  console.log("inside update router user")
+
+  docController
+    .updateProfileDetailsController(id, role ,obj)
+    .then((data) => res.send(data))
+    .catch((err) => res.status(err.statuscode).send(err));
+  
+  }
+
+
+router.post("/userDetails/addMedicalDetails", addMedicalDetails);
+// router.post("/userDetails/addMedicalDetails", addMedicalDetails);
+
+
+module.exports = router

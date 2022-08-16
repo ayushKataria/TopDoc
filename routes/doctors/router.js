@@ -12,21 +12,8 @@ cloudinary.config({
 
 //get Profile details (all & specific Field search)
 function getProfileDetails(req, res) {
-  //req.header("Access-Control-Allow-Origin","*")
-  // // Website you wish to allow to connect
-  // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-
-  // // Request methods you wish to allow
-  // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-  // // Request headers you wish to allow
-  // res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-  // // Set to true if you need the website to include cookies in the requests sent
-  // // to the API (e.g. in case you use sessions)
-  // res.setHeader('Access-Control-Allow-Credentials', true);
-  
-
+ // req.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+ 
   let doctorId;
   let fieldsToFetch;
   let role;
@@ -84,7 +71,7 @@ function updateProfileDetails(req, res) {
     obj = req.body;
     obj = _.omit(obj, "id","role");
   }
-  
+  console.log("inside update router")
 
   controller
     .updateProfileDetailsController(id, role ,obj)

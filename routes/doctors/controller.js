@@ -3,7 +3,7 @@ const esdb = require("../../ESUtils/elasticSearch");
 //get doctor data with the help of docId
 async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
   try {
-    console.log("try")
+    console.log("try");
     let queryBody;
     if (fieldsToFetch[0] === "all") {
       queryBody = {
@@ -18,7 +18,7 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
       };
     } else {
       queryBody = {
-        _source: false,
+        _source: fieldsToFetch,
         query: {
           term: {
             _id: {
@@ -26,23 +26,22 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
             },
           },
         },
-        fields: fieldsToFetch,
+        // fields: fieldsToFetch,
       };
     }
     console.log("esdb")
     let output={}
-    let dataOb=await  esdb.getData(queryBody, role);
-output.results=dataOb.hits[0]._source
-output.hits=dataOb.total.value
-console.log("dataob is ",dataOb.total.value)
-
-
-
-
+    let dataOb = await esdb.getData(queryBody, role);
+    output.hits=dataOb.total.value
+    output.results = dataOb.hits[0]._source
+    // output.fields=dataOb.hits[0].fields
+    
+    // console.log("dataob is ", dataOb.total.value)
+    // console.log(output)
 
     return output;
   } catch (err) {
-    console.log("Error is ",err)
+    console.log("Error is ", err);
     return {
       statuscode: 404,
       message: "There was some error in fetchig the doctors list",
@@ -51,9 +50,16 @@ console.log("dataob is ",dataOb.total.value)
 }
 
 //update profile data
-async function updateProfileDetailsController(Identifier, role , updateFields) {
+async function updateProfileDetailsController(Identifier, role, updateFields) {
   try {
-    return esdb.updateData(role, Identifier, updateFields);
+    let output={}
+    let dataObj = await esdb.updateData(role, Identifier, updateFields);
+    output.results = dataObj.result
+    if (dataObj.hasOwnProperty("result") == true) { 
+      return output
+    }
+    return dataObj
+    
   } catch (err) {
     return {
       statuscode: 404,
@@ -85,5 +91,5 @@ async function createNewDoctorAccount(object) {
 module.exports = {
   getProfileDetailsController,
   createNewDoctorAccount,
- updateProfileDetailsController,
+  updateProfileDetailsController,
 };
