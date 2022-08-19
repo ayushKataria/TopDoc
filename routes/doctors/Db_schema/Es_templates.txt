@@ -1,0 +1,120 @@
+GET doctor_v2/_search
+//PUT _scripts/my-search-template
+{
+  "script": {
+    "lang": "mustache",
+    "source": """
+    {
+    "size": {{sizeValue}}, 
+     "from": {{fromValue}},
+    "query": {
+    "bool": {     
+         "must": [
+        {
+          "multi_match": {
+            "query": "{{queryValue}}",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
+            ]
+          }
+        }
+      ]
+      {{#boolFilter}} 
+      ,       
+      "filter": [
+        {
+          "term": {
+            "id": "identifier"
+          }
+        }
+        {{#filterGender}}
+        ,
+        {
+          "term": {
+            "gender": "{{genderValue}}"
+          }
+        }
+        {{/filterGender}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "averageRating": {
+              "gte": {{gteAverageRatingValue}},
+              "lte": {{lteAverageRatingValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": {{gteYearOfExperienceValue}},
+              "lte": {{lteYearOfExperienceValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterCountry}}
+        ,        
+        {
+          "term": {
+            "country": "{{countryValue}}"
+          }
+        } {{/filterCountry}}
+         {{#filterCity}}
+        ,        
+        {
+          "term": {
+            "city.keyword": "{{cityValue}}"
+          }
+        }
+        {{/filterCity}}
+        {{#filterIsVideoAllowed}}
+        ,        
+        {
+          "term": {
+            "isVideoAllowed": "{{isVideoAllowedValue}}"
+          }
+        }{{/filterIsVideoAllowed}}
+        {{#filterSpecialization}}
+        ,        
+        {
+          "term": {
+            "specialization.keyword": "{{specializationValue}}"
+          }
+        }{{/filterSpecialization}}
+        {{#filterLanguage}}
+        ,       
+        {
+          "terms": {
+            "languages": [
+              "{{languagesValue}}"
+            ]
+          }
+        }
+        {{/filterLanguage}}
+      ]
+      {{/boolFilter}}
+    }
+  }
+} """
+  }
+}
+
+
+
+POST _render/template
+{
+  "id": "my-search-template",
+  "params": {
+    "query_string": "hello world",
+    "from": 20,
+    "size": 10
+  }
+}

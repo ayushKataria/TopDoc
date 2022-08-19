@@ -1,6 +1,74 @@
 doctor_mappings = {
     "mappings": {
         "properties": {
+            "profImageUrl":{
+                "enabled" : false
+            },
+            "reviewTags" : {
+                "type": "nested",
+                "properties": {
+                    "tagName": {
+                        "type": "keyword"
+                    },
+                    "description": {
+                        "type": "keyword"
+                    }
+                }
+            },
+            "noOfReviews" : {
+            "type" : "long"
+            },
+            "consultations" : {
+            "type" : "long"
+            },
+            "satisfiedPatients" : {
+                "type": "long"
+            },
+            "awardsAndPublications":{
+                "type" : "nested",
+                "properties": {
+                    "awardName":{
+                        "type":"keyword"
+                    },
+                    "place":{
+                        "type":"keyword"
+                    },
+                    "date":{
+                        "type": "date"
+                    }
+                }
+            },
+            "associatedClinics" : {
+                "type": "nested",
+                "properties": {
+                    "clinicName": {
+                        "type": "keyword"
+                    },
+                    "location": {
+                        "type": "keyword"
+                    },
+                    "fees": {
+                        "type": "float"
+                    },
+                    "tagReceived": {
+                        "type": "keyword"
+                    },
+                    "schedule": {
+                        "type": "nested",
+                "properties": {
+                    "from": {
+                        "type": "keyword"
+                    },
+                    "to": {
+                        "type": "keyword"
+                    },
+                    "duration": {
+                        "type": "keyword"
+                    }
+                }
+            }
+                }
+            },
             "address": {
                 "type": "text",
                 "fields": {
@@ -49,10 +117,7 @@ doctor_mappings = {
                     "fieldOfStudy": {
                             "type": "keyword"
                     },
-                    "grade": {
-                            "type": "keyword"
-                    },
-                    "school": {
+                    "institute": {
                             "type": "keyword"
                     },
                     "startDate": {
@@ -71,7 +136,7 @@ doctor_mappings = {
             "experience": {
                 "type": "nested",
                 "properties": {
-                        "comapanyName": {
+                        "organisation": {
                             "type": "keyword"
                         },
                     "description": {
@@ -262,3 +327,197 @@ schedule_mappings = {
         }
     }
 }
+
+user_mappings = {
+    "mappings" : {
+        "properties" : {
+            "DOB" : {
+                "type" : "date",
+                "format" : "dd/mm/yyyy"
+            },
+            "Zipcode" : {
+                "type" : "keyword"
+            },
+            "address" : {
+                "type" : "text"
+            },
+            "blood_donor" : {
+                "type" : "boolean"
+            },
+            "city" : {
+                "type" : "keyword"
+            },
+            "country" : {
+                "type" : "keyword"
+            },
+            "email" : {
+            "type" : "text",
+            "fields" : {
+                "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+                }
+            }
+            },
+            "gender" : {
+            "type" : "keyword"
+            },
+            "id" : {
+            "type" : "keyword"
+            },
+            "insurance_details" : {
+            "properties" : {
+                "coverage" : {
+                "properties" : {
+                    "end_date" : {
+                    "type" : "date",
+                    "format" : "dd/mm/yyyy"
+                    },
+                    "start_date" : {
+                    "type" : "date",
+                    "format" : "dd/mm/yyyy"
+                    }
+                }
+                },
+                "documents" : {
+                "type" : "keyword"
+                },
+                "id" : {
+                "type" : "text",
+                "fields" : {
+                    "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                    }
+                }
+                },
+                "provider" : {
+                "type" : "keyword"
+                }
+            }
+            },
+            "isPremiumUser" : {
+            "type" : "boolean"
+            },
+            "landmark" : {
+            "type" : "text"
+            },
+            "language" : {
+            "type" : "keyword"
+            },
+            "locality" : {
+            "type" : "text",
+            "fields" : {
+                "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+                }
+            }
+            },
+            "medical_records" : {
+            "properties" : {
+                "alcohol_user" : {
+                "type" : "boolean"
+                },
+                "allergies" : {
+                "type" : "text",
+                "fields" : {
+                    "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                    }
+                }
+                },
+                "blood_group" : {
+                "type" : "keyword"
+                },
+                "drug_user" : {
+                "type" : "boolean"
+                },
+                "past_procedures" : {
+                "properties" : {
+                    "date" : {
+                    "type" : "date",
+                    "format" : "dd/mm/yyyy"
+                    },
+                    "name" : {
+                    "type" : "text",
+                    "fields" : {
+                        "keyword" : {
+                        "type" : "keyword",
+                        "ignore_above" : 256
+                        }
+                    }
+                    }
+                }
+                },
+                "pre_existing_conditions" : {
+                "properties" : {
+                    "duration" : {
+                    "type" : "float"
+                    },
+                    "name" : {
+                    "type" : "text",
+                    "fields" : {
+                        "keyword" : {
+                        "type" : "keyword",
+                        "ignore_above" : 256
+                        }
+                    }
+                    }
+                }
+                },
+                "smoker" : {
+                "type" : "boolean"
+                }
+            }
+            },
+            "mobile" : {
+            "type" : "keyword"
+            },
+            "name" : {
+            "type" : "text",
+            "fields" : {
+                "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+                }
+            }
+            },
+            "role" : {
+            "type" : "text"
+            },
+            "state" : {
+            "type" : "keyword"
+            }
+            "medicalDetails" :{
+                "type":"nested",
+                "properties" :{
+                    "sNo":{
+                        "type":"long"
+                    },
+                    "name":{
+                        "type":"keyword"
+                    },
+                    "bmi":{
+                        "type" :"float"
+                    },
+                    "heartRate":{
+                        "type":"float"
+                    },
+                    "fbcStatus":{
+                        "type":"long"
+                    },
+                    "weight":{
+                        "type":"keyword"
+                    },
+                    "orderDate":{
+                    "type" : "date",
+                    "format" : "yyyyMMdd'T'HHmmss.SSSZ"
+                    }
+                }
+            }
+        }
+    }
+}
+

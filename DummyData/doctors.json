@@ -1,6 +1,6 @@
 [
   {
-    "address": "MasterCanteen,unit-3,Odisha,756401",
+    "address": "MasterCanteen,unit-3",
     "ailmentsTreated": [
       "Cancer",
       "Skin Disease",
@@ -58,7 +58,7 @@
     "isPersonAllowed": "true",
     "isVideoAllowed": "true",
     "landmark": "Near JK Dance school",
-    "languages": "English, Hindi, Oriya",
+    "languages": ["English", "Hindi", "Oriya"],
     "lastName": "Bhargav",
     "licenses": {
       "identifier": "12345",
@@ -89,7 +89,7 @@
         }
       ]
     },
-    "specialization": "Neurosurgeon",
+    "specialization": ["Neurosurgeon","Neurologist"],
     "state": "Odisha",
     "yearsOfExperience": "24"
   },
@@ -110,8 +110,7 @@
         "description": "MCH is short for mean corpuscular hemoglobin",
         "endDate": "1997",
         "fieldOfStudy": "Neuro Surgery",
-        "grade": "A",
-        "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+        "institute": "National Institute of Mental Health and Neurosciences (NIMHANS)",
         "startDate": "1995"
       },
       {
@@ -152,7 +151,7 @@
     "isPersonAllowed": "true",
     "isVideoAllowed": "true",
     "landmark": "Near JK Dance school",
-    "languages": "English, Hindi, Oriya",
+    "languages": "[English, Hindi, Oriya]",
     "lastName": "Kataria",
     "licenses": {
       "identifier": "82345",
@@ -245,7 +244,7 @@
     "isPersonAllowed": "true",
     "isVideoAllowed": "true",
     "landmark": "Near JK Dance school",
-    "languages": "English, Hindi, Oriya",
+    "languages": "[English, Hindi, Oriya]",
     "lastName": "Kataria",
     "licenses": {
       "identifier": "42345",
@@ -339,7 +338,7 @@
     "isPersonAllowed": "true",
     "isVideoAllowed": "true",
     "landmark": "Near JK Dance school",
-    "languages": "English, Hindi, Marathi",
+    "languages": "[English, Hindi, Marathi]",
     "lastName": "Gaikwad",
     "licenses": {
       "identifier": "22345",

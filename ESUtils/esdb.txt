@@ -1,0 +1,122 @@
+PUT _scripts/doctor
+{
+  "script": {
+    "lang": "mustache",
+    "source": """
+    {
+    "size": {{sizeValue}}, 
+     "from": {{fromValue}},
+    "query": {
+    "bool": {     
+         "must": [
+        {
+          "multi_match": {
+            "query": "{{queryValue}}",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
+            ]
+          }
+        }
+      ]
+      {{#boolFilter}} 
+      , 
+           
+      "filter": [
+         {
+          "id": {
+            "value": "Identifier"
+          }
+        } 
+        {{#filterGender}}
+        ,
+        {
+          "term": {
+            "gender": "{{genderValue}}"
+          }
+        }
+        {{/filterGender}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "averageRating": {
+              "gte": {{gteAverageRatingValue}},
+              "lte": {{lteAverageRatingValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": {{gteYearOfExperienceValue}},
+              "lte": {{lteYearOfExperienceValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterCountry}}
+        ,        
+        {
+          "term": {
+            "country": "{{countryValue}}"
+          }
+        } {{/filterCountry}}
+         {{#filterCity}}
+        ,        
+        {
+          "term": {
+            "city.keyword": "{{cityValue}}"
+          }
+        }
+        {{/filterCity}}
+        {{#filterIsVideoAllowed}}
+        ,        
+        {
+          "term": {
+            "isVideoAllowed": "{{isVideoAllowedValue}}"
+          }
+        }{{/filterIsVideoAllowed}}
+        {{#filterSpecialization}}
+        ,        
+        {
+          "term": {
+            "specialization.keyword": "{{specializationValue}}"
+          }
+        }{{/filterSpecialization}}
+        {{#filterLanguage}}
+        ,       
+        {
+          "terms": {
+            "languages": [
+              "{{languagesValue}}"
+            ]
+          }
+        }
+        {{/filterLanguage}}
+      ]
+      {{/boolFilter}}
+    }
+  }
+} """
+  }
+}
+
+
+POST _render/template
+{
+  "id": "doctor",
+  "params": {
+    "queryValue": "Delhi",
+    "fromValue": 20,
+    "sizeValue": 10,
+    "boolFilter":true,
+    "filterGender":true,
+    "genderValue":"male"
+  }
+}

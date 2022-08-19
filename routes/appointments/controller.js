@@ -1,4 +1,5 @@
 'use strict'
+const esUtil = require("../../utils/es_util")
 
 async function bookAppointment(userId, doctorId, slotStartTime) {
     try{
@@ -12,6 +13,8 @@ async function bookAppointment(userId, doctorId, slotStartTime) {
 
 async function getSchedule(doctorId) {
     try{
+        let res = await esUtil.getById("doctor", "oUx7coEBl3a7mjbwBX1y")
+        // console.log(res)
         // Fetch the schedule meta from ES for doctorId from doctor index
         // Fetch booked appointments for the doctor from schedule index
         // Form all possible slots for each day 
@@ -25,10 +28,11 @@ async function getSchedule(doctorId) {
         //     ...
         // }
         return {
-            test: doctorId
+            test: res['_source']['schedule']
         }
     }catch(err) {
-        return { statuscode: 500, message: "Unexpected error occured"}
+        console.log(err.message)
+        throw { statuscode: 500, message: "Unexpected error occured"}
     }
 }
 

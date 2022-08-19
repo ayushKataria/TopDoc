@@ -25,6 +25,6 @@ function bookAppointment(req, res) {
 
 router.get('/v1/appointment/schedule/:doctorId', getSchedule)
 
-router.get('/v1/appointment/book/', getSchedule)
+router.get('/v1/appointment/book/', bookAppointment)
 
 module.exports = router
