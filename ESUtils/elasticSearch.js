@@ -3,7 +3,7 @@ const { json } = require('express');
 
 let elasticSearchClient=null
 //Akash Elastic pass
- var auth = 'elastic' + ":" + 'cmlflG69YzfuZMgN=DUb'
+ var auth = 'elastic' + ":" + 'j*+44bej_O0ZsUlUxFH5'
  const connstring = "https://" + 'localhost' + ":" + '9200'
  const enable_password=true;
  function connectClient() {
@@ -115,7 +115,7 @@ function getData(queryBody, paramIndex) {
           console.log("Fields successfully updated");
           return resp;
         } else {
-          return {
+          throw {
             statuscode: 400,
             message: "please enter a new Field Value to update ",
           };

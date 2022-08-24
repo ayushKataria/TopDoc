@@ -42,7 +42,7 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
     return output;
   } catch (err) {
     console.log("Error is ", err);
-    return {
+    throw {
       statuscode: 404,
       message: "There was some error in fetchig the doctors list",
     };
@@ -61,10 +61,11 @@ async function updateProfileDetailsController(Identifier, role, updateFields) {
     return dataObj
     
   } catch (err) {
-    return {
+     throw {
       statuscode: 404,
       message: "There was some error in fetchig the doctors list",
     };
+ 
   }
 }
 
@@ -81,10 +82,10 @@ async function createNewDoctorAccount(object) {
     //console.log("entityCreationObj",entityCreationObj)
     return { statuscode: 200, message: "Profile created Successfully" };
   } catch (err) {
-    return {
+    throw {
       statuscode: 404,
       message: "There was some error in creating profile",
-      err,
+      
     };
   }
 }

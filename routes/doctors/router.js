@@ -63,6 +63,7 @@ function updateProfileDetails(req, res) {
   })
   if (req.body.hasOwnProperty("id") == false || req.body.id == null || req.body.id == "") {
     res.status(400).send("bad request , id cannot be empty");
+   
   } else if (req.body.hasOwnProperty("role") == false || req.body.role == null || req.body.role == "") {
     res.status(400).send("bad request , role cannot be empty");
   } else { 
@@ -70,13 +71,16 @@ function updateProfileDetails(req, res) {
     role = req.body.role;
     obj = req.body;
     obj = _.omit(obj, "id","role");
-  }
-  console.log("inside update router")
+    console.log("inside update router")
 
-  controller
-    .updateProfileDetailsController(id, role ,obj)
-    .then((data) => res.send(data))
-    .catch((err) => res.status(err.statuscode).send(err));
+    controller
+      .updateProfileDetailsController(id, role ,obj)
+      .then((data) => res.send(data))
+      .catch((err) => {
+        console.log("router err is ",err)
+        res.status(err.statuscode).send(err)});
+  }
+ 
   
 }
 
