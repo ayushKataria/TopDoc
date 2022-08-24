@@ -3,7 +3,7 @@ const { json } = require('express');
 
 let elasticSearchClient=null
 //Akash Elastic pass
- var auth = 'elastic' + ":" + 'cmlflG69YzfuZMgN=DUb'
+ var auth = 'elastic' + ":" + 'TNCn9w5B4rjmy*A+jJ0t'
  const connstring = "https://" + 'localhost' + ":" + '9200'
  const enable_password=true;
  function connectClient() {
@@ -171,6 +171,8 @@ function getData(queryBody, paramIndex) {
     // });
     // indexNames = indexNamesList.join(',')
     // console.log(indexNames)
+    queryBody.genderAggregation=true
+    console.log(queryBody , "is")
     return new Promise((resolve, reject) => {
         elasticSearchClient.searchTemplate({
             index: paramIndex,
@@ -180,7 +182,7 @@ function getData(queryBody, paramIndex) {
                 "params": queryBody
             }
         }).then((result) => {
-            // log.info('Results: ' + result);
+            console.log('Results: ' + result);
             resolve(result)
         }).catch((err) => {
             // log.error('error: ' + err);
@@ -189,11 +191,79 @@ function getData(queryBody, paramIndex) {
         })
     })
 }
+
+function aggegrationsData(aggsMetaData){
+  aggsDataList = []
+  try {
+      //console.log(aggsMetaData)
+      for(var obj in aggsMetaData){
+          if(obj in aggsDisplayName){
+              aggsFilter = {
+                  "displayName" : "",
+                  "type" : "",
+                  "content" :[]
+              }
+
+              aggsFilter.type = obj.replace("Aggs","")
+              aggsFilter.displayName = aggsDisplayName[obj]
+              aggsData = aggsMetaData[obj][obj]
+              
+              //to handle nested aggs case
+              if(aggsData.hasOwnProperty(obj)){
+                  aggsData = aggsData[obj]
+                  
+              }
+              aggsData = aggsData["buckets"]
+
+              let contentList = []
+              if(aggsData.length > 0){
+                  for(let value of aggsData){
+                      //console.log(value)
+                      aggsContent={}
+
+                      //for hasAcceptedAnswerAggs the key from aggs data is 0 or 1 , inorder to show the value as true
+                          // or false we use key_as_string field in this case
+                      if(obj == "hasAcceptedAnswerAggs"){
+                          if(value['key_as_string'] == "false"){
+                              aggsContent.displayName = "No"
+                          }
+                          else{
+                              aggsContent.displayName = "Yes"
+                          }
+                          aggsContent.type = value['key_as_string']
+                      }
+                      else if(obj == "dtLastModifiedAggs"){
+                          aggsContent.displayName = value['key']
+                          aggsContent.from = value['from_as_string']
+                          aggsContent.to = value['to_as_string']
+                      }
+                      else{
+                          aggsContent.displayName = value['key']
+                          aggsContent.type = value['key']
+                      }
+                      aggsContent.count = value['doc_count']
+                      contentList.push(aggsContent)
+                  }
+              }
+              if(contentList.length >0){
+                aggsFilter.content = contentList
+                aggsDataList.push(aggsFilter)
+              }
+              
+          }
+      }
+      return aggsDataList
+  } catch (error) {
+      log.error('error', error)
+    throw error.toString()
+  }
+}
   
   module.exports = {
     getData,
     createEntity,
     updateData,
-    templateSearch
+    templateSearch,
+    aggegrationsData
   };
   
