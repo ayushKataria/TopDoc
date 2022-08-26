@@ -2,7 +2,7 @@ let router = require("express").Router();
 const controller = require("./controller");
 
 function getSearchDetails(req, res) {
-  console.log("chal de bhai");
+    console.log("chal de bhai");
   // console.log("req. body ", req.body);
   pageSize =10;
   pageNo=0;

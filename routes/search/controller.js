@@ -5,7 +5,7 @@ async function getSearchDetails(body){
     
     try{
        
-        let esIndex = "doctor"
+        let esIndex = "doctor_v2"
         let esTemplate = "doctorTemplate"
         let params = {}
         params.fromValue = body.pageNo * body.pageSize
@@ -37,14 +37,18 @@ async function getSearchDetails(body){
         let output = {
            
         }
-
+           
         let dataOb = await esdb.templateSearch(params, esIndex, esTemplate)
         output.hits = dataOb.hits.total.value
         console.log(dataOb,"is made by me")
         searchAggs = dataOb['aggregations']['TotalAggs']
         console.log("pareshaan",searchAggs)
+        searchFilterAggs = esdb.aggegrationsData(searchAggs)
+        console.log("searchFilterAggs",searchFilterAggs)
         output.result=dataOb.hits.hits.map((e)=>{return e._source})//.map ,.filter ,.reduce
-        
+       
+        output.filters=searchFilterAggs
+     
         return output;
 
     }catch(err){}  
