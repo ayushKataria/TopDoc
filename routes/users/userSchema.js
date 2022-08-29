@@ -1,0 +1,33 @@
+module.exports = () => ({
+    "name": null,
+    "first_name": null,
+    "last_name": null,
+    "password": null,
+    "DOB": null,
+    "gender": null,
+    "id": null,
+    "email": null,
+    "mobile":null,
+    "address":null,
+    "landmark":null,
+    "locality":null,
+    "city":null,
+    "state": null,
+    "country": null,
+    "Zipcode": null,
+    "role": null,
+    "language": null,
+    "blood_donor": false,
+    "medical_records": {
+        "blood_group": null,
+        "pre_existing_conditions":[],
+        "allergies" : [],
+        "past_procedures": [],
+        "smoker": false,
+        "alcohol_user": false,
+        "drug_user": false
+    },
+    "insurance_details":[],
+    "coins":null,
+    "isPremiumUser":false
+})
