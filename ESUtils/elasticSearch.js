@@ -4,9 +4,9 @@ const { json } = require('express');
 let elasticSearchClient=null
 //Akash Elastic pass
 
- var auth = 'elastic' + ":" + 'j*+44bej_O0ZsUlUxFH5'
-
+ var auth = 'elastic' + ":" + 'prMQZkpxu8he__rgcCgR'
  const connstring = "https://" + 'localhost' + ":" + '9200'
+
  const enable_password=true;
  function connectClient() {
      if (enable_password == true) {
@@ -53,33 +53,31 @@ function getData(queryBody, paramIndex) {
       console.log("connect client elastic")
     }
   
-    // return new Promise((resolve, reject) => {
-    //       elasticSearchClient.search({
-    //             index: paramIndex,
-    //             body: queryBody
+    return new Promise((resolve, reject) => {
+          elasticSearchClient.search({
+                index: paramIndex,
+                body: queryBody
   
-    //     }).then((result) => {
-    //         //console.log("33333")
-    //         log.info('Results: ' + result);
-    //         resolve(result)
-    //     }).catch((err) => {
-    //         //console.log("444444444")
-    //         log.error('error: ' + err);
-    //         reject(err)
-    //     })
-    // })
+        }).then((result) => {
+            // log.info('Results: ' + result);
+            resolve(result)
+        }).catch((err) => {
+            // log.error('error: ' + err);
+            reject(err)
+        });
+    });
   
-    return elasticSearchClient
-      .search({
-        index: paramIndex,
-        body: queryBody,
-      })
-      .then(function (resp) {
-        console.log(resp);
-        if (resp.hits.total.value == 0)
-          return { statuscode: 404, message: "No such doctor exist" };
-        else return resp.hits;
-      });
+    // return elasticSearchClient
+    //   .search({
+    //     index: paramIndex,
+    //     body: queryBody,
+    //   })
+    //   .then(function (resp) {
+    //     console.log(resp);
+    //     if (resp.hits.total.value == 0)
+          // return { statuscode: 404, message: "No such doctor exist" };
+    //     else return resp.hits;
+    //   });
   }
   
   //update Profile Details
@@ -91,14 +89,15 @@ function getData(queryBody, paramIndex) {
     // return new Promise((resolve, reject) => {
     //       elasticSearchClient.search({
     //             index: paramIndex,
-    //             body: queryBody
+    //             id: Identifier,
+    //             body: {
+        //   doc: body,
+        // },
   
     //     }).then((result) => {
-    //         //console.log("33333")
     //         log.info('Results: ' + result);
     //         resolve(result)
     //     }).catch((err) => {
-    //         //console.log("444444444")
     //         log.error('error: ' + err);
     //         reject(err)
     //     })
@@ -114,13 +113,11 @@ function getData(queryBody, paramIndex) {
       })
       .then(function (resp) {
         if (resp.result == "updated") {
+          console.log(resp)
           console.log("Fields successfully updated");
           return resp;
         } else {
-          throw {
-            statuscode: 400,
-            message: "please enter a new Field Value to update ",
-          };
+          throw err
         }
       });
   }
@@ -135,7 +132,7 @@ function getData(queryBody, paramIndex) {
       elasticSearchClient
         .index({
           index: paramIndex,
-  
+          id:object.id,
           body: object,
         })
         .then((result) => {

@@ -118,3 +118,9 @@ function getSearchDetails(req, res) {
 router.post("/doctorSearch", getSearchDetails);
 
 module.exports = router;
+
+
+
+
+ 
+

@@ -1,5 +1,5 @@
  
- const userAttributes  = [ 
+ const userAttributes = [ 
         "bmi",
         "orderDate",
         "fbcStatus",
@@ -8,13 +8,13 @@
         "weight",
         "id",
         "role",
-        "medicalDetails"
+     "medicalDetails",
     ]
  
     const userMedicalDetailsAttributes=
     [ 
         "bmi",
-        "date",
+        "orderDate",
         "fbcStatus",
         "heartRate",
         "name",

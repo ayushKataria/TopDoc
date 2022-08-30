@@ -32,19 +32,23 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
     console.log("esdb")
     let output={}
     let dataOb = await esdb.getData(queryBody, role);
-    output.hits=dataOb.total.value
-    output.results = dataOb.hits[0]._source
-    // output.fields=dataOb.hits[0].fields
+    if (dataOb.hits.total.value == 0) { 
+      throw err;
+    }
+    output.hits=dataOb.hits.total.value
+    for (let i = 0; i < output.hits; i++) { 
+      dataOb.hits.hits[i]._source.id = dataOb.hits.hits[i]._id;
+    }
+    output.results = dataOb.hits.hits.map((e) => { return  e._source  })
     
-    // console.log("dataob is ", dataOb.total.value)
-    // console.log(output)
+    // output.fields=dataOb.hits.hits[0].fields
 
     return output;
   } catch (err) {
-    console.log("Error is ", err);
+    // console.log("Error is ", err);
     throw {
       statuscode: 404,
-      message: "There was some error in fetchig the doctors list",
+      message: "No such document exist",
     };
   }
 }
@@ -54,6 +58,7 @@ async function updateProfileDetailsController(Identifier, role, updateFields) {
   try {
     let output={}
     let dataObj = await esdb.updateData(role, Identifier, updateFields);
+    
     output.results = dataObj.result
     if (dataObj.hasOwnProperty("result") == true) { 
       return output
@@ -61,11 +66,13 @@ async function updateProfileDetailsController(Identifier, role, updateFields) {
     return dataObj
     
   } catch (err) {
-     throw {
-      statuscode: 404,
-      message: "There was some error in fetchig the doctors list",
+    // console.log("error caught in esdb",err)
+    // console.log(err)
+    throw {
+
+      statuscode: 400,
+      message: "please enter a new Field Value to update",
     };
- 
   }
 }
 
@@ -85,12 +92,100 @@ async function createNewDoctorAccount(object) {
     throw {
       statuscode: 404,
       message: "There was some error in creating profile",
-      
     };
   }
 }
+
+async function createNewReview(object,role) {
+  try {
+    const { v4: uuidv4 } = require("uuid");
+    const newId = uuidv4();
+    object.id = newId;
+let output={}
+    let entityCreationObj = await esdb.createEntity(object, role);
+    if (entityCreationObj.result === "created") { 
+output.result = "review posted Successfully"
+    } else {
+      output.result="NOT created"
+      output.message="Sorry , unable to post the review "
+    }
+
+    return output
+  } catch (err) {
+    throw {
+      statuscode: 404,
+      message: "There was some error in creating Review",
+    };
+  }
+}
+
+async function getReviewsDetails(body){
+    
+  try{
+    console.log("in controller")
+      let esIndex = body.role
+      let esTemplate = "reviewTemplate"
+      let params = {}
+      params.fromValue = body.pageNo * body.pageSize
+    params.sizeValue = body.pageSize
+    if (body.hasOwnProperty("doctorId") && body.hasOwnProperty("userId")) {
+      params.boolUserId = true
+      params.userIdValue = body.userId
+      params.boolDoctorId = true
+      params.boolDoctorIdComma = true
+      params.doctorIdValue = body.doctorId
+      params.avgReviewRatingAggregation = true
+      params.rangeReviewRatingAggregation = true
+      params.rangeReviewRatingAggregationComma=true
+    } else if (body.hasOwnProperty("doctorId")) { 
+      params.boolDoctorId = true
+      params.doctorIdValue = body.doctorId
+      params.avgReviewRatingAggregation = true
+      params.rangeReviewRatingAggregation = true
+      params.rangeReviewRatingAggregationComma=true
+    }else if (body.hasOwnProperty("userId")) { 
+      params.boolUserId = true
+      params.userIdValue = body.userId
+      params.avgReviewRatingAggregation = false
+      params.rangeReviewRatingAggregation = false
+      params.rangeReviewRatingAggregationComma=false
+    }
+
+    if (Object.keys(body.sort).length === 0) {
+      params.boolSort = false
+    } else { 
+      params.boolSort = true
+      params.sortField = Object.keys(body.sort)[0]
+      params.sortOrder = Object.values(body.sort)[0]
+    }
+      
+      console.log("params hereeeeeeeee",params)
+    let output = {} 
+ let dataOb = await esdb.templateSearch(params, esIndex, esTemplate)
+    output.hits = dataOb.hits.total.value
+    for (let i = 0; i < output.hits; i++) { 
+      dataOb.hits.hits[i]._source.id = dataOb.hits.hits[i]._id;
+    }
+    output.results = dataOb.hits.hits.map((e) => { return  e._source  })
+      
+    if (body.hasOwnProperty("doctorId")) { 
+      output.avgReviewRating = dataOb.aggregations.TotalAggs.avgReviewRatingAggs.avgReviewRatingAggs.value.toFixed(1)
+      output.rangeReviewRating = dataOb.aggregations.TotalAggs.rangeReviewRatingAggs.rangeReviewRatingAggs.buckets
+    }
+      return output;
+
+  } catch (err) {
+    throw {
+      statuscode: 404,
+      message: "There was some error in fetching Reviews",
+    };
+  }  
+}
+
 module.exports = {
   getProfileDetailsController,
   createNewDoctorAccount,
   updateProfileDetailsController,
+  createNewReview,
+  getReviewsDetails
 };
