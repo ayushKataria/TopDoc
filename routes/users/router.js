@@ -94,13 +94,14 @@ else {
     role = req.body.role;
     obj = req.body;
     obj = _.omit(obj, "id","role");
-  }
+    
   console.log("inside update router user")
 
   docController
     .updateProfileDetailsController(id, role ,obj)
     .then((data) => res.send(data))
     .catch((err) => res.status(err.statuscode).send(err));
+  }
   
   }
 

@@ -489,7 +489,7 @@ user_mappings = {
             },
             "state" : {
             "type" : "keyword"
-            }
+            },
             "medicalDetails" :{
                 "type":"nested",
                 "properties" :{
@@ -500,7 +500,7 @@ user_mappings = {
                         "type":"keyword"
                     },
                     "bmi":{
-                        "type" :"float"
+                        "type" :"float"  
                     },
                     "heartRate":{
                         "type":"float"

@@ -1,9 +1,9 @@
  
  const userAttributes  = [ 
         "bmi",
-        "date",
-        "fbc",
-        "heartrate",
+        "orderDate",
+        "fbcStatus",
+        "heartRate",
         "name",
         "weight",
         "id",
@@ -15,8 +15,8 @@
     [ 
         "bmi",
         "date",
-        "fbc",
-        "heartrate",
+        "fbcStatus",
+        "heartRate",
         "name",
         "weight"
     ]
