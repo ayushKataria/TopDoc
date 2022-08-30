@@ -66,6 +66,7 @@ function updateProfileDetails(req, res) {
   })
   if (req.body.hasOwnProperty("id") == false || req.body.id == null || req.body.id == "") {
     res.status(400).send("bad request , id cannot be empty");
+   
   } else if (req.body.hasOwnProperty("role") == false || req.body.role == null || req.body.role == "") {
     res.status(400).send("bad request , role cannot be empty");
   } else { 

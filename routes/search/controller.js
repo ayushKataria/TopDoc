@@ -1,11 +1,12 @@
 const esdb = require("../../ESUtils/elasticSearch");
 
+
 async function getSearchDetails(body){
     
     try{
        
-        let esIndex = "doctor4"
-        let esTemplate = "doctor_template"
+        let esIndex = "doctor_v2"
+        let esTemplate = "doctorTemplate"
         let params = {}
         params.fromValue = body.pageNo * body.pageSize
         params.sizeValue = body.pageSize
@@ -25,9 +26,9 @@ async function getSearchDetails(body){
             params.boolFilter=true
             //console.log("in if")
             for (var key in body.filters) {
-                console.log("key : ",key)
+                // console.log("key : ",key)
                 if(body.filters[key].length >0){
-                    console.log("chal de bhai2",body.filters[key][0]);
+                    // console.log("chal de bhai2",body.filters[key][0]);
                     params = generateFilterStructure(params,key,body.filters[key][0])
                     
                 }
@@ -36,11 +37,18 @@ async function getSearchDetails(body){
         let output = {
            
         }
-
+           
         let dataOb = await esdb.templateSearch(params, esIndex, esTemplate)
         output.hits = dataOb.hits.total.value
+        console.log(dataOb,"is made by me")
+        searchAggs = dataOb['aggregations']['TotalAggs']
+        console.log("pareshaan",searchAggs)
+        searchFilterAggs = esdb.aggegrationsData(searchAggs)
+        console.log("searchFilterAggs",searchFilterAggs)
         output.result=dataOb.hits.hits.map((e)=>{return e._source})//.map ,.filter ,.reduce
-        
+       
+        output.filters=searchFilterAggs
+     
         return output;
 
     }catch(err){}  
@@ -81,7 +89,8 @@ async function getSearchDetails(body){
 // }
 
 function generateFilterStructure(params, key, value) {
-    console.log("chal de bhai3",);
+    // console.log("chal de bhai3",);
+    // let suffix = key.substring(1);
     
     try {
         params['filter' + key.charAt(0).toUpperCase()+key.slice(1)] = true
