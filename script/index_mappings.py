@@ -44,6 +44,9 @@ doctor_mappings = {
                     "clinicName": {
                         "type": "keyword"
                     },
+                    "clinicRating": {
+                        "type": "double"
+                    },
                     "location": {
                         "type": "keyword"
                     },
@@ -493,9 +496,6 @@ user_mappings = {
             "medicalDetails" :{
                 "type":"nested",
                 "properties" :{
-                    "sNo":{
-                        "type":"long"
-                    },
                     "name":{
                         "type":"keyword"
                     },
@@ -521,3 +521,46 @@ user_mappings = {
     }
 }
 
+
+
+
+review_mappings = {
+    "mappings": {
+        "properties": {
+              "reviewRating": {
+                "type": "double"
+            },
+            "reviewMessage": {
+                "type": "text"
+            },
+            "reviewDate" : {
+            "type" : "date"
+            },
+            "userId" : {
+            "type" : "keyword"
+            },
+            "userName" : {
+            "type" : "text",
+            "fields" : {
+                "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+                }
+            }
+            },
+            "isVerifiedUser": {
+                "type": "boolean"
+            },
+             "doctorId": {
+                "type": "keyword"
+            },
+            "reviewlastEditedOn" : {
+            "type" : "date"
+            },
+             "userScheduleId": {
+                "type": "keyword"
+            }
+            
+        }
+    }
+}

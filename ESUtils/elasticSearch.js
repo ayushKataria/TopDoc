@@ -4,8 +4,8 @@ const { json } = require('express');
 let elasticSearchClient=null
 //Akash Elastic pass
 
- var auth = 'user' + ":" + 'pass'
- const connstring = "http://" + '43.205.73.23' + ":" + '9200'
+ var auth = 'elastic' + ":" + 'prMQZkpxu8he__rgcCgR'
+ const connstring = "https://" + 'localhost' + ":" + '9200'
 
  const enable_password=true;
  function connectClient() {
@@ -13,9 +13,9 @@ let elasticSearchClient=null
         console.log('inside iffffffffffff');
          elasticSearchClient = new elasticsearch.Client({
              host: [{
-                 host: '43.205.73.23',
+                 host: 'localhost',
                  port: '9200',
-                 protocol: "http",
+                 protocol: "https",
                  auth: auth,
                  log: 'trace',
                  requestTimeout: 60000
@@ -53,33 +53,31 @@ function getData(queryBody, paramIndex) {
       console.log("connect client elastic")
     }
   
-    // return new Promise((resolve, reject) => {
-    //       elasticSearchClient.search({
-    //             index: paramIndex,
-    //             body: queryBody
+    return new Promise((resolve, reject) => {
+          elasticSearchClient.search({
+                index: paramIndex,
+                body: queryBody
   
-    //     }).then((result) => {
-    //         //console.log("33333")
-    //         log.info('Results: ' + result);
-    //         resolve(result)
-    //     }).catch((err) => {
-    //         //console.log("444444444")
-    //         log.error('error: ' + err);
-    //         reject(err)
-    //     })
-    // })
+        }).then((result) => {
+            // log.info('Results: ' + result);
+            resolve(result)
+        }).catch((err) => {
+            // log.error('error: ' + err);
+            reject(err)
+        });
+    });
   
-    return elasticSearchClient
-      .search({
-        index: paramIndex,
-        body: queryBody,
-      })
-      .then(function (resp) {
-        console.log(resp);
-        if (resp.hits.total.value == 0)
-          return { statuscode: 404, message: "No such doctor exist" };
-        else return resp.hits;
-      });
+    // return elasticSearchClient
+    //   .search({
+    //     index: paramIndex,
+    //     body: queryBody,
+    //   })
+    //   .then(function (resp) {
+    //     console.log(resp);
+    //     if (resp.hits.total.value == 0)
+          // return { statuscode: 404, message: "No such doctor exist" };
+    //     else return resp.hits;
+    //   });
   }
   
   //update Profile Details
@@ -91,14 +89,15 @@ function getData(queryBody, paramIndex) {
     // return new Promise((resolve, reject) => {
     //       elasticSearchClient.search({
     //             index: paramIndex,
-    //             body: queryBody
+    //             id: Identifier,
+    //             body: {
+        //   doc: body,
+        // },
   
     //     }).then((result) => {
-    //         //console.log("33333")
     //         log.info('Results: ' + result);
     //         resolve(result)
     //     }).catch((err) => {
-    //         //console.log("444444444")
     //         log.error('error: ' + err);
     //         reject(err)
     //     })
@@ -114,13 +113,11 @@ function getData(queryBody, paramIndex) {
       })
       .then(function (resp) {
         if (resp.result == "updated") {
+          console.log(resp)
           console.log("Fields successfully updated");
           return resp;
         } else {
-          return {
-            statuscode: 400,
-            message: "please enter a new Field Value to update ",
-          };
+          throw err
         }
       });
   }
@@ -135,7 +132,7 @@ function getData(queryBody, paramIndex) {
       elasticSearchClient
         .index({
           index: paramIndex,
-  
+          id:object.id,
           body: object,
         })
         .then((result) => {
@@ -159,11 +156,35 @@ function getData(queryBody, paramIndex) {
     // }).catch(err=>{
     //     return   { statuscode: 404, message: "Doctor profile Creation Failed"}
     // });
+}
+  
+function templateSearch(queryBody,  paramIndex, paramsTemplate) {
+  if (elasticSearchClient == null) {
+      connectClient();
   }
+  return new Promise((resolve, reject) => {
+    elasticSearchClient.searchTemplate({
+      index: paramIndex,
+      body: {
+        "id": paramsTemplate,
+        "params": queryBody
+      }
+    }).then((result) => {
+      // log.info('Results: ' + result);
+      resolve(result)
+      console.log(result)
+    }).catch((err) => {
+      // log.error('error: ' + err);
+      reject(err)
+      // console.log(err)
+    });
+  });
+}
   
   module.exports = {
     getData,
     createEntity,
     updateData,
+    templateSearch,
   };
   
