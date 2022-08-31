@@ -489,7 +489,7 @@ user_mappings = {
             },
             "state" : {
             "type" : "keyword"
-            }
+            },
             "medicalDetails" :{
                 "type":"nested",
                 "properties" :{
