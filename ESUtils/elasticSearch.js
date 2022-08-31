@@ -46,41 +46,72 @@ let elasticSearchClient=null
 }
 
 //get profile details
+
 function getData(queryBody, paramIndex) {
-    console.log("hello elastic ")
-    if (elasticSearchClient == null) {
-      connectClient();
-      console.log("connect client elastic")
-    }
-  
-    // return new Promise((resolve, reject) => {
-    //       elasticSearchClient.search({
-    //             index: paramIndex,
-    //             body: queryBody
-  
-    //     }).then((result) => {
-    //         //console.log("33333")
-    //         log.info('Results: ' + result);
-    //         resolve(result)
-    //     }).catch((err) => {
-    //         //console.log("444444444")
-    //         log.error('error: ' + err);
-    //         reject(err)
-    //     })
-    // })
-  
-    return elasticSearchClient
-      .search({
-        index: paramIndex,
-        body: queryBody,
-      })
-      .then(function (resp) {
-        console.log(resp);
-        if (resp.hits.total.value == 0)
-          return { statuscode: 404, message: "No such doctor exist" };
-        else return resp.hits;
-      });
+
+  console.log("hello elastic ")
+
+  if (elasticSearchClient == null) {
+
+    connectClient();
+
+    console.log("connect client elastic")
+
   }
+
+
+
+  return new Promise((resolve, reject) => {
+
+        elasticSearchClient.search({
+
+              index: paramIndex,
+
+              body: queryBody
+
+
+
+      }).then((result) => {
+
+          // log.info('Results: ' + result);
+
+          resolve(result)
+
+      }).catch((err) => {
+
+          // log.error('error: ' + err);
+
+          reject(err)
+
+      });
+
+  });
+
+
+
+  // return elasticSearchClient
+
+  //   .search({
+
+  //     index: paramIndex,
+
+  //     body: queryBody,
+
+  //   })
+
+  //   .then(function (resp) {
+
+  //     console.log(resp);
+
+  //     if (resp.hits.total.value == 0)
+
+        // return { statuscode: 404, message: "No such doctor exist" };
+
+  //     else return resp.hits;
+
+  //   });
+
+}
   
   //update Profile Details
   function updateData(paramIndex, Identifier, body) {
@@ -117,10 +148,7 @@ function getData(queryBody, paramIndex) {
           console.log("Fields successfully updated");
           return resp;
         } else {
-          throw {
-            statuscode: 400,
-            message: "please enter a new Field Value to update ",
-          };
+          throw err
         }
       });
   }
@@ -135,7 +163,7 @@ function getData(queryBody, paramIndex) {
       elasticSearchClient
         .index({
           index: paramIndex,
-  
+          id:object.id,
           body: object,
         })
         .then((result) => {
@@ -178,18 +206,18 @@ function getData(queryBody, paramIndex) {
 
     // temporay code starts
    queryBody.genderAggregation=true
-  //  queryBody.averageRatingAggregation=true,
-  //  queryBody.averageRatingAggregationComma=true,
-  //     queryBody.languagesAggregation=true,
-  //   queryBody.languagesAggregationComma=true,
-  //   queryBody.specializationAggregation=true,
-  //   queryBody.specializationAggregationComma=true,
-  //   queryBody.cityAggregation=true,
-  //   queryBody.cityAggregationComma=true,
-  //   queryBody.countryAggregation=true,
-  //   queryBody.countryAggregationComma=true,
-  //   queryBody.yearsOfExperienceAggregation=true,
-  //   queryBody.yearsOfExperienceAggregationComma=true
+   queryBody.averageRatingAggregation=true,
+   queryBody.averageRatingAggregationComma=true,
+      queryBody.languagesAggregation=true,
+    queryBody.languagesAggregationComma=true,
+    queryBody.specializationAggregation=true,
+    queryBody.specializationAggregationComma=true,
+    queryBody.cityAggregation=true,
+    queryBody.cityAggregationComma=true,
+    queryBody.countryAggregation=true,
+    queryBody.countryAggregationComma=true,
+    queryBody.yearsOfExperienceAggregation=true,
+    queryBody.yearsOfExperienceAggregationComma=true
   // temporay code sends
     console.log("ssssssssssqueryBody is",queryBody )
     return new Promise((resolve, reject) => {
