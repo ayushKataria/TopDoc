@@ -11,7 +11,12 @@ const userReviewsAttributes = [
  "isVerifiedUser",
  "doctorId",
  "reviewlastEditedOn",
- "userScheduleId"
+ "userScheduleId",
+  "accurateDiagnosisRating",
+ "friendlinessAndWaitTimeRating",
+ "bedsideMannerismRating",
+ "staffCourteousnessRating",
+"patientEducationRating"
 ]
 
 const doctorProfileAttributes=
@@ -66,11 +71,18 @@ const doctorProfileAttributes=
         "reviewlastEditedOn"
       ];
 
-
+      const getRequestReviewAttributes = [ 
+        "role",
+        "doctorId",
+        "pageSize",
+        "pageNo",
+        "userId",
+        "sort"
+       ]
     
 
 
-module.exports = {userReviewsAttributes,doctorProfileAttributes,getRequestAttributes,sortListForReview}
+module.exports = {userReviewsAttributes,doctorProfileAttributes,getRequestAttributes,sortListForReview,getRequestReviewAttributes}
 
 
 

@@ -118,9 +118,9 @@ async function addMedicalDetails(req, res) {
   
   }
 
+  
 
 router.post("/userDetails/addMedicalDetails", addMedicalDetails);
 // router.post("/userDetails/addMedicalDetails", addMedicalDetails);
-
 
 module.exports = router

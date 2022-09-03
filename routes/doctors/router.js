@@ -167,13 +167,18 @@ function createNewDoctorAccount(req, res) {
 
 function createDoctorReviews(req, res) {
   
-   let role;
+  let role;
+  let fail = false;
    const list = docAttributeList.userReviewsAttributes;
   Object.keys(req.body).forEach(key => {
     if (!list.includes(key)) { 
       res.status(400).send("bad request , unknown attribute found in request");
+      fail=true
     }
   })
+  if (fail)
+    return;
+  
   if (req.body.hasOwnProperty("doctorId") == false || req.body.doctorId == null || req.body.doctorId == "") {
     res.status(400).send("bad request , doctorId cannot be empty");
   } else if (req.body.hasOwnProperty("role") == false || req.body.role == null || req.body.role == "") {
@@ -194,6 +199,16 @@ function createDoctorReviews(req, res) {
     res.status(400).send("bad request , reviewlastEditedOn cannot be empty");
   }else if (req.body.hasOwnProperty("userScheduleId") == false || req.body.userScheduleId == null || req.body.userScheduleId == "") {
     res.status(400).send("bad request , userScheduleId cannot be empty");
+  }else if (req.body.hasOwnProperty("patientEducationRating") == false || req.body.patientEducationRating == null || req.body.patientEducationRating == "") {
+    res.status(400).send("bad request , patientEducationRating cannot be empty");
+  }else if (req.body.hasOwnProperty("staffCourteousnessRating") == false || req.body.staffCourteousnessRating == null || req.body.staffCourteousnessRating == "") {
+    res.status(400).send("bad request , staffCourteousnessRating cannot be empty");
+  }else if (req.body.hasOwnProperty("bedsideMannerismRating") == false || req.body.bedsideMannerismRating == null || req.body.bedsideMannerismRating == "") {
+    res.status(400).send("bad request , bedsideMannerismRating cannot be empty");
+  }else if (req.body.hasOwnProperty("friendlinessAndWaitTimeRating") == false || req.body.friendlinessAndWaitTimeRating == null || req.body.friendlinessAndWaitTimeRating == "") {
+    res.status(400).send("bad request , friendlinessAndWaitTimeRating cannot be empty");
+  }else if (req.body.hasOwnProperty("accurateDiagnosisRating") == false || req.body.accurateDiagnosisRating == null || req.body.accurateDiagnosisRating == "") {
+    res.status(400).send("bad request , accurateDiagnosisRating cannot be empty");
   }
   else {
     role = req.body.role;
@@ -212,12 +227,17 @@ function updateReviewDetails(req, res) {
   req.body = _.omit(req.body, "id")
   let role
   let obj
+  let fail = false;
   const list = docAttributeList.userReviewsAttributes;
   Object.keys(req.body).forEach(key => {
     if (!list.includes(key)) { 
       res.status(400).send("bad request , unknown attribute found in request");
+      fail=true
     }
   })
+  if (fail)
+    return;
+  
   if (req.body.hasOwnProperty("doctorId") == false || req.body.doctorId == null || req.body.doctorId == "") {
     res.status(400).send("bad request , doctorId cannot be empty");
   } else if (req.body.hasOwnProperty("role") == false || req.body.role == null || req.body.role == "") {
@@ -238,6 +258,16 @@ function updateReviewDetails(req, res) {
     res.status(400).send("bad request , reviewlastEditedOn cannot be empty");
   }else if (req.body.hasOwnProperty("userScheduleId") == false || req.body.userScheduleId == null || req.body.userScheduleId == "") {
     res.status(400).send("bad request , userScheduleId cannot be empty");
+  }else if (req.body.hasOwnProperty("patientEducationRating") == false || req.body.patientEducationRating == null || req.body.patientEducationRating == "") {
+    res.status(400).send("bad request , patientEducationRating cannot be empty");
+  }else if (req.body.hasOwnProperty("staffCourteousnessRating") == false || req.body.staffCourteousnessRating == null || req.body.staffCourteousnessRating == "") {
+    res.status(400).send("bad request , staffCourteousnessRating cannot be empty");
+  }else if (req.body.hasOwnProperty("bedsideMannerismRating") == false || req.body.bedsideMannerismRating == null || req.body.bedsideMannerismRating == "") {
+    res.status(400).send("bad request , bedsideMannerismRating cannot be empty");
+  }else if (req.body.hasOwnProperty("friendlinessAndWaitTimeRating") == false || req.body.friendlinessAndWaitTimeRating == null || req.body.friendlinessAndWaitTimeRating == "") {
+    res.status(400).send("bad request , friendlinessAndWaitTimeRating cannot be empty");
+  }else if (req.body.hasOwnProperty("accurateDiagnosisRating") == false || req.body.accurateDiagnosisRating == null || req.body.accurateDiagnosisRating == "") {
+    res.status(400).send("bad request , accurateDiagnosisRating cannot be empty");
   } else { 
     role = req.body.role;
     obj = req.body;
@@ -251,10 +281,34 @@ function updateReviewDetails(req, res) {
 }
 
 function getDoctorReviewsByUserIdOrDoctorId(req, res) {
- 
+  let fail = false;
+  const list = docAttributeList.getRequestReviewAttributes;
+  Object.keys(req.body).forEach(key => {
+    if (!list.includes(key)) { 
+      res.status(400).send("bad request , unknown attribute found in request");
+      fail=true
+    }
+  })
+  if (fail)
+    return;
+  
+  let sortBy = Object.keys(req.body.sort);
+
+  const sortList = docAttributeList.sortListForReview;
+  for (i = 0; i < sortBy.length; i++) {
+    if (!sortList.includes(sortBy[i])) {
+      res
+        .status(400)
+        .send(
+          "bad request, sorting cannot be done based on the given parameter"
+      );
+      return
+    }
+  }
+  
   if (req.body.hasOwnProperty("doctorId") == false && req.body.hasOwnProperty("userId") == false) { 
     res.status(400).send("bad request , atleast one Field out of doctorID or userID is required");
-  } if (req.body.hasOwnProperty("doctorId") && req.body.hasOwnProperty("userId") && (req.body.doctorId == null || req.body.doctorId == "" || req.body.userId == null || req.body.userId == "")) {
+  }else if (req.body.hasOwnProperty("doctorId") && req.body.hasOwnProperty("userId") && (req.body.doctorId == null || req.body.doctorId == "" || req.body.userId == null || req.body.userId == "")) {
     res.status(400).send("bad request , doctorId and userID cannot be empty");
   } else if (req.body.hasOwnProperty("doctorId") && (req.body.doctorId == null || req.body.doctorId == "")) {
     res.status(400).send("bad request , doctorId cannot be empty");
@@ -268,21 +322,8 @@ function getDoctorReviewsByUserIdOrDoctorId(req, res) {
     res.status(400).send("bad request , pageNo cannot be empty");
   } else if (req.body.hasOwnProperty("sort") == false) {
     res.status(400).send("bad request , sort field required");
-  } else if (req.body.sort) {
-    let sortBy = Object.keys(req.body.sort);
-
-    const sortList = docAttributeList.sortListForReview;
-    for (i = 0; i < sortBy.length; i++) {
-      if (!sortList.includes(sortBy[i])) {
-        res
-          .status(400)
-          .send(
-            "bad request, sorting cannot be done based on the given parameter"
-
-        );
-        return
-      }
-    }
+  } else {
+    
      console.log("in router")
     controller
      .getReviewsDetails(req.body)

@@ -523,7 +523,6 @@ user_mappings = {
 
 
 
-
 review_mappings = {
     "mappings": {
         "properties": {
@@ -559,8 +558,22 @@ review_mappings = {
             },
              "userScheduleId": {
                 "type": "keyword"
+            },
+            "accurateDiagnosisRating": {
+                "type": "double"
+            },
+            "friendlinessAndWaitTimeRating": {
+                "type": "double"
+            },
+            "bedsideMannerismRating": {
+                "type": "double"
+            },
+            "staffCourteousnessRating": {
+                "type": "double"
+            },
+            "patientEducationRating": {
+                "type": "double"
             }
-            
         }
     }
 }
