@@ -31,15 +31,20 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
     }
     console.log("esdb")
     let output={}
+    output.results=[]
     let dataOb = await esdb.getData(queryBody, role);
     if (dataOb.hits.total.value == 0) { 
       throw err;
     }
     output.hits=dataOb.hits.total.value
     for (let i = 0; i < output.hits; i++) { 
+    //  console.log("lllllllllllllllllllllllllllllllllllllll")
       dataOb.hits.hits[i]._source.id = dataOb.hits.hits[i]._id;
+      
+      
     }
-    output.results = dataOb.hits.hits.map((e) => { return  e._source  })
+   // output.results.push(dataOb.hits.hits[i])
+   output.results = dataOb.hits.hits.map((e) => { return  e._source  })
     
     // output.fields=dataOb.hits.hits[0].fields
 
@@ -163,7 +168,7 @@ async function getReviewsDetails(body){
     let output = {} 
  let dataOb = await esdb.templateSearch(params, esIndex, esTemplate)
     output.hits = dataOb.hits.total.value
-    for (let i = 0; i < output.hits; i++) { 
+    for (let i = 0; i < dataOb.hits.hits.length; i++) { 
       dataOb.hits.hits[i]._source.id = dataOb.hits.hits[i]._id;
     }
     output.results = dataOb.hits.hits.map((e) => { return  e._source  })
