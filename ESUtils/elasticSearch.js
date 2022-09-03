@@ -174,7 +174,7 @@ function getData(queryBody, paramIndex) {
     // console.log(indexNames)
 
     // temporay code starts
-   queryBody.genderAggregation=true
+  //  queryBody.genderAggregation=true
   //  queryBody.averageRatingAggregation=true,
   //  queryBody.averageRatingAggregationComma=true,
   //     queryBody.languagesAggregation=true,
@@ -202,7 +202,7 @@ function getData(queryBody, paramIndex) {
             resolve(result)
         }).catch((err) => {
             // log.error('error: ' + err);
-            // reject(result)
+            reject(result)
             console.log("bata bhai" ,err)
         })
     })
