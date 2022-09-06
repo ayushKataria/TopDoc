@@ -4,13 +4,13 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from index_mappings import doctor_mappings, schedule_mappings, user_mappings
 import os
 
-es_db = Elasticsearch("https://localhost:9200", basic_auth=('elastic', 'cmlflG69YzfuZMgN=DUb'), verify_certs=False, ssl_show_warn=False)
+es_db = Elasticsearch("https://localhost:9200", basic_auth=('elastic', 'uoCKnkLHaDB5M9gJyfQr'), verify_certs=False, ssl_show_warn=False)
 
 indices_instructions = {
     "doctor": {
         "old_version": "v1",
-        "new_version": "v4",
-        "create": True,
+        "new_version": "v1",
+        "create": False,
         "reindex_alias": False,
         "reindex": False,
         "alias": False,
@@ -18,17 +18,17 @@ indices_instructions = {
     },
     "schedule": {
         "old_version": "v1",
-        "new_version": "v4",
+        "new_version": "v1",
         "create": True,
         "reindex_alias": False,
         "reindex": False,
-        "alias": False,
+        "alias": True,
         "mapping": schedule_mappings
     },
     "user": {
         "old_version": "v1",
-        "new_version": "v2",
-        "create": True,
+        "new_version": "v1",
+        "create": False,
         "reindex_alias": False,
         "reindex": False,
         "alias": False,

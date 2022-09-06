@@ -2,7 +2,7 @@ doctor_mappings = {
     "mappings": {
         "properties": {
             "profImageUrl": {
-                "enabled": false
+                "enabled": False
             },
             "reviewTags": {
                 "type": "nested",
@@ -110,19 +110,19 @@ doctor_mappings = {
                         },
                     "description": {
                             "type": "keyword"
-                        },
+                    },
                     "endDate": {
                             "type": "date"
-                        },
+                    },
                     "fieldOfStudy": {
                             "type": "keyword"
-                        },
+                    },
                     "institute": {
                             "type": "keyword"
-                        },
+                    },
                     "startDate": {
                             "type": "date"
-                        }
+                    }
                 }
             },
             "email": {
@@ -141,19 +141,19 @@ doctor_mappings = {
                         },
                     "description": {
                             "type": "keyword"
-                        },
+                    },
                     "endDate": {
                             "type": "date"
-                        },
+                    },
                     "location": {
                             "type": "keyword"
-                        },
+                    },
                     "startDate": {
                             "type": "date"
-                        },
+                    },
                     "title": {
                             "type": "keyword"
-                        }
+                    }
                 }
             },
             "firstName": {
@@ -175,7 +175,7 @@ doctor_mappings = {
                         },
                     "name": {
                             "type": "keyword"
-                        }
+                    }
                 }
             },
             "identifier": {
@@ -214,10 +214,10 @@ doctor_mappings = {
                         },
                     "name": {
                             "type": "keyword"
-                        },
+                    },
                     "provider": {
                             "type": "keyword"
-                        }
+                    }
                 }
             },
             "locality": {
@@ -244,21 +244,115 @@ doctor_mappings = {
             },
             "schedule": {
                 "properties": {
-                    "day": {
-                        "type": "keyword"
-                    },
-                    "slotTimeInMinutes": {
-                        "type": "long"
-                    },
-                    "workingTime": {
+                    "monday": {
                         "properties": {
-                            "endTime": {
-                                "type": "date",
-                                "format": "basic_time_no_millis"
+                            "session1_start_time": {
+                                "type": "keyword"
                             },
-                            "startTime": {
-                                "type": "date",
-                                "format": "basic_time_no_millis"
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "tuesday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "wednesday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "thursday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "friday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "saturday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "sunday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
                             }
                         }
                     }
@@ -297,6 +391,10 @@ schedule_mappings = {
             "appointmentNumber": {
                 "type": "keyword"
             },
+            "appointmentTime": {
+                "type": "date",
+                "format": "basic_date_time_no_millis"
+            },
             "doctorComment": {
                 "type": "keyword"
             },
@@ -319,6 +417,12 @@ schedule_mappings = {
                 "type": "keyword"
             },
             "status": {
+                "type": "keyword"
+            },
+            "slotDay": {
+                "type": "keyword"
+            },
+            "slotTime": {
                 "type": "keyword"
             },
             "type": {

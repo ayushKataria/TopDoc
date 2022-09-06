@@ -14,10 +14,8 @@ function getSchedule(req, res) {
 // book a slot with a doctor
 function bookAppointment(req, res) {
     let userId = req.header.userId
-    let doctorId = req.body.doctorId
-    let slotStartTime = req.body.slotStartTime
-    
-    controller.bookAppointment(userId, doctorId, slotStartTime)
+    let reqBody = req.body
+    controller.bookAppointment(userId, reqBody)
         .then(data => res.send(data))
         .catch(err => res.status(err.statuscode).send(err))
 }
@@ -25,6 +23,6 @@ function bookAppointment(req, res) {
 
 router.get('/v1/appointment/schedule/:doctorId', getSchedule)
 
-router.get('/v1/appointment/book/', bookAppointment)
+router.post('/v1/appointment/book/', bookAppointment)
 
 module.exports = router

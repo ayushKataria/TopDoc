@@ -1,5 +1,4 @@
 'use strict'
-var router = require('express').Router()
 let router = require("express").Router();
 const controller = require("./controller");
 

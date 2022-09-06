@@ -11,21 +11,21 @@ async function setClient() {
             username: properties_util.esUserName,
             password: properties_util.esPassword
         },
-        tls: { 
-          rejectUnauthorized: false
+        tls: {
+            rejectUnauthorized: false
         }
     })
 }
 
 async function ping() {
-    if(!esClient) {
+    if (!esClient) {
         setClient()
     }
     return esClient.ping()
 }
 
 async function getById(index, id) {
-    if(!esClient) {
+    if (!esClient) {
         setClient()
     }
     return esClient.get({
@@ -34,7 +34,64 @@ async function getById(index, id) {
     })
 }
 
+async function search(queryBody, indexName) {
+    if (!esClient) {
+        setClient()
+    }
+
+    return esClient.search({
+        index: indexName,
+        body: queryBody,
+    })
+}
+
+//update Profile Details
+function update(indexName, identifier, body) {
+    if (!esClient) {
+        setClient()
+    }
+
+    return esClient.update({
+        index: indexName,
+        id: identifier,
+        body: {
+            doc: body,
+        },
+    })
+}
+
+function insert(object, identifier, indexName) {
+    if (!esClient) {
+        setClient()
+    }
+
+    return esClient.index({
+        id: identifier,
+        index: indexName,
+        body: object,
+    })
+}
+
+
+function templateSearch(queryBody, indexName, templateName) {
+    if (!esClient) {
+        setClient()
+    }
+
+    return esClient.searchTemplate({
+        index: indexName,
+        body: {
+            "id": templateName,
+            "params": queryBody
+        }
+    })
+}
+
 module.exports = {
     ping,
-    getById
+    getById,
+    search,
+    update,
+    insert,
+    templateSearch
 }
