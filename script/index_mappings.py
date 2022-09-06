@@ -44,6 +44,9 @@ doctor_mappings = {
                     "clinicName": {
                         "type": "keyword"
                     },
+                    "clinicRating": {
+                        "type": "double"
+                    },
                     "location": {
                         "type": "keyword"
                     },
@@ -591,23 +594,23 @@ user_mappings = {
             "role": {
                 "type": "text"
             },
-            "state": {
-                "type": "keyword"
+            "state" : {
+            "type" : "keyword"
             },
-            "medicalDetails": {
-                "type": "nested",
-                "properties": {
-                    "sNo": {
-                        "type": "long"
+            "medicalDetails" :{
+                "type":"nested",
+                "properties" :{
+                    "name":{
+                        "type":"keyword"
                     },
-                    "name": {
-                        "type": "keyword"
+                    "bmi":{
+                        "type" :"float"  
                     },
-                    "bmi": {
-                        "type": "float"
+                    "heartRate":{
+                        "type":"float"
                     },
-                    "heartRate": {
-                        "type": "float"
+                    "fbcStatus":{
+                        "type":"long"
                     },
                     "fbcStatus": {
                         "type": "long"
@@ -620,6 +623,63 @@ user_mappings = {
                         "format": "yyyyMMdd'T'HHmmss.SSSZ"
                     }
                 }
+            }
+        }
+    }
+}
+
+
+
+review_mappings = {
+    "mappings": {
+        "properties": {
+              "reviewRating": {
+                "type": "double"
+            },
+            "reviewMessage": {
+                "type": "text"
+            },
+            "reviewDate" : {
+            "type" : "date"
+            },
+            "userId" : {
+            "type" : "keyword"
+            },
+            "userName" : {
+            "type" : "text",
+            "fields" : {
+                "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+                }
+            }
+            },
+            "isVerifiedUser": {
+                "type": "boolean"
+            },
+             "doctorId": {
+                "type": "keyword"
+            },
+            "reviewlastEditedOn" : {
+            "type" : "date"
+            },
+             "userScheduleId": {
+                "type": "keyword"
+            },
+            "accurateDiagnosisRating": {
+                "type": "double"
+            },
+            "friendlinessAndWaitTimeRating": {
+                "type": "double"
+            },
+            "bedsideMannerismRating": {
+                "type": "double"
+            },
+            "staffCourteousnessRating": {
+                "type": "double"
+            },
+            "patientEducationRating": {
+                "type": "double"
             }
         }
     }
