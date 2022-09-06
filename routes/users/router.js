@@ -1,3 +1,4 @@
+'use strict'
 var router = require('express').Router()
 var controller = require('./controller')
 const _ = require("underscore");
@@ -138,6 +139,5 @@ router.post("/userDetails/addMedicalDetails", addMedicalDetails);
 router.post("/userDetails/getMedicalDetails", MedicalDetails);
 
 // router.post("/userDetails/addMedicalDetails", addMedicalDetails);
-
 
 module.exports = router

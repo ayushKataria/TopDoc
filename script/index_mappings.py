@@ -1,10 +1,10 @@
 doctor_mappings = {
     "mappings": {
         "properties": {
-            "profImageUrl":{
-                "enabled" : false
+            "profImageUrl": {
+                "enabled": False
             },
-            "reviewTags" : {
+            "reviewTags": {
                 "type": "nested",
                 "properties": {
                     "tagName": {
@@ -15,30 +15,30 @@ doctor_mappings = {
                     }
                 }
             },
-            "noOfReviews" : {
-            "type" : "long"
-            },
-            "consultations" : {
-            "type" : "long"
-            },
-            "satisfiedPatients" : {
+            "noOfReviews": {
                 "type": "long"
             },
-            "awardsAndPublications":{
-                "type" : "nested",
+            "consultations": {
+                "type": "long"
+            },
+            "satisfiedPatients": {
+                "type": "long"
+            },
+            "awardsAndPublications": {
+                "type": "nested",
                 "properties": {
-                    "awardName":{
-                        "type":"keyword"
+                    "awardName": {
+                        "type": "keyword"
                     },
-                    "place":{
-                        "type":"keyword"
+                    "place": {
+                        "type": "keyword"
                     },
-                    "date":{
+                    "date": {
                         "type": "date"
                     }
                 }
             },
-            "associatedClinics" : {
+            "associatedClinics": {
                 "type": "nested",
                 "properties": {
                     "clinicName": {
@@ -58,18 +58,18 @@ doctor_mappings = {
                     },
                     "schedule": {
                         "type": "nested",
-                "properties": {
-                    "from": {
-                        "type": "keyword"
-                    },
-                    "to": {
-                        "type": "keyword"
-                    },
-                    "duration": {
-                        "type": "keyword"
+                        "properties": {
+                            "from": {
+                                "type": "keyword"
+                            },
+                            "to": {
+                                "type": "keyword"
+                            },
+                            "duration": {
+                                "type": "keyword"
+                            }
+                        }
                     }
-                }
-            }
                 }
             },
             "address": {
@@ -247,21 +247,115 @@ doctor_mappings = {
             },
             "schedule": {
                 "properties": {
-                    "day": {
-                        "type": "keyword"
-                    },
-                    "slotTimeInMinutes": {
-                        "type": "long"
-                    },
-                    "workingTime": {
+                    "monday": {
                         "properties": {
-                            "endTime": {
-                                "type": "date",
-                                "format": "basic_time_no_millis"
+                            "session1_start_time": {
+                                "type": "keyword"
                             },
-                            "startTime": {
-                                "type": "date",
-                                "format": "basic_time_no_millis"
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "tuesday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "wednesday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "thursday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "friday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "saturday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "sunday": {
+                        "properties": {
+                            "session1_start_time": {
+                                "type": "keyword"
+                            },
+                            "session1_end_time": {
+                                "type": "keyword"
+                            },
+                            "session2_start_time": {
+                                "type": "keyword"
+                            },
+                            "session2_end_time": {
+                                "type": "keyword"
                             }
                         }
                     }
@@ -300,6 +394,10 @@ schedule_mappings = {
             "appointmentNumber": {
                 "type": "keyword"
             },
+            "appointmentTime": {
+                "type": "date",
+                "format": "basic_date_time_no_millis"
+            },
             "doctorComment": {
                 "type": "keyword"
             },
@@ -324,6 +422,12 @@ schedule_mappings = {
             "status": {
                 "type": "keyword"
             },
+            "slotDay": {
+                "type": "keyword"
+            },
+            "slotTime": {
+                "type": "keyword"
+            },
             "type": {
                 "type": "keyword"
             }
@@ -332,163 +436,163 @@ schedule_mappings = {
 }
 
 user_mappings = {
-    "mappings" : {
-        "properties" : {
-            "DOB" : {
-                "type" : "date",
-                "format" : "dd/mm/yyyy"
+    "mappings": {
+        "properties": {
+            "DOB": {
+                "type": "date",
+                "format": "dd/mm/yyyy"
             },
-            "Zipcode" : {
-                "type" : "keyword"
+            "Zipcode": {
+                "type": "keyword"
             },
-            "address" : {
-                "type" : "text"
+            "address": {
+                "type": "text"
             },
-            "blood_donor" : {
-                "type" : "boolean"
+            "blood_donor": {
+                "type": "boolean"
             },
-            "city" : {
-                "type" : "keyword"
+            "city": {
+                "type": "keyword"
             },
-            "country" : {
-                "type" : "keyword"
+            "country": {
+                "type": "keyword"
             },
-            "email" : {
-            "type" : "text",
-            "fields" : {
-                "keyword" : {
-                "type" : "keyword",
-                "ignore_above" : 256
-                }
-            }
-            },
-            "gender" : {
-            "type" : "keyword"
-            },
-            "id" : {
-            "type" : "keyword"
-            },
-            "insurance_details" : {
-            "properties" : {
-                "coverage" : {
-                "properties" : {
-                    "end_date" : {
-                    "type" : "date",
-                    "format" : "dd/mm/yyyy"
-                    },
-                    "start_date" : {
-                    "type" : "date",
-                    "format" : "dd/mm/yyyy"
+            "email": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
                     }
                 }
-                },
-                "documents" : {
-                "type" : "keyword"
-                },
-                "id" : {
-                "type" : "text",
-                "fields" : {
-                    "keyword" : {
-                    "type" : "keyword",
-                    "ignore_above" : 256
-                    }
-                }
-                },
-                "provider" : {
-                "type" : "keyword"
-                }
-            }
             },
-            "isPremiumUser" : {
-            "type" : "boolean"
+            "gender": {
+                "type": "keyword"
             },
-            "landmark" : {
-            "type" : "text"
+            "id": {
+                "type": "keyword"
             },
-            "language" : {
-            "type" : "keyword"
-            },
-            "locality" : {
-            "type" : "text",
-            "fields" : {
-                "keyword" : {
-                "type" : "keyword",
-                "ignore_above" : 256
-                }
-            }
-            },
-            "medical_records" : {
-            "properties" : {
-                "alcohol_user" : {
-                "type" : "boolean"
-                },
-                "allergies" : {
-                "type" : "text",
-                "fields" : {
-                    "keyword" : {
-                    "type" : "keyword",
-                    "ignore_above" : 256
-                    }
-                }
-                },
-                "blood_group" : {
-                "type" : "keyword"
-                },
-                "drug_user" : {
-                "type" : "boolean"
-                },
-                "past_procedures" : {
-                "properties" : {
-                    "date" : {
-                    "type" : "date",
-                    "format" : "dd/mm/yyyy"
-                    },
-                    "name" : {
-                    "type" : "text",
-                    "fields" : {
-                        "keyword" : {
-                        "type" : "keyword",
-                        "ignore_above" : 256
+            "insurance_details": {
+                "properties": {
+                    "coverage": {
+                        "properties": {
+                            "end_date": {
+                                "type": "date",
+                                "format": "dd/mm/yyyy"
+                            },
+                            "start_date": {
+                                "type": "date",
+                                "format": "dd/mm/yyyy"
+                            }
                         }
-                    }
-                    }
-                }
-                },
-                "pre_existing_conditions" : {
-                "properties" : {
-                    "duration" : {
-                    "type" : "float"
                     },
-                    "name" : {
-                    "type" : "text",
-                    "fields" : {
-                        "keyword" : {
-                        "type" : "keyword",
-                        "ignore_above" : 256
+                    "documents": {
+                        "type": "keyword"
+                    },
+                    "id": {
+                        "type": "text",
+                        "fields": {
+                            "keyword": {
+                                "type": "keyword",
+                                "ignore_above": 256
+                            }
                         }
+                    },
+                    "provider": {
+                        "type": "keyword"
                     }
+                }
+            },
+            "isPremiumUser": {
+                "type": "boolean"
+            },
+            "landmark": {
+                "type": "text"
+            },
+            "language": {
+                "type": "keyword"
+            },
+            "locality": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
                     }
                 }
-                },
-                "smoker" : {
-                "type" : "boolean"
+            },
+            "medical_records": {
+                "properties": {
+                    "alcohol_user": {
+                        "type": "boolean"
+                    },
+                    "allergies": {
+                        "type": "text",
+                        "fields": {
+                            "keyword": {
+                                "type": "keyword",
+                                "ignore_above": 256
+                            }
+                        }
+                    },
+                    "blood_group": {
+                        "type": "keyword"
+                    },
+                    "drug_user": {
+                        "type": "boolean"
+                    },
+                    "past_procedures": {
+                        "properties": {
+                            "date": {
+                                "type": "date",
+                                "format": "dd/mm/yyyy"
+                            },
+                            "name": {
+                                "type": "text",
+                                "fields": {
+                                    "keyword": {
+                                        "type": "keyword",
+                                        "ignore_above": 256
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "pre_existing_conditions": {
+                        "properties": {
+                            "duration": {
+                                "type": "float"
+                            },
+                            "name": {
+                                "type": "text",
+                                "fields": {
+                                    "keyword": {
+                                        "type": "keyword",
+                                        "ignore_above": 256
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "smoker": {
+                        "type": "boolean"
+                    }
                 }
-            }
             },
-            "mobile" : {
-            "type" : "keyword"
+            "mobile": {
+                "type": "keyword"
             },
-            "name" : {
-            "type" : "text",
-            "fields" : {
-                "keyword" : {
-                "type" : "keyword",
-                "ignore_above" : 256
+            "name": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
                 }
-            }
             },
-            "role" : {
-            "type" : "text"
+            "role": {
+                "type": "text"
             },
             "state" : {
             "type" : "keyword"
@@ -508,19 +612,21 @@ user_mappings = {
                     "fbcStatus":{
                         "type":"long"
                     },
-                    "weight":{
-                        "type":"keyword"
+                    "fbcStatus": {
+                        "type": "long"
                     },
-                    "orderDate":{
-                    "type" : "date",
-                    "format" : "yyyyMMdd'T'HHmmss.SSSZ"
+                    "weight": {
+                        "type": "keyword"
+                    },
+                    "orderDate": {
+                        "type": "date",
+                        "format": "yyyyMMdd'T'HHmmss.SSSZ"
                     }
                 }
             }
         }
     }
 }
-
 
 
 
@@ -559,8 +665,22 @@ review_mappings = {
             },
              "userScheduleId": {
                 "type": "keyword"
+            },
+            "accurateDiagnosisRating": {
+                "type": "double"
+            },
+            "friendlinessAndWaitTimeRating": {
+                "type": "double"
+            },
+            "bedsideMannerismRating": {
+                "type": "double"
+            },
+            "staffCourteousnessRating": {
+                "type": "double"
+            },
+            "patientEducationRating": {
+                "type": "double"
             }
-            
         }
     }
 }

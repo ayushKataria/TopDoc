@@ -10,8 +10,8 @@ es_db = Elasticsearch("https://localhost:9200", basic_auth=('elastic',
 indices_instructions = {
     "doctor": {
         "old_version": "v1",
-        "new_version": "v4",
-        "create": True,
+        "new_version": "v1",
+        "create": False,
         "reindex_alias": False,
         "reindex": False,
         "alias": False,
@@ -19,17 +19,17 @@ indices_instructions = {
     },
     "schedule": {
         "old_version": "v1",
-        "new_version": "v4",
+        "new_version": "v1",
         "create": True,
         "reindex_alias": False,
         "reindex": False,
-        "alias": False,
+        "alias": True,
         "mapping": schedule_mappings
     },
     "user": {
         "old_version": "v1",
-        "new_version": "v2",
-        "create": True,
+        "new_version": "v1",
+        "create": False,
         "reindex_alias": False,
         "reindex": False,
         "alias": False,

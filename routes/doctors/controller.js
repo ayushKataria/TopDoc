@@ -1,3 +1,4 @@
+'use strict'
 const esdb = require("../../ESUtils/elasticSearch");
 
 //get doctor data with the help of docId
@@ -31,15 +32,20 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
     }
     console.log("esdb")
     let output={}
+    output.results=[]
     let dataOb = await esdb.getData(queryBody, role);
     if (dataOb.hits.total.value == 0) { 
       throw err;
     }
     output.hits=dataOb.hits.total.value
     for (let i = 0; i < output.hits; i++) { 
+    //  console.log("lllllllllllllllllllllllllllllllllllllll")
       dataOb.hits.hits[i]._source.id = dataOb.hits.hits[i]._id;
+      
+      
     }
-    output.results = dataOb.hits.hits.map((e) => { return  e._source  })
+   // output.results.push(dataOb.hits.hits[i])
+   output.results = dataOb.hits.hits.map((e) => { return  e._source  })
     
     // output.fields=dataOb.hits.hits[0].fields
 
@@ -136,19 +142,49 @@ async function getReviewsDetails(body){
       params.doctorIdValue = body.doctorId
       params.avgReviewRatingAggregation = true
       params.rangeReviewRatingAggregation = true
-      params.rangeReviewRatingAggregationComma=true
+      params.rangeReviewRatingAggregationComma = true
+      params.avgAccurateDiagnosisRatingAggregation = true
+      params.avgAccurateDiagnosisRatingAggregationComma =  true
+      params.avgFriendlinessAndWaitTimeRatingAggregation =  true
+      params.avgFriendlinessAndWaitTimeRatingAggregationComma = true
+      params.avgBedsideMannerismRatingAggregation =  true
+      params.avgBedsideMannerismRatingAggregationComma =  true
+      params.avgStaffCourteousnessRatingAggregation =  true
+      params.avgStaffCourteousnessRatingAggregationComma = true
+      params.avgPatientEducationRatingAggregation =  true
+      params.avgPatientEducationRatingAggregationComma =  true
     } else if (body.hasOwnProperty("doctorId")) { 
       params.boolDoctorId = true
       params.doctorIdValue = body.doctorId
       params.avgReviewRatingAggregation = true
       params.rangeReviewRatingAggregation = true
-      params.rangeReviewRatingAggregationComma=true
+      params.rangeReviewRatingAggregationComma = true
+      params.avgAccurateDiagnosisRatingAggregation = true
+      params.avgAccurateDiagnosisRatingAggregationComma =  true
+      params.avgFriendlinessAndWaitTimeRatingAggregation =  true
+      params.avgFriendlinessAndWaitTimeRatingAggregationComma = true
+      params.avgBedsideMannerismRatingAggregation =  true
+      params.avgBedsideMannerismRatingAggregationComma =  true
+      params.avgStaffCourteousnessRatingAggregation =  true
+      params.avgStaffCourteousnessRatingAggregationComma = true
+      params.avgPatientEducationRatingAggregation =  true
+      params.avgPatientEducationRatingAggregationComma =  true
     }else if (body.hasOwnProperty("userId")) { 
       params.boolUserId = true
       params.userIdValue = body.userId
       params.avgReviewRatingAggregation = false
       params.rangeReviewRatingAggregation = false
-      params.rangeReviewRatingAggregationComma=false
+      params.rangeReviewRatingAggregationComma = false
+      params.avgAccurateDiagnosisRatingAggregation = false
+      params.avgAccurateDiagnosisRatingAggregationComma =  false
+      params.avgFriendlinessAndWaitTimeRatingAggregation =  false
+      params.avgFriendlinessAndWaitTimeRatingAggregationComma = false
+      params.avgBedsideMannerismRatingAggregation =  false
+      params.avgBedsideMannerismRatingAggregationComma =  false
+      params.avgStaffCourteousnessRatingAggregation =  false
+      params.avgStaffCourteousnessRatingAggregationComma = false
+      params.avgPatientEducationRatingAggregation =  false
+      params.avgPatientEducationRatingAggregationComma =  false
     }
 
     if (Object.keys(body.sort).length === 0) {
@@ -163,13 +199,18 @@ async function getReviewsDetails(body){
     let output = {} 
  let dataOb = await esdb.templateSearch(params, esIndex, esTemplate)
     output.hits = dataOb.hits.total.value
-    for (let i = 0; i < output.hits; i++) { 
+    for (let i = 0; i < dataOb.hits.hits.length; i++) { 
       dataOb.hits.hits[i]._source.id = dataOb.hits.hits[i]._id;
     }
     output.results = dataOb.hits.hits.map((e) => { return  e._source  })
       
     if (body.hasOwnProperty("doctorId")) { 
       output.avgReviewRating = dataOb.aggregations.TotalAggs.avgReviewRatingAggs.avgReviewRatingAggs.value.toFixed(1)
+      output.avgPatientEducationRating = dataOb.aggregations.TotalAggs.avgPatientEducationRatingAggs.avgPatientEducationRatingAggs.value.toFixed(1)
+      output.avgStaffCourteousnessRating = dataOb.aggregations.TotalAggs.avgStaffCourteousnessRatingAggs.avgStaffCourteousnessRatingAggs.value.toFixed(1)
+      output.avgFriendlinessAndWaitTimeRating = dataOb.aggregations.TotalAggs.avgFriendlinessAndWaitTimeRatingAggs.avgFriendlinessAndWaitTimeRatingAggs.value.toFixed(1)
+      output.avgAccurateDiagnosisRating = dataOb.aggregations.TotalAggs.avgAccurateDiagnosisRatingAggs.avgAccurateDiagnosisRatingAggs.value.toFixed(1)
+      output.avgBedsideMannerismRating = dataOb.aggregations.TotalAggs.avgBedsideMannerismRatingAggs.avgBedsideMannerismRatingAggs.value.toFixed(1)
       output.rangeReviewRating = dataOb.aggregations.TotalAggs.rangeReviewRatingAggs.rangeReviewRatingAggs.buckets
     }
       return output;
