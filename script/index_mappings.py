@@ -533,7 +533,8 @@ review_mappings = {
                 "type": "text"
             },
             "reviewDate" : {
-            "type" : "date"
+            "type" : "date",
+            "format" : "yyyyMMdd'T'HHmmss.SSSZ"
             },
             "userId" : {
             "type" : "keyword"
@@ -554,7 +555,8 @@ review_mappings = {
                 "type": "keyword"
             },
             "reviewlastEditedOn" : {
-            "type" : "date"
+            "type" : "date",
+            "format" : "yyyyMMdd'T'HHmmss.SSSZ"
             },
              "userScheduleId": {
                 "type": "keyword"
