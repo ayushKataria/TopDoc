@@ -1,3 +1,4 @@
+'use strict'
 const router = require("express").Router();
 const controller = require("./controller");
 const docAttributeList = require("./constants/docAttributeList");

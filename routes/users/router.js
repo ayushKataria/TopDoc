@@ -1,3 +1,4 @@
+'use strict'
 var router = require('express').Router()
 var controller = require('./controller')
 const _ = require("underscore");
@@ -118,9 +119,25 @@ async function addMedicalDetails(req, res) {
   
   }
 
+  async function MedicalDetails(req, res) {    
+    console.log("print") 
+  if (req.body.hasOwnProperty("id") == false || req.body.id == null || req.body.id == "") {
+    res.status(400).send("bad request , id cannot be empty");
+  } else if (req.body.hasOwnProperty("role") == false || req.body.role == null || req.body.role == "") {
+    res.status(400).send("bad request , role cannot be empty");
+    } else {  
+      // console.log("error", err)
+            controller.medicalDetails(req.body)
+            .then(data => res.send(data))
+            .catch(err => res.status(err.statuscode).send(err))
+    }   
+  }
+  
   
 
 router.post("/userDetails/addMedicalDetails", addMedicalDetails);
+router.post("/userDetails/getMedicalDetails", MedicalDetails);
+
 // router.post("/userDetails/addMedicalDetails", addMedicalDetails);
 
 module.exports = router
