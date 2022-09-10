@@ -4,7 +4,7 @@ const { json } = require('express');
 let elasticSearchClient=null
 //Akash Elastic pass
 
- var auth = 'elastic' + ":" + 'j*+44bej_O0ZsUlUxFH5'
+ var auth = 'elastic' + ":" + 'prMQZkpxu8he__rgcCgR'
  const connstring = "https://" + 'localhost' + ":" + '9200'
 
  const enable_password=true;
@@ -202,7 +202,7 @@ function getData(queryBody, paramIndex) {
             resolve(result)
         }).catch((err) => {
             // log.error('error: ' + err);
-            reject(result)
+            reject(err)
             console.log("bata bhai" ,err)
         })
     })
@@ -212,6 +212,7 @@ function getData(queryBody, paramIndex) {
     getData,
     createEntity,
     updateData,
-    templateSearch
+    templateSearch,
+    connectClient
   };
   

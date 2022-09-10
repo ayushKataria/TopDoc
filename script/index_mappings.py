@@ -1,10 +1,10 @@
 doctor_mappings = {
     "mappings": {
         "properties": {
-            "profImageUrl": {
-                "enabled": False
+            "profImageUrl":{
+                "enabled" : false
             },
-            "reviewTags": {
+            "reviewTags" : {
                 "type": "nested",
                 "properties": {
                     "tagName": {
@@ -15,30 +15,30 @@ doctor_mappings = {
                     }
                 }
             },
-            "noOfReviews": {
+            "noOfReviews" : {
+            "type" : "long"
+            },
+            "consultations" : {
+            "type" : "long"
+            },
+            "satisfiedPatients" : {
                 "type": "long"
             },
-            "consultations": {
-                "type": "long"
-            },
-            "satisfiedPatients": {
-                "type": "long"
-            },
-            "awardsAndPublications": {
-                "type": "nested",
+            "awardsAndPublications":{
+                "type" : "nested",
                 "properties": {
-                    "awardName": {
-                        "type": "keyword"
+                    "awardName":{
+                        "type":"keyword"
                     },
-                    "place": {
-                        "type": "keyword"
+                    "place":{
+                        "type":"keyword"
                     },
-                    "date": {
+                    "date":{
                         "type": "date"
                     }
                 }
             },
-            "associatedClinics": {
+            "associatedClinics" : {
                 "type": "nested",
                 "properties": {
                     "clinicName": {
@@ -58,18 +58,18 @@ doctor_mappings = {
                     },
                     "schedule": {
                         "type": "nested",
-                        "properties": {
-                            "from": {
-                                "type": "keyword"
-                            },
-                            "to": {
-                                "type": "keyword"
-                            },
-                            "duration": {
-                                "type": "keyword"
-                            }
-                        }
+                "properties": {
+                    "from": {
+                        "type": "keyword"
+                    },
+                    "to": {
+                        "type": "keyword"
+                    },
+                    "duration": {
+                        "type": "keyword"
                     }
+                }
+            }
                 }
             },
             "address": {
@@ -615,12 +615,9 @@ user_mappings = {
                     "fbcStatus": {
                         "type": "long"
                     },
-                    "weight": {
-                        "type": "keyword"
-                    },
-                    "orderDate": {
-                        "type": "date",
-                        "format": "yyyyMMdd'T'HHmmss.SSSZ"
+                    "orderDate":{
+                    "type" : "date",
+                    "format" : "basic_date_time_no_millis"
                     }
                 }
             }
@@ -686,3 +683,77 @@ review_mappings = {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# date - mapping according to format date.now()---yyyy-MM-dd'T'HH:mm:ss.SSSZ for new Date().toISOString()
+# search dynamic 
+# overall rating 

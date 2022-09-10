@@ -4,13 +4,13 @@ const controller = require("./controller");
 
 function getSearchDetails(req, res) {
     console.log("chal de bhai");
-  // console.log("req. body ", req.body);
-  pageSize =10;
-  pageNo=0;
-  didYouMean= false;
-  applyLTR=false;
-  highlight=false;
-  isStandAlone = false
+  console.log("req. body ", req.body);
+ let  pageSize =10;
+ let pageNo=0;
+ let didYouMean= false;
+ let applyLTR=false;
+  let highlight=false;
+  let isStandAlone = false
   if (
     req.body.hasOwnProperty("query") == false ||
     req.body.query == null ||
@@ -66,7 +66,7 @@ function getSearchDetails(req, res) {
           "averageRating",
           "city",
         ];
-        for (i = 0; i < visibleFilter.length; i++) {
+        for (let i = 0; i < visibleFilter.length; i++) {
           if (!filters.includes(visibleFilter[i])) {
             res
               .status(400)
@@ -99,7 +99,7 @@ function getSearchDetails(req, res) {
         "earliestAvailable",
         "price",
       ];
-      for (i = 0; i < sortBy.length; i++) {
+      for (let i = 0; i < sortBy.length; i++) {
         if (!sortList.includes(Object.keys(sortBy[i])[i])) {
           res
             .status(400)
