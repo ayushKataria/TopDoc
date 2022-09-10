@@ -1,4 +1,3 @@
-'use strict'
 var router = require('express').Router()
 var controller = require('./controller')
 const _ = require("underscore");
@@ -132,12 +131,10 @@ async function addMedicalDetails(req, res) {
             .catch(err => res.status(err.statuscode).send(err))
     }   
   }
-  
+
   
 
-router.post("/userDetails/addMedicalDetails", addMedicalDetails);
-router.post("/userDetails/getMedicalDetails", MedicalDetails);
-
-// router.post("/userDetails/addMedicalDetails", addMedicalDetails);
+  router.post("/userDetails/addMedicalDetails", addMedicalDetails);
+  router.post("/userDetails/getMedicalDetails", MedicalDetails);
 
 module.exports = router

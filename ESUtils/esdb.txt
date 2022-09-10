@@ -5,74 +5,6 @@ PUT doctor_v2
   },
   "mappings": {
     "properties": {
-      "profImageUrl": {
-        "enabled": false
-      },
-      "reviewTags": {
-        "type": "nested",
-        "properties": {
-          "tagName": {
-            "type": "keyword"
-          },
-          "description": {
-            "type": "keyword"
-          }
-        }
-      },
-      "noOfReviews": {
-        "type": "long"
-      },
-      "consultations": {
-        "type": "long"
-      },
-      "satisfiedPatients": {
-        "type": "long"
-      },
-      "awardsAndPublications": {
-        "type": "nested",
-        "properties": {
-          "awardName": {
-            "type": "keyword"
-          },
-          "place": {
-            "type": "keyword"
-          },
-          "date": {
-            "type": "date"
-          }
-        }
-      },
-      "associatedClinics": {
-        "type": "nested",
-        "properties": {
-          "clinicName": {
-            "type": "keyword"
-          },
-          "location": {
-            "type": "keyword"
-          },
-          "fees": {
-            "type": "float"
-          },
-          "tagReceived": {
-            "type": "keyword"
-          },
-          "schedule": {
-            "type": "nested",
-            "properties": {
-              "from": {
-                "type": "keyword"
-              },
-              "to": {
-                "type": "keyword"
-              },
-              "duration": {
-                "type": "keyword"
-              }
-            }
-          }
-        }
-      },
       "address": {
         "type": "text",
         "fields": {
@@ -121,7 +53,10 @@ PUT doctor_v2
           "fieldOfStudy": {
             "type": "keyword"
           },
-          "institute": {
+          "grade": {
+            "type": "keyword"
+          },
+          "school": {
             "type": "keyword"
           },
           "startDate": {
@@ -140,7 +75,7 @@ PUT doctor_v2
       "experience": {
         "type": "nested",
         "properties": {
-          "organisation": {
+          "comapanyName": {
             "type": "keyword"
           },
           "description": {
@@ -286,7 +221,6 @@ PUT doctor_v2
   }
 }
 
-
 GET doctor_v2/_search
 PUT doctor_v2/_doc/1
 {
@@ -379,48 +313,6 @@ PUT doctor_v2/_doc/1
       }
     ]
   },
-    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
-  "reviewTags": [
-    {
-      "tagName": "tag1_doc1",
-      "description": "tag1 description here"
-    },
-    {
-      "tagName": "tag2_doc1",
-      "description": "tag2 description here"
-    }
-  ],
-  "noOfReviews": 77,
-  "consultations": 145,
-  "satisfiedPatients": 34,
-  "awardsAndPublications": [
-    {
-      "awardName": "award 1",
-      "place": "Jabalpur",
-      "date": "2022-07-22"
-    },
-    {
-      "awardName": "award 2",
-      "place": "Mysore",
-      "date": "2022-01-17"
-    }
-  ],
-  "associatedClinics": [
-    {
-      "clinicName": "hello verify",
-      "location": "Hyderabad",
-      "fees": 999,
-      "tagReceived": [
-        "tag1",
-        "tag2"
-      ],
-      "schedule": [{
-        "from": "Monday",
-        "to": "Saturday",
-        "duration": "10:26am - 02:30pm"
-      }]
-    }
-  ],
   "specialization": "Neurosurgeon",
   "state": "Odisha",
   "yearsOfExperience": "24"
@@ -517,48 +409,6 @@ PUT doctor_v2/_doc/2
       }
     ]
   },
-    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
-  "reviewTags": [
-    {
-      "tagName": "tag1_doc1",
-      "description": "tag1 description here"
-    },
-    {
-      "tagName": "tag2_doc1",
-      "description": "tag2 description here"
-    }
-  ],
-  "noOfReviews": 77,
-  "consultations": 145,
-  "satisfiedPatients": 34,
-  "awardsAndPublications": [
-    {
-      "awardName": "award 1",
-      "place": "Jabalpur",
-      "date": "2022-07-22"
-    },
-    {
-      "awardName": "award 2",
-      "place": "Mysore",
-      "date": "2022-01-17"
-    }
-  ],
-  "associatedClinics": [
-    {
-      "clinicName": "hello verify",
-      "location": "Hyderabad",
-      "fees": 999,
-      "tagReceived": [
-        "tag1",
-        "tag2"
-      ],
-      "schedule": [{
-        "from": "Monday",
-        "to": "Saturday",
-        "duration": "10:26am - 02:30pm"
-      }]
-    }
-  ],
   "specialization": "Neurosurgeon",
   "state": "Karnataka",
   "yearsOfExperience": "24"
@@ -654,48 +504,6 @@ PUT doctor_v2/_doc/3
       }
     ]
   },
-    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
-  "reviewTags": [
-    {
-      "tagName": "tag1_doc1",
-      "description": "tag1 description here"
-    },
-    {
-      "tagName": "tag2_doc1",
-      "description": "tag2 description here"
-    }
-  ],
-  "noOfReviews": 77,
-  "consultations": 145,
-  "satisfiedPatients": 34,
-  "awardsAndPublications": [
-    {
-      "awardName": "award 1",
-      "place": "Jabalpur",
-      "date": "2022-07-22"
-    },
-    {
-      "awardName": "award 2",
-      "place": "Mysore",
-      "date": "2022-01-17"
-    }
-  ],
-  "associatedClinics": [
-    {
-      "clinicName": "hello verify",
-      "location": "Hyderabad",
-      "fees": 999,
-      "tagReceived": [
-        "tag1",
-        "tag2"
-      ],
-      "schedule": [{
-        "from": "Monday",
-        "to": "Saturday",
-        "duration": "10:26am - 02:30pm"
-      }]
-    }
-  ],
   "specialization": "Dentist",
   "state": "Odisha",
   "yearsOfExperience": "24"
@@ -792,48 +600,6 @@ PUT doctor_v2/_doc/4
       }
     ]
   },
-    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
-  "reviewTags": [
-    {
-      "tagName": "tag1_doc1",
-      "description": "tag1 description here"
-    },
-    {
-      "tagName": "tag2_doc1",
-      "description": "tag2 description here"
-    }
-  ],
-  "noOfReviews": 77,
-  "consultations": 145,
-  "satisfiedPatients": 34,
-  "awardsAndPublications": [
-    {
-      "awardName": "award 1",
-      "place": "Jabalpur",
-      "date": "2022-07-22"
-    },
-    {
-      "awardName": "award 2",
-      "place": "Mysore",
-      "date": "2022-01-17"
-    }
-  ],
-  "associatedClinics": [
-    {
-      "clinicName": "hello verify",
-      "location": "Hyderabad",
-      "fees": 999,
-      "tagReceived": [
-        "tag1",
-        "tag2"
-      ],
-      "schedule": [{
-        "from": "Monday",
-        "to": "Saturday",
-        "duration": "10:26am - 02:30pm"
-      }]
-    }
-  ],
   "specialization": "Neurosurgeon",
   "state": "Karnataka",
   "yearsOfExperience": "24"
@@ -930,48 +696,6 @@ PUT doctor_v2/_doc/5
       }
     ]
   },
-    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
-  "reviewTags": [
-    {
-      "tagName": "tag1_doc1",
-      "description": "tag1 description here"
-    },
-    {
-      "tagName": "tag2_doc1",
-      "description": "tag2 description here"
-    }
-  ],
-  "noOfReviews": 77,
-  "consultations": 145,
-  "satisfiedPatients": 34,
-  "awardsAndPublications": [
-    {
-      "awardName": "award 1",
-      "place": "Jabalpur",
-      "date": "2022-07-22"
-    },
-    {
-      "awardName": "award 2",
-      "place": "Mysore",
-      "date": "2022-01-17"
-    }
-  ],
-  "associatedClinics": [
-    {
-      "clinicName": "hello verify",
-      "location": "Hyderabad",
-      "fees": 999,
-      "tagReceived": [
-        "tag1",
-        "tag2"
-      ],
-      "schedule": [{
-        "from": "Monday",
-        "to": "Saturday",
-        "duration": "10:26am - 02:30pm"
-      }]
-    }
-  ],
   "specialization": "Neurosurgeon",
   "state": "Odisha",
   "yearsOfExperience": "24"
@@ -1070,48 +794,6 @@ PUT doctor_v2/_doc/6
       }
     ]
   },
-    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
-  "reviewTags": [
-    {
-      "tagName": "tag1_doc1",
-      "description": "tag1 description here"
-    },
-    {
-      "tagName": "tag2_doc1",
-      "description": "tag2 description here"
-    }
-  ],
-  "noOfReviews": 77,
-  "consultations": 145,
-  "satisfiedPatients": 34,
-  "awardsAndPublications": [
-    {
-      "awardName": "award 1",
-      "place": "Jabalpur",
-      "date": "2022-07-22"
-    },
-    {
-      "awardName": "award 2",
-      "place": "Mysore",
-      "date": "2022-01-17"
-    }
-  ],
-  "associatedClinics": [
-    {
-      "clinicName": "hello verify",
-      "location": "Hyderabad",
-      "fees": 999,
-      "tagReceived": [
-        "tag1",
-        "tag2"
-      ],
-      "schedule": [{
-        "from": "Monday",
-        "to": "Saturday",
-        "duration": "10:26am - 02:30pm"
-      }]
-    }
-  ],
   "specialization": "Neurosurgeon",
   "state": "Odisha",
   "yearsOfExperience": "24"
@@ -1209,52 +891,886 @@ PUT doctor_v2/_doc/7
       }
     ]
   },
-    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
-  "reviewTags": [
-    {
-      "tagName": "tag1_doc1",
-      "description": "tag1 description here"
-    },
-    {
-      "tagName": "tag2_doc1",
-      "description": "tag2 description here"
-    }
-  ],
-  "noOfReviews": 77,
-  "consultations": 145,
-  "satisfiedPatients": 34,
-  "awardsAndPublications": [
-    {
-      "awardName": "award 1",
-      "place": "Jabalpur",
-      "date": "2022-07-22"
-    },
-    {
-      "awardName": "award 2",
-      "place": "Mysore",
-      "date": "2022-01-17"
-    }
-  ],
-  "associatedClinics": [
-    {
-      "clinicName": "hello verify",
-      "location": "Hyderabad",
-      "fees": 999,
-      "tagReceived": [
-        "tag1",
-        "tag2"
-      ],
-      "schedule": [{
-        "from": "Monday",
-        "to": "Saturday",
-        "duration": "10:26am - 02:30pm"
-      }]
-    }
-  ],
   "specialization": "Neurosurgeon",
   "state": "Odisha",
   "yearsOfExperience": "24"
 }
+
+
+GET doctor_v2/_doc/1
+
+GET doctor_v2/_doc/2
+
+GET doctor_v2/_doc/3
+
+GET doctor_v2/_doc/4
+
+GET doctor_v2/_stats
+
+GET doctor_v2/_search
+{
+  "query": {
+    "term": {
+      "name.keyword": "Harsh Bhargav"
+    }
+  }
+}
+
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "name": {
+              "query": "Harsh"
+            }
+          }
+        }
+      ],
+      "filter": [
+        {
+          "term": {
+            "ailmentsTreated.keyword": "Cancer"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "ailmentsTreated.keyword": "Cancer"
+          }
+        },
+        {
+          "term": {
+            "gender": "male"
+          }
+        },
+        {
+          "term": {
+            "city.keyword": "Delhi"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "averageRating": {
+              "gte": 4,
+              "lte": 5
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "city.keyword": "Delhi"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "country": "India"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": 20,
+              "lte": 25
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "gender": "female"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "isVideoAllowed": "true"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "ailmentsTreated.keyword": "Cancer"
+          }
+        },
+        {
+          "term": {
+            "gender": "male"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "match": {
+      "name": "Harsh"
+    }
+  }
+}
+
+GET doctor_v2/_search
+{
+  "query": {
+    "match": {
+      "firstName": "Harsh"
+    }
+  }
+}
+
+GET doctor_v2/_search
+{
+  "query": {
+    "match": {
+      "lastName": "Bhargav"
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "nested": {
+      "path": "hospital",
+      "query": {
+        "match": {
+          "hospital.name": {
+            "query": "Srirama Chandra Bhanja Medical College and Hospital"
+          }
+        }
+      }
+    }
+  }
+}
+
+GET doctor_v2/_search
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "name": {
+              "query": "Harsh"
+            }
+          }
+        }
+      ],
+      "filter": [
+        {
+          "term": {
+            "ailmentsTreated.keyword": "Cancer"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET doctor_v2/_search
+
+
+PUT doct
+{
+  "mappings": {
+    "properties": {
+      "address": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+PUT doct/_doc/5
+{
+  "address":"Srirama Chandra Bhanja Medical College and Hospital"
+}
+
+GET doct/_search
+
+GET doct/_search
+{
+  "query": {
+    "match": {
+      "address": "Srirama Chandra Bhanja"
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "gender": "male"
+          }
+        },
+        {
+          "range": {
+            "averageRating": {
+              "gte": 4,
+              "lte": 5
+            }
+          }
+        },
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": 20,
+              "lte": 25
+            }
+          }
+        },
+        {
+          "term": {
+            "country": "India"
+          }
+        },
+        {
+          "term": {
+            "city.keyword": "Delhi"
+          }
+        },
+        {
+          "term": {
+            "city.keyword": "Delhi"
+          }
+        },
+        {
+          "term": {
+            "isVideoAllowed": "true"
+          }
+        },
+        {
+          "term": {
+            "specialization.keyword": "Neurosurgeon"
+          }
+        },
+        {
+          "terms": {
+            "languages": [
+              "English",
+              "Hindi"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "match_phrase": {
+      "firstName": {
+        "query": "Harsh"
+      }
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "match_phrase": {
+      "lastName": {
+        "query": "Aggarwal"
+      }
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "match": {
+      "city": "Bhubaneswar"
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "match": {
+      "locality": "Bhubaneswar"
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "match": {
+      "name": "Harsh Aggarwal"
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "match": {
+      "ailmentsTreated": "Cancer"
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "match": {
+      "specialization": "Neurosurgeon"
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "match": {
+      "address": "odisha"
+    }
+  }
+}
+
+GET doctor_v2/_search
+{
+  "query": {
+    "multi_match" : {
+      "query" : "Bhubaneswar",
+      "fields" : [ "ailmentsTreated^2", "*name^3", "city", "locality^1" ,"specialization^4" ,"address" ] 
+    }
+  }
+}
+
+
+
+GET doctor_v2/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "multi_match": {
+            "query": "Bhubaneswar",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^1",
+              "specialization^4",
+              "address"
+            ]
+          }
+        }
+      ],
+      "filter": [
+        {
+          "term": {
+            "gender": "male"
+          }
+        },
+        {
+          "range": {
+            "averageRating": {
+              "gte": 4,
+              "lte": 5
+            }
+          }
+        },
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": 20,
+              "lte": 25
+            }
+          }
+        },
+        {
+          "term": {
+            "country": "India"
+          }
+        },
+        {
+          "term": {
+            "city.keyword": "Bhubaneswar"
+          }
+        },
+        {
+          "term": {
+            "isVideoAllowed": "true"
+          }
+        },
+        {
+          "term": {
+            "specialization.keyword": "Neurosurgeon"
+          }
+        },
+        {
+          "terms": {
+            "languages": [
+              "English",
+              "Hindi"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET doctor_v2/_search
+
+PUT _scripts/doctorTemplate
+{
+  "script": {
+    "lang": "mustache",
+    "source": """
+    {
+    "size": {{sizeValue}}, 
+     "from": {{fromValue}},
+     {{#boolSort}}
+     "sort":[
+       {"{{sortField}}":{"order":"{{sortOrder}}"}}
+    ],
+     {{/boolSort}}
+    "query": {
+    "bool": {     
+         "must": [
+        {
+          "multi_match": {
+            "query": "{{queryValue}}",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
+            ]
+          }
+        }
+      ]
+      {{#boolFilter}} 
+      , 
+           
+      "filter": [
+         {
+          "exists": {
+            "field": "name"
+          }
+        } 
+        {{#filterGender}}
+        ,
+        {
+          "term": {
+            "gender": "{{genderValue}}"
+          }
+        }
+        {{/filterGender}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "averageRating": {
+              "gte": {{gteAverageRatingValue}},
+              "lte": {{lteAverageRatingValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterYearOfExperience}}
+        ,       
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": {{gteYearOfExperienceValue}},
+              "lte": {{lteYearOfExperienceValue}}
+            }
+          }
+        }{{/filterYearOfExperience}}
+        {{#filterCountry}}
+        ,        
+        {
+          "term": {
+            "country": "{{countryValue}}"
+          }
+        } {{/filterCountry}}
+         {{#filterCity}}
+        ,        
+        {
+          "term": {
+            "city.keyword": "{{cityValue}}"
+          }
+        }
+        {{/filterCity}}
+        {{#filterIsVideoAllowed}}
+        ,        
+        {
+          "term": {
+            "isVideoAllowed": "{{isVideoAllowedValue}}"
+          }
+        }{{/filterIsVideoAllowed}}
+        {{#filterSpecialization}}
+        ,        
+        {
+          "term": {
+            "specialization.keyword": "{{specializationValue}}"
+          }
+        }{{/filterSpecialization}}
+        {{#filterLanguage}}
+        ,       
+        {
+          "terms": {
+            "languages": [
+              "{{languagesValue}}"
+            ]
+          }
+        }
+        {{/filterLanguage}}
+      ]
+      {{/boolFilter}}
+    }
+  }
+} """
+  }
+}
+
+
+
+POST _render/template
+{
+  "id": "doctorTemplate",
+  "params": {
+    "queryValue": "Delhi",
+    "fromValue": 20,
+    "sizeValue": 10,
+    "boolFilter": true,
+    "filterGender": true,
+    "genderValue": "male",
+    "filterAverageRating": true,
+    "gteAverageRatingValue": 5,
+    "lteAverageRatingValue": 4,
+    "filterYearOfExperience": true,
+    "gteYearOfExperienceValue": 25,
+    "lteYearOfExperienceValue": 20,
+    "filterCountry":true,
+    "countryValue":"India",
+    "filterCity":true,
+    "cityValue":"Sidhi",
+    "filterIsVideoAllowed":true,
+    "isVideoAllowedValue":true,
+    "filterSpecialization":true,
+    "specializationValue":"Dentist",
+    "filterLanguage":true,
+    "languagesValue":["Hindi","English"],
+    "boolSort":true,
+    "sortField":"price",
+    "sortOrder":"desc"
+  }
+}
+
+POST _render/template
+{
+  "id": "doctorTemplate",
+  "params": {
+     "fromValue": 0,
+  "sizeValue": 40,
+  "queryValue": "Harsh",
+  "boolSort": true,
+  "sortField": "yearsOfExperience",
+  "sortOrder": "desc",
+  "boolFilter": true,
+  "filterCity": true,
+  "cityValue": "Delhi"
+    
+  }
+}
+
+GET doctor/_search
+{
+    "size" : 10,
+    "from" : 0,
+    "sort" : [
+      {
+        "yearsOfExperience" : {
+          "order" : "desc"
+        }
+      }
+    ],
+    "query" : {
+      "bool" : {
+        "must" : [
+          {
+            "multi_match" : {
+              "query" : "Delhi",
+              "fields" : [
+                "ailmentsTreated^2",
+                "*name^3",
+                "city",
+                "locality^10",
+                "specialization^1",
+                "address"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+  
+  
+  
+GET doctor/_search
+{
+    "size" : 40,
+    "from" : 0,
+    "sort" : [
+      {
+        "yearsOfExperience" : {
+          "order" : "desc"
+        }
+      }
+    ],
+    "query" : {
+      "bool" : {
+        "must" : [
+          {
+            "multi_match" : {
+              "query" : "Harsh",
+              "fields" : [
+                "ailmentsTreated^2",
+                "*name^3",
+                "city",
+                "locality^10",
+                "specialization^1",
+                "address"
+              ]
+            }
+          }
+        ],
+        "filter" : [
+          {
+            "exists" : {
+              "field" : "name"
+            }
+          },
+          {
+            "term" : {
+              "city.keyword" : "Delhi"
+            }
+          }
+        ]
+      }
+    }
+  }
+  
+GET doctor_v2/_search
+{
+  "size": 10,
+  "from": 20,
+  "sort": [
+    {
+      "averageRating": {
+        "order": "desc"
+      }
+    }
+  ],
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "multi_match": {
+            "query": "Delhi",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
+            ]
+          }
+        }
+      ],
+      "filter": [
+        {
+          "exists": {
+            "field": "name"
+          }
+        },
+        {
+          "term": {
+            "gender": "male"
+          }
+        },
+        {
+          "range": {
+            "averageRating": {
+              "gte": 5,
+              "lte": 4
+            }
+          }
+        },
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": 25,
+              "lte": 20
+            }
+          }
+        },
+        {
+          "term": {
+            "country": "India"
+          }
+        },
+        {
+          "term": {
+            "city.keyword": "Sidhi"
+          }
+        },
+        {
+          "term": {
+            "isVideoAllowed": "true"
+          }
+        },
+        {
+          "term": {
+            "specialization.keyword": "Dentist"
+          }
+        },
+        {
+          "terms": {
+            "languages": [
+              "{0=Hindi, 1=English}"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+
+
 
 
 PUT _scripts/doctorTemplate

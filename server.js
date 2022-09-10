@@ -1,8 +1,6 @@
-'use strict'
 var app = require('./index')
-const properties_util = require('./utils/properties_util')
 
-const port = properties_util.serverPort;
+const port = 3000;
 
 app.listen(port, function (error) {
   if (error) {

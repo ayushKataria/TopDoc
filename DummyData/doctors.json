@@ -1,6 +1,5 @@
 [
   {
-    "identifier": "38f5b2ce-1181-4ff7-bc44-cb8efa17889a",
     "address": "MasterCanteen,unit-3",
     "ailmentsTreated": [
       "Cancer",
@@ -59,11 +58,7 @@
     "isPersonAllowed": "true",
     "isVideoAllowed": "true",
     "landmark": "Near JK Dance school",
-    "languages": [
-      "English",
-      "Hindi",
-      "Oriya"
-    ],
+    "languages": ["English", "Hindi", "Oriya"],
     "lastName": "Bhargav",
     "licenses": {
       "identifier": "12345",
@@ -77,58 +72,28 @@
     "name": "Harsh Bhargav",
     "phone": 6370020831,
     "schedule": {
-      "monday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "tuesday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "wednesday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "thursday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "friday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "saturday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "sunday": {
-        "session1_start_time": "",
-        "session1_end_time": "",
-        "session2_start_time": "",
-        "session2_end_time": ""
-      }
+      "day": "Monday",
+      "slotTimeInMinutes": "15",
+      "workingTime": [
+        {
+          "startTime": "080000+0000",
+          "endTime": "100000+0000"
+        },
+        {
+          "startTime": "170000+0000",
+          "endTime": "190000+0000"
+        },
+        {
+          "startTime": "150000+0000",
+          "endTime": "170000+0000"
+        }
+      ]
     },
-    "specialization": [
-      "Neurosurgeon",
-      "Neurologist"
-    ],
+    "specialization": ["Neurosurgeon","Neurologist"],
     "state": "Odisha",
     "yearsOfExperience": "24"
   },
   {
-    "identifier": "2d4cb963-356c-47c6-bb68-86a42cc8610c",
     "address": "Veerana Palya, Outer Ring Road, Landmark : Near Manyata Tech Park, Bangalore",
     "ailmentsTreated": [
       "Cancer",
@@ -200,55 +165,28 @@
     "name": "Ayush kataria",
     "phone": 6370020831,
     "schedule": {
-      "monday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "tuesday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "wednesday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "thursday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "friday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "saturday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "sunday": {
-        "session1_start_time": "",
-        "session1_end_time": "",
-        "session2_start_time": "",
-        "session2_end_time": ""
-      }
+      "day": "Monday",
+      "slotTimeInMinutes": "15",
+      "workingTime": [
+        {
+          "startTime": "080000+0000",
+          "endTime": "100000+0000"
+        },
+        {
+          "startTime": "170000+0000",
+          "endTime": "190000+0000"
+        },
+        {
+          "startTime": "150000+0000",
+          "endTime": "170000+0000"
+        }
+      ]
     },
     "specialization": "Neurosurgeon",
     "state": "Karnataka",
     "yearsOfExperience": "24"
   },
   {
-    "identifier": "a44f7ac6-1963-40af-9e72-0585bd1cc186",
     "address": "MasterCanteen,unit-3,Odisha,756401",
     "ailmentsTreated": [
       "Tooth cleaning",
@@ -320,55 +258,28 @@
     "name": "Nitish kumar",
     "phone": 6370020831,
     "schedule": {
-      "monday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "tuesday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "wednesday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "thursday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "friday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "saturday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "sunday": {
-        "session1_start_time": "",
-        "session1_end_time": "",
-        "session2_start_time": "",
-        "session2_end_time": ""
-      }
+      "day": "Monday",
+      "slotTimeInMinutes": "15",
+      "workingTime": [
+        {
+          "startTime": "080000+0000",
+          "endTime": "100000+0000"
+        },
+        {
+          "startTime": "170000+0000",
+          "endTime": "190000+0000"
+        },
+        {
+          "startTime": "150000+0000",
+          "endTime": "170000+0000"
+        }
+      ]
     },
     "specialization": "Dentist",
     "state": "Odisha",
     "yearsOfExperience": "24"
   },
   {
-    "identifier": "ab94dc64-5697-45f6-a15f-eb9d97679320",
     "address": "Veerana Palya, Outer Ring Road, Landmark : Near Manyata Tech Park, Bangalore",
     "ailmentsTreated": [
       "Cancer",
@@ -441,48 +352,22 @@
     "name": "Akash gaikwad",
     "phone": 6370020831,
     "schedule": {
-      "monday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "tuesday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "wednesday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "thursday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "friday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "saturday": {
-        "session1_start_time": "09:30",
-        "session1_end_time": "13:00",
-        "session2_start_time": "17:00",
-        "session2_end_time": "20:30"
-      },
-      "sunday": {
-        "session1_start_time": "",
-        "session1_end_time": "",
-        "session2_start_time": "",
-        "session2_end_time": ""
-      }
+      "day": "Monday",
+      "slotTimeInMinutes": "15",
+      "workingTime": [
+        {
+          "startTime": "080000+0000",
+          "endTime": "100000+0000"
+        },
+        {
+          "startTime": "170000+0000",
+          "endTime": "190000+0000"
+        },
+        {
+          "startTime": "150000+0000",
+          "endTime": "170000+0000"
+        }
+      ]
     },
     "specialization": "Neurosurgeon",
     "state": "Karnataka",

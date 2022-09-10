@@ -1,4 +1,3 @@
-'use strict'
 let router = require('express').Router()
 let controller = require('./controller')
 
@@ -14,8 +13,10 @@ function getSchedule(req, res) {
 // book a slot with a doctor
 function bookAppointment(req, res) {
     let userId = req.header.userId
-    let reqBody = req.body
-    controller.bookAppointment(userId, reqBody)
+    let doctorId = req.body.doctorId
+    let slotStartTime = req.body.slotStartTime
+    
+    controller.bookAppointment(userId, doctorId, slotStartTime)
         .then(data => res.send(data))
         .catch(err => res.status(err.statuscode).send(err))
 }
@@ -23,6 +24,6 @@ function bookAppointment(req, res) {
 
 router.get('/v1/appointment/schedule/:doctorId', getSchedule)
 
-router.post('/v1/appointment/book/', bookAppointment)
+router.get('/v1/appointment/book/', getSchedule)
 
 module.exports = router

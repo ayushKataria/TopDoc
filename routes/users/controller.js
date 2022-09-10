@@ -1,8 +1,5 @@
-
 const bcrypt = require('bcrypt')
 const docController = require('../doctors/controller')
-
-
 
 async function signup(request){
     try {
@@ -26,7 +23,6 @@ async function signup(request){
         }
     }
 }
-
 
 
 async function medicalDetails(body){
@@ -65,6 +61,5 @@ async function medicalDetails(body){
     } 
     return MedicalList ;
 }
-  
 
 module.exports = {medicalDetails} ;
