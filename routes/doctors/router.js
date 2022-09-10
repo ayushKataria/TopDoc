@@ -296,7 +296,7 @@ function getDoctorReviewsByUserIdOrDoctorId(req, res) {
   let sortBy = Object.keys(req.body.sort);
 
   const sortList = docAttributeList.sortListForReview;
-  for (i = 0; i < sortBy.length; i++) {
+  for (let i = 0; i < sortBy.length; i++) {
     if (!sortList.includes(sortBy[i])) {
       res
         .status(400)

@@ -174,19 +174,19 @@ function getData(queryBody, paramIndex) {
     // console.log(indexNames)
 
     // temporay code starts
-  //  queryBody.genderAggregation=true
-  //  queryBody.averageRatingAggregation=true,
-  //  queryBody.averageRatingAggregationComma=true,
-  //     queryBody.languagesAggregation=true,
-  //   queryBody.languagesAggregationComma=true,
-  //   queryBody.specializationAggregation=true,
-  //   queryBody.specializationAggregationComma=true,
-  //   queryBody.cityAggregation=true,
-  //   queryBody.cityAggregationComma=true,
-  //   queryBody.countryAggregation=true,
-  //   queryBody.countryAggregationComma=true,
-  //   queryBody.yearsOfExperienceAggregation=true,
-  //   queryBody.yearsOfExperienceAggregationComma=true
+   queryBody.genderAggregation=true
+   queryBody.averageRatingAggregation=true,
+   queryBody.averageRatingAggregationComma=true,
+      queryBody.languagesAggregation=true,
+    queryBody.languagesAggregationComma=true,
+    queryBody.specializationAggregation=true,
+    queryBody.specializationAggregationComma=true,
+    queryBody.cityAggregation=true,
+    queryBody.cityAggregationComma=true,
+    queryBody.countryAggregation=true,
+    queryBody.countryAggregationComma=true,
+    queryBody.yearsOfExperienceAggregation=true,
+    queryBody.yearsOfExperienceAggregationComma=true
   // temporay code sends
     console.log("ssssssssssqueryBody is",queryBody )
     return new Promise((resolve, reject) => {
