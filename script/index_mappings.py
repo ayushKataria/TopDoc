@@ -1,10 +1,10 @@
 doctor_mappings = {
     "mappings": {
         "properties": {
-            "profImageUrl":{
-                "enabled" : false
+            "profImageUrl": {
+                "enabled": False
             },
-            "reviewTags" : {
+            "reviewTags": {
                 "type": "nested",
                 "properties": {
                     "tagName": {
@@ -18,27 +18,27 @@ doctor_mappings = {
             "noOfReviews" : {
             "type" : "long"
             },
-            "consultations" : {
-            "type" : "long"
-            },
-            "satisfiedPatients" : {
+            "consultations": {
                 "type": "long"
             },
-            "awardsAndPublications":{
-                "type" : "nested",
+            "satisfiedPatients": {
+                "type": "long"
+            },
+            "awardsAndPublications": {
+                "type": "nested",
                 "properties": {
-                    "awardName":{
-                        "type":"keyword"
+                    "awardName": {
+                        "type": "keyword"
                     },
-                    "place":{
-                        "type":"keyword"
+                    "place": {
+                        "type": "keyword"
                     },
-                    "date":{
+                    "date": {
                         "type": "date"
                     }
                 }
             },
-            "associatedClinics" : {
+            "associatedClinics": {
                 "type": "nested",
                 "properties": {
                     "clinicName": {
@@ -58,18 +58,18 @@ doctor_mappings = {
                     },
                     "schedule": {
                         "type": "nested",
-                "properties": {
-                    "from": {
-                        "type": "keyword"
-                    },
-                    "to": {
-                        "type": "keyword"
-                    },
-                    "duration": {
-                        "type": "keyword"
+                        "properties": {
+                            "from": {
+                                "type": "keyword"
+                            },
+                            "to": {
+                                "type": "keyword"
+                            },
+                            "duration": {
+                                "type": "keyword"
+                            }
+                        }
                     }
-                }
-            }
                 }
             },
             "address": {
