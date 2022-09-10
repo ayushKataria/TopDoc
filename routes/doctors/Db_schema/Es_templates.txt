@@ -1,5 +1,1265 @@
+#Doctor
+
+PUT doctor_v2
+{
+  "aliases": {
+    "doctor": {}
+  },
+  "mappings": {
+    "properties": {
+      "profImageUrl": {
+        "enabled": false
+      },
+      "reviewTags": {
+        "type": "nested",
+        "properties": {
+          "tagName": {
+            "type": "keyword"
+          },
+          "description": {
+            "type": "keyword"
+          }
+        }
+      },
+      "noOfReviews": {
+        "type": "long"
+      },
+      "consultations": {
+        "type": "long"
+      },
+      "satisfiedPatients": {
+        "type": "long"
+      },
+      "awardsAndPublications": {
+        "type": "nested",
+        "properties": {
+          "awardName": {
+            "type": "keyword"
+          },
+          "place": {
+            "type": "keyword"
+          },
+          "date": {
+            "type": "date"
+          }
+        }
+      },
+      "associatedClinics": {
+        "type": "nested",
+        "properties": {
+          "clinicName": {
+            "type": "keyword"
+          },
+          "location": {
+            "type": "keyword"
+          },
+          "fees": {
+            "type": "float"
+          },
+          "tagReceived": {
+            "type": "keyword"
+          },
+          "schedule": {
+            "type": "nested",
+            "properties": {
+              "from": {
+                "type": "keyword"
+              },
+              "to": {
+                "type": "keyword"
+              },
+              "duration": {
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      },
+      "address": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ailmentsTreated": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "averageRating": {
+        "type": "double"
+      },
+      "city": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "country": {
+        "type": "keyword"
+      },
+      "designation": {
+        "type": "keyword"
+      },
+      "education": {
+        "type": "nested",
+        "properties": {
+          "degree": {
+            "type": "keyword"
+          },
+          "description": {
+            "type": "keyword"
+          },
+          "endDate": {
+            "type": "date"
+          },
+          "fieldOfStudy": {
+            "type": "keyword"
+          },
+          "institute": {
+            "type": "keyword"
+          },
+          "startDate": {
+            "type": "date"
+          }
+        }
+      },
+      "email": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "experience": {
+        "type": "nested",
+        "properties": {
+          "organisation": {
+            "type": "keyword"
+          },
+          "description": {
+            "type": "keyword"
+          },
+          "endDate": {
+            "type": "date"
+          },
+          "location": {
+            "type": "keyword"
+          },
+          "startDate": {
+            "type": "date"
+          },
+          "title": {
+            "type": "keyword"
+          }
+        }
+      },
+      "firstName": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "gender": {
+        "type": "keyword"
+      },
+      "hospital": {
+        "type": "nested",
+        "properties": {
+          "identfier": {
+            "type": "keyword"
+          },
+          "name": {
+            "type": "keyword"
+          }
+        }
+      },
+      "identifier": {
+        "type": "keyword"
+      },
+      "isPersonAllowed": {
+        "type": "boolean"
+      },
+      "isVideoAllowed": {
+        "type": "boolean"
+      },
+      "landmark": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "languages": {
+        "type": "keyword"
+      },
+      "lastName": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "licenses": {
+        "type": "nested",
+        "properties": {
+          "identifier": {
+            "type": "keyword"
+          },
+          "name": {
+            "type": "keyword"
+          },
+          "provider": {
+            "type": "keyword"
+          }
+        }
+      },
+      "locality": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "location": {
+        "type": "geo_point"
+      },
+      "name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "phone": {
+        "type": "keyword"
+      },
+      "schedule": {
+        "properties": {
+          "day": {
+            "type": "keyword"
+          },
+          "slotTimeInMinutes": {
+            "type": "long"
+          },
+          "workingTime": {
+            "properties": {
+              "endTime": {
+                "type": "date",
+                "format": "basic_time_no_millis"
+              },
+              "startTime": {
+                "type": "date",
+                "format": "basic_time_no_millis"
+              }
+            }
+          }
+        }
+      },
+      "specialization": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "state": {
+        "type": "keyword"
+      },
+      "yearsOfExperience": {
+        "type": "long"
+      }
+    }
+  }
+}
+
+
 GET doctor_v2/_search
-//PUT _scripts/my-search-template
+PUT doctor_v2/_doc/1
+{
+  "address": "MasterCanteen,unit-3,Odisha,756401",
+  "ailmentsTreated": [
+    "Cancer",
+    "Skin Disease",
+    "Chemo"
+  ],
+  "averageRating": "4.65",
+  "city": "Indore",
+  "country": "India",
+  "designation": "Neurosurgeon",
+  "education": [
+    {
+      "degree": "MCh",
+      "description": "MCH is short for mean corpuscular hemoglobin",
+      "endDate": "1997",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1995"
+    },
+    {
+      "degree": "MBBS",
+      "description": "Bachelor of Medicine Bachelor of Surgery",
+      "endDate": "1994",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1989"
+    }
+  ],
+  "email": "harshBhargav@gmail.com",
+  "experience": [
+    {
+      "comapanyName": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "description": " Optimized the whole medical infrastructure",
+      "endDate": null,
+      "location": "Bangalore",
+      "startDate": "2000",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    },
+    {
+      "comapanyName": "Srirama Chandra Bhanja Medical College and Hospital",
+      "description": "Handled thousand sof patients",
+      "endDate": "2000",
+      "location": "Cuttack",
+      "startDate": "1996",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    }
+  ],
+  "firstName": "Nitish",
+  "gender": "male",
+  "hospital": {
+    "identifier": "54321",
+    "name": "Srirama Chandra Bhanja Medical College and Hospital"
+  },
+  "isPersonAllowed": "true",
+  "isVideoAllowed": "true",
+  "landmark": "Near JK Dance school",
+  "languages": ["English", "Hindi", "Oriya"],
+  "lastName": "Kumar",
+  "licenses": {
+    "identifier": "12345",
+    "name": "MBBS License",
+    "registrationYear": "15022022",
+    "validUpTo": "15022024",
+    "provider": "Delhi Medical Council"
+  },
+  "locality": "Old town, Bhubaneswar",
+  "location": "41.12,-71.34",
+  "name": "Nitish Kumar",
+  "phone": 6370020831,
+  "schedule": {
+    "day": "Monday",
+    "slotTimeInMinutes": "15",
+    "workingTime": [
+      {
+        "startTime": "080000+0000",
+        "endTime": "100000+0000"
+      },
+      {
+        "startTime": "170000+0000",
+        "endTime": "190000+0000"
+      },
+      {
+        "startTime": "150000+0000",
+        "endTime": "170000+0000"
+      }
+    ]
+  },
+    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
+  "reviewTags": [
+    {
+      "tagName": "tag1_doc1",
+      "description": "tag1 description here"
+    },
+    {
+      "tagName": "tag2_doc1",
+      "description": "tag2 description here"
+    }
+  ],
+  "noOfReviews": 77,
+  "consultations": 145,
+  "satisfiedPatients": 34,
+  "awardsAndPublications": [
+    {
+      "awardName": "award 1",
+      "place": "Jabalpur",
+      "date": "2022-07-22"
+    },
+    {
+      "awardName": "award 2",
+      "place": "Mysore",
+      "date": "2022-01-17"
+    }
+  ],
+  "associatedClinics": [
+    {
+      "clinicName": "hello verify",
+      "location": "Hyderabad",
+      "fees": 999,
+      "tagReceived": [
+        "tag1",
+        "tag2"
+      ],
+      "schedule": [{
+        "from": "Monday",
+        "to": "Saturday",
+        "duration": "10:26am - 02:30pm"
+      }]
+    }
+  ],
+  "specialization": "Neurosurgeon",
+  "state": "Odisha",
+  "yearsOfExperience": "24"
+}
+
+PUT doctor_v2/_doc/2
+{
+  "address": "Veerana Palya, Outer Ring Road, Landmark : Near Manyata Tech Park, Bangalore",
+  "ailmentsTreated": [
+    "Cancer",
+    "Skin Disease",
+    "Chemo"
+  ],
+  "averageRating": "4.65",
+  "city": "Indore",
+  "country": "India",
+  "designation": "Neurosurgeon",
+  "education": [
+    {
+      "degree": "MCh",
+      "description": "MCH is short for mean corpuscular hemoglobin",
+      "endDate": "1997",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1995"
+    },
+    {
+      "degree": "MBBS",
+      "description": "Bachelor of Medicine Bachelor of Surgery",
+      "endDate": "1994",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1989"
+    }
+  ],
+  "email": "ayushkataria@gmail.com",
+  "experience": [
+    {
+      "comapanyName": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "description": " Optimized the whole medical infrastructure",
+      "endDate": null,
+      "location": "Bangalore",
+      "startDate": "2000",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    },
+    {
+      "comapanyName": "Srirama Chandra Bhanja Medical College and Hospital",
+      "description": "Handled thousand sof patients",
+      "endDate": "2000",
+      "location": "Cuttack",
+      "startDate": "1996",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    }
+  ],
+  "firstName": "Harsh",
+  "gender": "male",
+  "hospital": {
+    "identifier": "64321",
+    "name": "Srirama Chandra Bhanja Medical College and Hospital"
+  },
+  "isPersonAllowed": "true",
+  "isVideoAllowed": "true",
+  "landmark": "Near JK Dance school",
+  "languages": ["English", "Hindi", "Oriya"],
+  "lastName": "Kataria",
+  "licenses": {
+    "identifier": "82345",
+    "name": "MBBS License",
+    "registrationYear": "15022022",
+    "validUpTo": "15022024",
+    "provider": "Delhi Medical Council"
+  },
+  "locality": "Old town, Bengaluru",
+  "location": "41.12,-71.34",
+  "name": "Nitish Kumar",
+  "phone": 6370020831,
+  "schedule": {
+    "day": "Monday",
+    "slotTimeInMinutes": "15",
+    "workingTime": [
+      {
+        "startTime": "080000+0000",
+        "endTime": "100000+0000"
+      },
+      {
+        "startTime": "170000+0000",
+        "endTime": "190000+0000"
+      },
+      {
+        "startTime": "150000+0000",
+        "endTime": "170000+0000"
+      }
+    ]
+  },
+    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
+  "reviewTags": [
+    {
+      "tagName": "tag1_doc1",
+      "description": "tag1 description here"
+    },
+    {
+      "tagName": "tag2_doc1",
+      "description": "tag2 description here"
+    }
+  ],
+  "noOfReviews": 77,
+  "consultations": 145,
+  "satisfiedPatients": 34,
+  "awardsAndPublications": [
+    {
+      "awardName": "award 1",
+      "place": "Jabalpur",
+      "date": "2022-07-22"
+    },
+    {
+      "awardName": "award 2",
+      "place": "Mysore",
+      "date": "2022-01-17"
+    }
+  ],
+  "associatedClinics": [
+    {
+      "clinicName": "hello verify",
+      "location": "Hyderabad",
+      "fees": 999,
+      "tagReceived": [
+        "tag1",
+        "tag2"
+      ],
+      "schedule": [{
+        "from": "Monday",
+        "to": "Saturday",
+        "duration": "10:26am - 02:30pm"
+      }]
+    }
+  ],
+  "specialization": "Neurosurgeon",
+  "state": "Karnataka",
+  "yearsOfExperience": "24"
+}
+
+PUT doctor_v2/_doc/3
+{
+  "address": "MasterCanteen,unit-3,Odisha,756401",
+  "ailmentsTreated": [
+    "Tooth cleaning",
+    "tooth repairing"
+  ],
+  "averageRating": "4.65",
+  "city": "Bhubaneswar",
+  "country": "India",
+  "designation": "Neurosurgeon",
+  "education": [
+    {
+      "degree": "MCh",
+      "description": "MCH is short for mean corpuscular hemoglobin",
+      "endDate": "1997",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1995"
+    },
+    {
+      "degree": "MBBS",
+      "description": "Bachelor of Medicine Bachelor of Surgery",
+      "endDate": "1994",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1989"
+    }
+  ],
+  "email": "nitishkumar@gmail.com",
+  "experience": [
+    {
+      "comapanyName": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "description": " Optimized the whole medical infrastructure",
+      "endDate": null,
+      "location": "Bangalore",
+      "startDate": "2000",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    },
+    {
+      "comapanyName": "Srirama Chandra Bhanja Medical College and Hospital",
+      "description": "Handled thousand sof patients",
+      "endDate": "2000",
+      "location": "Cuttack",
+      "startDate": "1996",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    }
+  ],
+  "firstName": "Nitish",
+  "gender": "male",
+  "hospital": {
+    "identifier": "74321",
+    "name": "Srirama Chandra Bhanja Medical College and Hospital"
+  },
+  "isPersonAllowed": "true",
+  "isVideoAllowed": "true",
+  "landmark": "Near JK Dance school",
+  "languages": "English, Hindi, Oriya",
+  "lastName": "Kataria",
+  "licenses": {
+    "identifier": "42345",
+    "name": "MBBS License",
+    "registrationYear": "15022022",
+    "validUpTo": "15022024",
+    "provider": "Delhi Medical Council"
+  },
+  "locality": "Old town, Bhubaneswar",
+  "location": "41.12,-71.34",
+  "name": "Nitish kumar",
+  "phone": 6370020831,
+  "schedule": {
+    "day": "Monday",
+    "slotTimeInMinutes": "15",
+    "workingTime": [
+      {
+        "startTime": "080000+0000",
+        "endTime": "100000+0000"
+      },
+      {
+        "startTime": "170000+0000",
+        "endTime": "190000+0000"
+      },
+      {
+        "startTime": "150000+0000",
+        "endTime": "170000+0000"
+      }
+    ]
+  },
+    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
+  "reviewTags": [
+    {
+      "tagName": "tag1_doc1",
+      "description": "tag1 description here"
+    },
+    {
+      "tagName": "tag2_doc1",
+      "description": "tag2 description here"
+    }
+  ],
+  "noOfReviews": 77,
+  "consultations": 145,
+  "satisfiedPatients": 34,
+  "awardsAndPublications": [
+    {
+      "awardName": "award 1",
+      "place": "Jabalpur",
+      "date": "2022-07-22"
+    },
+    {
+      "awardName": "award 2",
+      "place": "Mysore",
+      "date": "2022-01-17"
+    }
+  ],
+  "associatedClinics": [
+    {
+      "clinicName": "hello verify",
+      "location": "Hyderabad",
+      "fees": 999,
+      "tagReceived": [
+        "tag1",
+        "tag2"
+      ],
+      "schedule": [{
+        "from": "Monday",
+        "to": "Saturday",
+        "duration": "10:26am - 02:30pm"
+      }]
+    }
+  ],
+  "specialization": "Dentist",
+  "state": "Odisha",
+  "yearsOfExperience": "24"
+}
+
+PUT doctor_v2/_doc/4
+{
+  "address": "Veerana Palya, Outer Ring Road, Landmark : Near Manyata Tech Park, Bangalore",
+  "ailmentsTreated": [
+    "Cancer",
+    "Skin Disease",
+    "Chemo"
+  ],
+  "averageRating": "4.65",
+  "city": "Bengaluru",
+  "country": "India",
+  "designation": "Neurosurgeon",
+  "education": [
+    {
+      "degree": "MCh",
+      "description": "MCH is short for mean corpuscular hemoglobin",
+      "endDate": "1997",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1995"
+    },
+    {
+      "degree": "MBBS",
+      "description": "Bachelor of Medicine Bachelor of Surgery",
+      "endDate": "1994",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1989"
+    }
+  ],
+  "email": "AkashGaikwad@gmail.com",
+  "experience": [
+    {
+      "comapanyName": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "description": " Optimized the whole medical infrastructure",
+      "endDate": null,
+      "location": "Bangalore",
+      "startDate": "2000",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    },
+    {
+      "comapanyName": "Srirama Chandra Bhanja Medical College and Hospital",
+      "description": "Handled thousand sof patients",
+      "endDate": "2000",
+      "location": "Cuttack",
+      "startDate": "1996",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    }
+  ],
+  "firstName": "Harsh",
+  "gender": "male",
+  "hospital": {
+    "identifier": "84321",
+    "name": "Srirama Chandra Bhanja Medical College and Hospital"
+  },
+  "isPersonAllowed": "true",
+  "isVideoAllowed": "true",
+  "landmark": "Near JK Dance school",
+  "languages": "English, Hindi, Marathi",
+  "lastName": "Gaikwad",
+  "licenses": {
+    "identifier": "22345",
+    "name": "MBBS License",
+    "registrationYear": "15022022",
+    "validUpTo": "15022024",
+    "provider": "Delhi Medical Council"
+  },
+  "locality": "Old town, Bengaluru",
+  "location": "41.12,-71.34",
+  "name": "Akash gaikwad",
+  "phone": 6370020831,
+  "schedule": {
+    "day": "Monday",
+    "slotTimeInMinutes": "15",
+    "workingTime": [
+      {
+        "startTime": "080000+0000",
+        "endTime": "100000+0000"
+      },
+      {
+        "startTime": "170000+0000",
+        "endTime": "190000+0000"
+      },
+      {
+        "startTime": "150000+0000",
+        "endTime": "170000+0000"
+      }
+    ]
+  },
+    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
+  "reviewTags": [
+    {
+      "tagName": "tag1_doc1",
+      "description": "tag1 description here"
+    },
+    {
+      "tagName": "tag2_doc1",
+      "description": "tag2 description here"
+    }
+  ],
+  "noOfReviews": 77,
+  "consultations": 145,
+  "satisfiedPatients": 34,
+  "awardsAndPublications": [
+    {
+      "awardName": "award 1",
+      "place": "Jabalpur",
+      "date": "2022-07-22"
+    },
+    {
+      "awardName": "award 2",
+      "place": "Mysore",
+      "date": "2022-01-17"
+    }
+  ],
+  "associatedClinics": [
+    {
+      "clinicName": "hello verify",
+      "location": "Hyderabad",
+      "fees": 999,
+      "tagReceived": [
+        "tag1",
+        "tag2"
+      ],
+      "schedule": [{
+        "from": "Monday",
+        "to": "Saturday",
+        "duration": "10:26am - 02:30pm"
+      }]
+    }
+  ],
+  "specialization": "Neurosurgeon",
+  "state": "Karnataka",
+  "yearsOfExperience": "24"
+}
+
+PUT doctor_v2/_doc/5
+{
+  "address": "MasterCanteen,unit-3,Odisha,756401",
+  "ailmentsTreated": [
+    "Cancer",
+    "Skin Disease",
+    "Chemo"
+  ],
+  "averageRating": "4.65",
+  "city": "Delhi",
+  "country": "India",
+  "designation": "Neurosurgeon",
+  "education": [
+    {
+      "degree": "MCh",
+      "description": "MCH is short for mean corpuscular hemoglobin",
+      "endDate": "1997",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1995"
+    },
+    {
+      "degree": "MBBS",
+      "description": "Bachelor of Medicine Bachelor of Surgery",
+      "endDate": "1994",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1989"
+    }
+  ],
+  "email": "harshAggarwal@gmail.com",
+  "experience": [
+    {
+      "comapanyName": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "description": " Optimized the whole medical infrastructure",
+      "endDate": null,
+      "location": "Bangalore",
+      "startDate": "2000",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    },
+    {
+      "comapanyName": "Srirama Chandra Bhanja Medical College and Hospital",
+      "description": "Handled thousand sof patients",
+      "endDate": "2000",
+      "location": "Cuttack",
+      "startDate": "1996",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    }
+  ],
+  "firstName": "Harsh",
+  "gender": "male",
+  "hospital": {
+    "identifier": "54321",
+    "name": "Srirama Chandra Bhanja Medical College and Hospital"
+  },
+  "isPersonAllowed": "true",
+  "isVideoAllowed": "true",
+  "landmark": "Near JK Dance school",
+  "languages": "English, Hindi, Oriya",
+  "lastName": "Aggarwal",
+  "licenses": {
+    "identifier": "12345",
+    "name": "MBBS License",
+    "registrationYear": "15022022",
+    "validUpTo": "15022024",
+    "provider": "Delhi Medical Council"
+  },
+  "locality": "Old town, Bhubaneswar",
+  "location": "41.12,-71.34",
+  "name": "Harsh Aggarwal",
+  "phone": 6370020831,
+  "schedule": {
+    "day": "Monday",
+    "slotTimeInMinutes": "15",
+    "workingTime": [
+      {
+        "startTime": "080000+0000",
+        "endTime": "100000+0000"
+      },
+      {
+        "startTime": "170000+0000",
+        "endTime": "190000+0000"
+      },
+      {
+        "startTime": "150000+0000",
+        "endTime": "170000+0000"
+      }
+    ]
+  },
+    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
+  "reviewTags": [
+    {
+      "tagName": "tag1_doc1",
+      "description": "tag1 description here"
+    },
+    {
+      "tagName": "tag2_doc1",
+      "description": "tag2 description here"
+    }
+  ],
+  "noOfReviews": 77,
+  "consultations": 145,
+  "satisfiedPatients": 34,
+  "awardsAndPublications": [
+    {
+      "awardName": "award 1",
+      "place": "Jabalpur",
+      "date": "2022-07-22"
+    },
+    {
+      "awardName": "award 2",
+      "place": "Mysore",
+      "date": "2022-01-17"
+    }
+  ],
+  "associatedClinics": [
+    {
+      "clinicName": "hello verify",
+      "location": "Hyderabad",
+      "fees": 999,
+      "tagReceived": [
+        "tag1",
+        "tag2"
+      ],
+      "schedule": [{
+        "from": "Monday",
+        "to": "Saturday",
+        "duration": "10:26am - 02:30pm"
+      }]
+    }
+  ],
+  "specialization": "Neurosurgeon",
+  "state": "Odisha",
+  "yearsOfExperience": "24"
+}
+
+PUT doctor_v2/_doc/6
+{
+  "address": "MasterCanteen,unit-3,Odisha,756401",
+  "ailmentsTreated": [
+    "Cancer",
+    "Skin Disease",
+    "Chemo"
+  ],
+  "averageRating": "4.65",
+  "city": "Bhubaneswar",
+  "country": "India",
+  "designation": "Neurosurgeon",
+  "education": [
+    {
+      "degree": "MCh",
+      "description": "MCH is short for mean corpuscular hemoglobin",
+      "endDate": "1997",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1995"
+    },
+    {
+      "degree": "MBBS",
+      "description": "Bachelor of Medicine Bachelor of Surgery",
+      "endDate": "1994",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1989"
+    }
+  ],
+  "email": "harshBhargav@gmail.com",
+  "experience": [
+    {
+      "comapanyName": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "description": " Optimized the whole medical infrastructure",
+      "endDate": null,
+      "location": "Bangalore",
+      "startDate": "2000",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    },
+    {
+      "comapanyName": "Srirama Chandra Bhanja Medical College and Hospital",
+      "description": "Handled thousand sof patients",
+      "endDate": "2000",
+      "location": "Cuttack",
+      "startDate": "1996",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    }
+  ],
+  "firstName": "Harsh Kumar",
+  "gender": "male",
+  "hospital": {
+    "properties": {
+      "identifier": "54321",
+      "name": "Srirama Chandra Bhanja Medical College and Hospital"
+    }
+  },
+  "isPersonAllowed": "true",
+  "isVideoAllowed": "true",
+  "landmark": "Near JK Dance school",
+  "languages": "English, Hindi, Oriya",
+  "lastName": "Bhargav",
+  "licenses": {
+    "identifier": "12345",
+    "name": "MBBS License",
+    "registrationYear": "15022022",
+    "validUpTo": "15022024",
+    "provider": "Delhi Medical Council"
+  },
+  "locality": "Old town, Bhubaneswar",
+  "location": "41.12,-71.34",
+  "name": "Harsh Kumar Bhargav",
+  "phone": 6370020831,
+  "schedule": {
+    "day": "Monday",
+    "slotTimeInMinutes": "15",
+    "workingTime": [
+      {
+        "startTime": "080000+0000",
+        "endTime": "100000+0000"
+      },
+      {
+        "startTime": "170000+0000",
+        "endTime": "190000+0000"
+      },
+      {
+        "startTime": "150000+0000",
+        "endTime": "170000+0000"
+      }
+    ]
+  },
+    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
+  "reviewTags": [
+    {
+      "tagName": "tag1_doc1",
+      "description": "tag1 description here"
+    },
+    {
+      "tagName": "tag2_doc1",
+      "description": "tag2 description here"
+    }
+  ],
+  "noOfReviews": 77,
+  "consultations": 145,
+  "satisfiedPatients": 34,
+  "awardsAndPublications": [
+    {
+      "awardName": "award 1",
+      "place": "Jabalpur",
+      "date": "2022-07-22"
+    },
+    {
+      "awardName": "award 2",
+      "place": "Mysore",
+      "date": "2022-01-17"
+    }
+  ],
+  "associatedClinics": [
+    {
+      "clinicName": "hello verify",
+      "location": "Hyderabad",
+      "fees": 999,
+      "tagReceived": [
+        "tag1",
+        "tag2"
+      ],
+      "schedule": [{
+        "from": "Monday",
+        "to": "Saturday",
+        "duration": "10:26am - 02:30pm"
+      }]
+    }
+  ],
+  "specialization": "Neurosurgeon",
+  "state": "Odisha",
+  "yearsOfExperience": "24"
+}
+
+
+PUT doctor_v2/_doc/7
+{
+  "address": "MasterCanteen,unit-3,Odisha,756401",
+  "ailmentsTreated": [
+    "Cancer",
+    "Skin Disease",
+    "Chemo"
+  ],
+  "averageRating": "4.65",
+  "city": "Bhubaneswar",
+  "country": "India",
+  "designation": "Neurosurgeon",
+  "education": [
+    {
+      "degree": "MCh",
+      "description": "MCH is short for mean corpuscular hemoglobin",
+      "endDate": "1997",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1995"
+    },
+    {
+      "degree": "MBBS",
+      "description": "Bachelor of Medicine Bachelor of Surgery",
+      "endDate": "1994",
+      "fieldOfStudy": "Neuro Surgery",
+      "grade": "A",
+      "school": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "startDate": "1989"
+    }
+  ],
+  "email": "harshBhargav@gmail.com",
+  "experience": [
+    {
+      "comapanyName": "National Institute of Mental Health and Neurosciences (NIMHANS)",
+      "description": " Optimized the whole medical infrastructure",
+      "endDate": null,
+      "location": "Bangalore",
+      "startDate": "2000",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    },
+    {
+      "comapanyName": "Srirama Chandra Bhanja Medical College and Hospital",
+      "description": "Handled thousand sof patients",
+      "endDate": "2000",
+      "location": "Cuttack",
+      "startDate": "1996",
+      "title": "HOD and Professor of Neurosurgery Dept"
+    }
+  ],
+  "firstName": "Harsh",
+  "gender": "male",
+  "hospital": {
+    "identifier": "54321",
+    "name": "Srirama Chandra Bhanja Medical College and Hospital"
+  },
+  "isPersonAllowed": "true",
+  "isVideoAllowed": "true",
+  "landmark": "Near JK Dance school",
+  "languages": ["English", "Hindi", "Oriya"],
+  "lastName": "Bhargav",
+  "licenses": {
+    "identifier": "12345",
+    "name": "MBBS License",
+    "registrationYear": "15022022",
+    "validUpTo": "15022024",
+    "provider": "Delhi Medical Council"
+  },
+  "locality": "Old town, Bhubaneswar",
+  "location": "41.12,-71.34",
+  "name": "Harsh Bhargav",
+  "phone": 6370020831,
+  "schedule": {
+    "day": "Monday",
+    "slotTimeInMinutes": "15",
+    "workingTime": [
+      {
+        "startTime": "080000+0000",
+        "endTime": "100000+0000"
+      },
+      {
+        "startTime": "170000+0000",
+        "endTime": "190000+0000"
+      },
+      {
+        "startTime": "150000+0000",
+        "endTime": "170000+0000"
+      }
+    ]
+  },
+    "docImageUrl": "https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=2000",
+  "reviewTags": [
+    {
+      "tagName": "tag1_doc1",
+      "description": "tag1 description here"
+    },
+    {
+      "tagName": "tag2_doc1",
+      "description": "tag2 description here"
+    }
+  ],
+  "noOfReviews": 77,
+  "consultations": 145,
+  "satisfiedPatients": 34,
+  "awardsAndPublications": [
+    {
+      "awardName": "award 1",
+      "place": "Jabalpur",
+      "date": "2022-07-22"
+    },
+    {
+      "awardName": "award 2",
+      "place": "Mysore",
+      "date": "2022-01-17"
+    }
+  ],
+  "associatedClinics": [
+    {
+      "clinicName": "hello verify",
+      "location": "Hyderabad",
+      "fees": 999,
+      "tagReceived": [
+        "tag1",
+        "tag2"
+      ],
+      "schedule": [{
+        "from": "Monday",
+        "to": "Saturday",
+        "duration": "10:26am - 02:30pm"
+      }]
+    }
+  ],
+  "specialization": "Neurosurgeon",
+  "state": "Odisha",
+  "yearsOfExperience": "24"
+}
+
+
+PUT _scripts/doctorTemplate
 {
   "script": {
     "lang": "mustache",
@@ -7,6 +1267,11 @@ GET doctor_v2/_search
     {
     "size": {{sizeValue}}, 
      "from": {{fromValue}},
+     {{#boolSort}}
+     "sort":[
+       {"{{sortField}}":{"order":"{{sortOrder}}"}}
+    ],
+     {{/boolSort}}
     "query": {
     "bool": {     
          "must": [
@@ -25,13 +1290,14 @@ GET doctor_v2/_search
         }
       ]
       {{#boolFilter}} 
-      ,       
+      , 
+           
       "filter": [
-        {
-          "term": {
-            "id": "identifier"
+         {
+          "exists": {
+            "field": "name"
           }
-        }
+        } 
         {{#filterGender}}
         ,
         {
@@ -50,7 +1316,7 @@ GET doctor_v2/_search
             }
           }
         }{{/filterAverageRating}}
-        {{#filterAverageRating}}
+        {{#filterYearOfExperience}}
         ,       
         {
           "range": {
@@ -59,7 +1325,7 @@ GET doctor_v2/_search
               "lte": {{lteYearOfExperienceValue}}
             }
           }
-        }{{/filterAverageRating}}
+        }{{/filterYearOfExperience}}
         {{#filterCountry}}
         ,        
         {
@@ -102,19 +1368,1915 @@ GET doctor_v2/_search
       ]
       {{/boolFilter}}
     }
+  },
+      "aggs": {
+        "TotalAggs": {
+        "global": {},
+        "aggs": {
+            {{#genderAggregation}}
+            "genderAggs": {
+            "filter": {
+                "bool": {     
+         "must": [
+        {
+          "multi_match": {
+            "query": "{{queryValue}}",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
+            ]
+          }
+        }
+      ]
+      {{#boolFilter}} 
+      , 
+           
+      "filter": [
+         {
+          "exists": {
+            "field": "name"
+          }
+        } 
+        {{#filterGender}}
+        ,
+        {
+          "term": {
+            "gender": "{{genderValue}}"
+          }
+        }
+        {{/filterGender}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "averageRating": {
+              "gte": {{gteAverageRatingValue}},
+              "lte": {{lteAverageRatingValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterYearOfExperience}}
+        ,       
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": {{gteYearOfExperienceValue}},
+              "lte": {{lteYearOfExperienceValue}}
+            }
+          }
+        }{{/filterYearOfExperience}}
+        {{#filterCountry}}
+        ,        
+        {
+          "term": {
+            "country": "{{countryValue}}"
+          }
+        } {{/filterCountry}}
+         {{#filterCity}}
+        ,        
+        {
+          "term": {
+            "city.keyword": "{{cityValue}}"
+          }
+        }
+        {{/filterCity}}
+        {{#filterIsVideoAllowed}}
+        ,        
+        {
+          "term": {
+            "isVideoAllowed": "{{isVideoAllowedValue}}"
+          }
+        }{{/filterIsVideoAllowed}}
+        {{#filterSpecialization}}
+        ,        
+        {
+          "term": {
+            "specialization.keyword": "{{specializationValue}}"
+          }
+        }{{/filterSpecialization}}
+        {{#filterLanguage}}
+        ,       
+        {
+          "terms": {
+            "languages": [
+              "{{languagesValue}}"
+            ]
+          }
+        }
+        {{/filterLanguage}}
+      ]
+      {{/boolFilter}}
+    }
+            }
+            ,
+            "aggs": {
+                "genderAggs": {
+                "terms": {
+                    "field": "gender"
+                    //"size": 10
+                }
+                }
+            }
+            }
+            {{/genderAggregation}}
+            
+            {{#cityAggregation}}
+            {{#cityAggregationComma}},{{/cityAggregationComma}}
+            "cityAggs": {
+            "filter": {
+                "bool": {     
+         "must": [
+        {
+          "multi_match": {
+            "query": "{{queryValue}}",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
+            ]
+          }
+        }
+      ]
+      {{#boolFilter}} 
+      , 
+           
+      "filter": [
+         {
+          "exists": {
+            "field": "name"
+          }
+        } 
+        {{#filterGender}}
+        ,
+        {
+          "term": {
+            "gender": "{{genderValue}}"
+          }
+        }
+        {{/filterGender}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "averageRating": {
+              "gte": {{gteAverageRatingValue}},
+              "lte": {{lteAverageRatingValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterYearOfExperience}}
+        ,       
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": {{gteYearOfExperienceValue}},
+              "lte": {{lteYearOfExperienceValue}}
+            }
+          }
+        }{{/filterYearOfExperience}}
+        {{#filterCountry}}
+        ,        
+        {
+          "term": {
+            "country": "{{countryValue}}"
+          }
+        } {{/filterCountry}}
+         {{#filterCity}}
+        ,        
+        {
+          "term": {
+            "city.keyword": "{{cityValue}}"
+          }
+        }
+        {{/filterCity}}
+        {{#filterIsVideoAllowed}}
+        ,        
+        {
+          "term": {
+            "isVideoAllowed": "{{isVideoAllowedValue}}"
+          }
+        }{{/filterIsVideoAllowed}}
+        {{#filterSpecialization}}
+        ,        
+        {
+          "term": {
+            "specialization.keyword": "{{specializationValue}}"
+          }
+        }{{/filterSpecialization}}
+        {{#filterLanguage}}
+        ,       
+        {
+          "terms": {
+            "languages": [
+              "{{languagesValue}}"
+            ]
+          }
+        }
+        {{/filterLanguage}}
+      ]
+      {{/boolFilter}}
+    }
+            }
+            ,
+             "aggs": {
+                "cityAggs": {
+                "terms": {
+                    "field": "city.keyword"
+                    //"size": 10
+                }
+                }
+            }
+            }
+            {{/cityAggregation}}
+            
+            {{#countryAggregation}}
+            {{#countryAggregationComma}},{{/countryAggregationComma}}
+            "countryAggs": {
+            "filter": {
+                "bool": {     
+         "must": [
+        {
+          "multi_match": {
+            "query": "{{queryValue}}",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
+            ]
+          }
+        }
+      ]
+      {{#boolFilter}} 
+      , 
+           
+      "filter": [
+         {
+          "exists": {
+            "field": "name"
+          }
+        } 
+        {{#filterGender}}
+        ,
+        {
+          "term": {
+            "gender": "{{genderValue}}"
+          }
+        }
+        {{/filterGender}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "averageRating": {
+              "gte": {{gteAverageRatingValue}},
+              "lte": {{lteAverageRatingValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterYearOfExperience}}
+        ,       
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": {{gteYearOfExperienceValue}},
+              "lte": {{lteYearOfExperienceValue}}
+            }
+          }
+        }{{/filterYearOfExperience}}
+        {{#filterCountry}}
+        ,        
+        {
+          "term": {
+            "country": "{{countryValue}}"
+          }
+        } {{/filterCountry}}
+         {{#filterCity}}
+        ,        
+        {
+          "term": {
+            "city.keyword": "{{cityValue}}"
+          }
+        }
+        {{/filterCity}}
+        {{#filterIsVideoAllowed}}
+        ,        
+        {
+          "term": {
+            "isVideoAllowed": "{{isVideoAllowedValue}}"
+          }
+        }{{/filterIsVideoAllowed}}
+        {{#filterSpecialization}}
+        ,        
+        {
+          "term": {
+            "specialization.keyword": "{{specializationValue}}"
+          }
+        }{{/filterSpecialization}}
+        {{#filterLanguage}}
+        ,       
+        {
+          "terms": {
+            "languages": [
+              "{{languagesValue}}"
+            ]
+          }
+        }
+        {{/filterLanguage}}
+      ]
+      {{/boolFilter}}
+    }
+            }
+            ,
+            "aggs": {
+                "countryAggs": {
+                "terms": {
+                    "field": "country.keyword"
+                    //"size": 10
+                }
+                }
+            }
+            }
+            {{/countryAggregation}}
+            
+            {{#specializationAggregation}}
+            {{#specializationAggregationComma}},{{/specializationAggregationComma}}
+            "specializationAggs": {
+            "filter": {
+                "bool": {     
+         "must": [
+        {
+          "multi_match": {
+            "query": "{{queryValue}}",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
+            ]
+          }
+        }
+      ]
+      {{#boolFilter}} 
+      , 
+           
+      "filter": [
+         {
+          "exists": {
+            "field": "name"
+          }
+        } 
+        {{#filterGender}}
+        ,
+        {
+          "term": {
+            "gender": "{{genderValue}}"
+          }
+        }
+        {{/filterGender}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "averageRating": {
+              "gte": {{gteAverageRatingValue}},
+              "lte": {{lteAverageRatingValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterYearOfExperience}}
+        ,       
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": {{gteYearOfExperienceValue}},
+              "lte": {{lteYearOfExperienceValue}}
+            }
+          }
+        }{{/filterYearOfExperience}}
+        {{#filterCountry}}
+        ,        
+        {
+          "term": {
+            "country": "{{countryValue}}"
+          }
+        } {{/filterCountry}}
+         {{#filterCity}}
+        ,        
+        {
+          "term": {
+            "city.keyword": "{{cityValue}}"
+          }
+        }
+        {{/filterCity}}
+        {{#filterIsVideoAllowed}}
+        ,        
+        {
+          "term": {
+            "isVideoAllowed": "{{isVideoAllowedValue}}"
+          }
+        }{{/filterIsVideoAllowed}}
+        {{#filterSpecialization}}
+        ,        
+        {
+          "term": {
+            "specialization.keyword": "{{specializationValue}}"
+          }
+        }{{/filterSpecialization}}
+        {{#filterLanguage}}
+        ,       
+        {
+          "terms": {
+            "languages": [
+              "{{languagesValue}}"
+            ]
+          }
+        }
+        {{/filterLanguage}}
+      ]
+      {{/boolFilter}}
+    }
+            }
+             ,
+            "aggs": {
+                "specializationAggs": {
+                "terms": {
+                    "field": "specialization.keyword"
+                    //"size": 10
+                }
+                }
+            }
+            }
+            {{/specializationAggregation}}
+            
+            {{#languagesAggregation}}
+            {{#languagesAggregationComma}},{{/languagesAggregationComma}}
+            "languagesAggs": {
+            "filter": {
+                "bool": {     
+         "must": [
+        {
+          "multi_match": {
+            "query": "{{queryValue}}",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
+            ]
+          }
+        }
+      ]
+      {{#boolFilter}} 
+      , 
+           
+      "filter": [
+         {
+          "exists": {
+            "field": "name"
+          }
+        } 
+        {{#filterGender}}
+        ,
+        {
+          "term": {
+            "gender": "{{genderValue}}"
+          }
+        }
+        {{/filterGender}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "averageRating": {
+              "gte": {{gteAverageRatingValue}},
+              "lte": {{lteAverageRatingValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterYearOfExperience}}
+        ,       
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": {{gteYearOfExperienceValue}},
+              "lte": {{lteYearOfExperienceValue}}
+            }
+          }
+        }{{/filterYearOfExperience}}
+        {{#filterCountry}}
+        ,        
+        {
+          "term": {
+            "country": "{{countryValue}}"
+          }
+        } {{/filterCountry}}
+         {{#filterCity}}
+        ,        
+        {
+          "term": {
+            "city.keyword": "{{cityValue}}"
+          }
+        }
+        {{/filterCity}}
+        {{#filterIsVideoAllowed}}
+        ,        
+        {
+          "term": {
+            "isVideoAllowed": "{{isVideoAllowedValue}}"
+          }
+        }{{/filterIsVideoAllowed}}
+        {{#filterSpecialization}}
+        ,        
+        {
+          "term": {
+            "specialization.keyword": "{{specializationValue}}"
+          }
+        }{{/filterSpecialization}}
+        {{#filterLanguage}}
+        ,       
+        {
+          "terms": {
+            "languages": [
+              "{{languagesValue}}"
+            ]
+          }
+        }
+        {{/filterLanguage}}
+      ]
+      {{/boolFilter}}
+    }
+            }
+            ,
+            "aggs": {
+                "languagesAggs": {
+                "terms": {
+                    "field": "languages"
+                    //"size": 10
+                }
+                }
+            }
+            }
+            {{/languagesAggregation}}
+            
+             {{#averageRatingAggregation}}
+            {{#averageRatingAggregationComma}},{{/averageRatingAggregationComma}}
+            "averageRatingAggs": {
+            "filter": {
+                "bool": {     
+         "must": [
+        {
+          "multi_match": {
+            "query": "{{queryValue}}",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
+            ]
+          }
+        }
+      ]
+      {{#boolFilter}} 
+      , 
+           
+      "filter": [
+         {
+          "exists": {
+            "field": "name"
+          }
+        } 
+        {{#filterGender}}
+        ,
+        {
+          "term": {
+            "gender": "{{genderValue}}"
+          }
+        }
+        {{/filterGender}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "averageRating": {
+              "gte": {{gteAverageRatingValue}},
+              "lte": {{lteAverageRatingValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterYearOfExperience}}
+        ,       
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": {{gteYearOfExperienceValue}},
+              "lte": {{lteYearOfExperienceValue}}
+            }
+          }
+        }{{/filterYearOfExperience}}
+        {{#filterCountry}}
+        ,        
+        {
+          "term": {
+            "country": "{{countryValue}}"
+          }
+        } {{/filterCountry}}
+         {{#filterCity}}
+        ,        
+        {
+          "term": {
+            "city.keyword": "{{cityValue}}"
+          }
+        }
+        {{/filterCity}}
+        {{#filterIsVideoAllowed}}
+        ,        
+        {
+          "term": {
+            "isVideoAllowed": "{{isVideoAllowedValue}}"
+          }
+        }{{/filterIsVideoAllowed}}
+        {{#filterSpecialization}}
+        ,        
+        {
+          "term": {
+            "specialization.keyword": "{{specializationValue}}"
+          }
+        }{{/filterSpecialization}}
+        {{#filterLanguage}}
+        ,       
+        {
+          "terms": {
+            "languages": [
+              "{{languagesValue}}"
+            ]
+          }
+        }
+        {{/filterLanguage}}
+      ]
+      {{/boolFilter}}
+    }
+            }
+            ,
+            "aggs": {
+                "averageRatingAggs": {
+                //"histogram": {
+                //    "field": "averageRating",
+                //    "interval": 1,
+               //     "min_doc_count":0
+               // }
+               
+               "range": {
+                "field": "averageRating",
+                "ranges": [
+                    {
+                    "key": "4 & above", 
+                    "from": "4",
+                    "to": "5"
+                    },
+                    {
+                    "key": "3 & above", 
+                    "from": "3",
+                    "to": "5"
+                    },
+                    {
+                    "key": "2 & above", 
+                    "from": "2",
+                    "to": "5"
+                    },
+                    {
+                    "key": "1 & above", 
+                    "from": "1",
+                    "to": "5"
+                    },
+                    {
+                    "key": "Zero & above", 
+                    "from": "0",
+                    "to": "5"
+                    }
+                ]
+                }
+                }
+            }
+            }
+            {{/averageRatingAggregation}}
+            
+             {{#yearsOfExperienceAggregation}}
+            {{#yearsOfExperienceAggregationComma}},{{/yearsOfExperienceAggregationComma}}
+            "yearsOfExperienceAggs": {
+            "filter": {
+                "bool": {     
+         "must": [
+        {
+          "multi_match": {
+            "query": "{{queryValue}}",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
+            ]
+          }
+        }
+      ]
+      {{#boolFilter}} 
+      , 
+           
+      "filter": [
+         {
+          "exists": {
+            "field": "name"
+          }
+        } 
+        {{#filterGender}}
+        ,
+        {
+          "term": {
+            "gender": "{{genderValue}}"
+          }
+        }
+        {{/filterGender}}
+        {{#filterAverageRating}}
+        ,       
+        {
+          "range": {
+            "averageRating": {
+              "gte": {{gteAverageRatingValue}},
+              "lte": {{lteAverageRatingValue}}
+            }
+          }
+        }{{/filterAverageRating}}
+        {{#filterYearOfExperience}}
+        ,       
+        {
+          "range": {
+            "yearsOfExperience": {
+              "gte": {{gteYearOfExperienceValue}},
+              "lte": {{lteYearOfExperienceValue}}
+            }
+          }
+        }{{/filterYearOfExperience}}
+        {{#filterCountry}}
+        ,        
+        {
+          "term": {
+            "country": "{{countryValue}}"
+          }
+        } {{/filterCountry}}
+         {{#filterCity}}
+        ,        
+        {
+          "term": {
+            "city.keyword": "{{cityValue}}"
+          }
+        }
+        {{/filterCity}}
+        {{#filterIsVideoAllowed}}
+        ,        
+        {
+          "term": {
+            "isVideoAllowed": "{{isVideoAllowedValue}}"
+          }
+        }{{/filterIsVideoAllowed}}
+        {{#filterSpecialization}}
+        ,        
+        {
+          "term": {
+            "specialization.keyword": "{{specializationValue}}"
+          }
+        }{{/filterSpecialization}}
+        {{#filterLanguage}}
+        ,       
+        {
+          "terms": {
+            "languages": [
+              "{{languagesValue}}"
+            ]
+          }
+        }
+        {{/filterLanguage}}
+      ]
+      {{/boolFilter}}
+    }
+            }
+             ,
+            "aggs": {
+                "yearsOfExperienceAggs": {
+                //"histogram": {
+                  //  "field": "yearOfExperience",
+                    //"interval": 10,
+                    //"min_doc_count":0
+               // }
+               
+               "range": {
+                "field": "yearsOfExperience",
+                "ranges": [
+                    {
+                    "key": "40+ experience", 
+                    "from": "40"
+                    },
+                    {
+                    "key": "30+ experience", 
+                    "from": "30"
+                    },
+                    {
+                    "key": "20+ experience", 
+                    "from": "20"
+                    },
+                    {
+                    "key": "10+ experience", 
+                    "from": "10"
+                    },
+                    {
+                    "key": "Zero+ experience", 
+                    "from": "0"
+                    }
+                ]
+                }
+                }
+            }
+            }
+            {{/yearsOfExperienceAggregation}}
+            
+        }
+        }
+    }
+} """
+  }
+}
+
+POST _render/template
+{
+  "id": "doctorTemplate",
+  "params": {
+    "queryValue": "Nitish",
+    "fromValue": 0,
+    "sizeValue": 10,
+    "boolFilter": true,
+    "filterCountry":true,
+    "countryValue":"India",
+    "filterCity":true,
+    "cityValue":"Indore",
+    "genderAggregation":true,
+    "averageRatingAggregation":true,
+    "averageRatingAggregationComma":true,
+      "languagesAggregation":true,
+    "languagesAggregationComma":true,
+    "specializationAggregation":true,
+    "specializationAggregationComma":true,
+    "cityAggregation":true,
+    "cityAggregationComma":true,
+    "countryAggregation":true,
+    "countryAggregationComma":true,
+  "yearsOfExperienceAggregation":true,
+  "yearsOfExperienceAggregationComma":true
+  }
+}
+
+GET doctor/_search
+{
+    "size": 10,
+    "from": 0,
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "multi_match": {
+              "query": "Nitish",
+              "fields": [
+                "ailmentsTreated^2",
+                "*name^3",
+                "city",
+                "locality^10",
+                "specialization^1",
+                "address"
+              ]
+            }
+          }
+        ],
+        "filter": [
+          {
+            "exists": {
+              "field": "name"
+            }
+          },
+          {
+            "term": {
+              "country": "India"
+            }
+          },
+          {
+            "term": {
+              "city.keyword": "Indore"
+            }
+          }
+        ]
+      }
+    },
+    "aggs": {
+      "TotalAggs": {
+        "global": {},
+        "aggs": {
+          "genderAggs": {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "multi_match": {
+                      "query": "Nitish",
+                      "fields": [
+                        "ailmentsTreated^2",
+                        "*name^3",
+                        "city",
+                        "locality^10",
+                        "specialization^1",
+                        "address"
+                      ]
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "exists": {
+                      "field": "name"
+                    }
+                  },
+                  {
+                    "term": {
+                      "country": "India"
+                    }
+                  },
+                  {
+                    "term": {
+                      "city.keyword": "Indore"
+                    }
+                  }
+                ]
+              }
+            },
+            "aggs": {
+              "genderAggs": {
+                "terms": {
+                  "field": "gender"
+                }
+              }
+            }
+          },
+          "cityAggs": {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "multi_match": {
+                      "query": "Nitish",
+                      "fields": [
+                        "ailmentsTreated^2",
+                        "*name^3",
+                        "city",
+                        "locality^10",
+                        "specialization^1",
+                        "address"
+                      ]
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "exists": {
+                      "field": "name"
+                    }
+                  },
+                  {
+                    "term": {
+                      "country": "India"
+                    }
+                  },
+                  {
+                    "term": {
+                      "city.keyword": "Indore"
+                    }
+                  }
+                ]
+              }
+            },
+            "aggs": {
+              "cityAggs": {
+                "terms": {
+                  "field": "city.keyword"
+                }
+              }
+            }
+          },
+          "countryAggs": {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "multi_match": {
+                      "query": "Nitish",
+                      "fields": [
+                        "ailmentsTreated^2",
+                        "*name^3",
+                        "city",
+                        "locality^10",
+                        "specialization^1",
+                        "address"
+                      ]
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "exists": {
+                      "field": "name"
+                    }
+                  },
+                  {
+                    "term": {
+                      "country": "India"
+                    }
+                  },
+                  {
+                    "term": {
+                      "city.keyword": "Indore"
+                    }
+                  }
+                ]
+              }
+            },
+            "aggs": {
+              "countryAggs": {
+                "terms": {
+                  "field": "country.keyword"
+                }
+              }
+            }
+          },
+          "specializationAggs": {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "multi_match": {
+                      "query": "Nitish",
+                      "fields": [
+                        "ailmentsTreated^2",
+                        "*name^3",
+                        "city",
+                        "locality^10",
+                        "specialization^1",
+                        "address"
+                      ]
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "exists": {
+                      "field": "name"
+                    }
+                  },
+                  {
+                    "term": {
+                      "country": "India"
+                    }
+                  },
+                  {
+                    "term": {
+                      "city.keyword": "Indore"
+                    }
+                  }
+                ]
+              }
+            },
+            "aggs": {
+              "specializationAggs": {
+                "terms": {
+                  "field": "specialization.keyword"
+                }
+              }
+            }
+          },
+          "languagesAggs": {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "multi_match": {
+                      "query": "Nitish",
+                      "fields": [
+                        "ailmentsTreated^2",
+                        "*name^3",
+                        "city",
+                        "locality^10",
+                        "specialization^1",
+                        "address"
+                      ]
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "exists": {
+                      "field": "name"
+                    }
+                  },
+                  {
+                    "term": {
+                      "country": "India"
+                    }
+                  },
+                  {
+                    "term": {
+                      "city.keyword": "Indore"
+                    }
+                  }
+                ]
+              }
+            },
+            "aggs": {
+              "languagesAggs": {
+                "terms": {
+                  "field": "languages"
+                }
+              }
+            }
+          },
+          "averageRatingAggs": {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "multi_match": {
+                      "query": "Nitish",
+                      "fields": [
+                        "ailmentsTreated^2",
+                        "*name^3",
+                        "city",
+                        "locality^10",
+                        "specialization^1",
+                        "address"
+                      ]
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "exists": {
+                      "field": "name"
+                    }
+                  },
+                  {
+                    "term": {
+                      "country": "India"
+                    }
+                  },
+                  {
+                    "term": {
+                      "city.keyword": "Indore"
+                    }
+                  }
+                ]
+              }
+            },
+            "aggs": {
+              "averageRatingAggs": {
+                "range": {
+                  "field": "averageRating",
+                  "ranges": [
+                    {
+                      "key": "4 & above",
+                      "from": "4",
+                      "to": "5"
+                    },
+                    {
+                      "key": "3 & above",
+                      "from": "3",
+                      "to": "5"
+                    },
+                    {
+                      "key": "2 & above",
+                      "from": "2",
+                      "to": "5"
+                    },
+                    {
+                      "key": "1 & above",
+                      "from": "1",
+                      "to": "5"
+                    },
+                    {
+                      "key": "Zero & above",
+                      "from": "0",
+                      "to": "5"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "yearsOfExperienceAggs": {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "multi_match": {
+                      "query": "Nitish",
+                      "fields": [
+                        "ailmentsTreated^2",
+                        "*name^3",
+                        "city",
+                        "locality^10",
+                        "specialization^1",
+                        "address"
+                      ]
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "exists": {
+                      "field": "name"
+                    }
+                  },
+                  {
+                    "term": {
+                      "country": "India"
+                    }
+                  },
+                  {
+                    "term": {
+                      "city.keyword": "Indore"
+                    }
+                  }
+                ]
+              }
+            },
+            "aggs": {
+              "yearsOfExperienceAggs": {
+                "range": {
+                  "field": "yearsOfExperience",
+                  "ranges": [
+                    {
+                      "key": "40+ experience",
+                      "from": "40"
+                    },
+                    {
+                      "key": "30+ experience",
+                      "from": "30"
+                    },
+                    {
+                      "key": "20+ experience",
+                      "from": "20"
+                    },
+                    {
+                      "key": "10+ experience",
+                      "from": "10"
+                    },
+                    {
+                      "key": "Zero+ experience",
+                      "from": "0"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+#User
+
+PUT user_v1
+{
+  "aliases": {
+    "user": {}
+  },
+  "mappings": {
+    "properties": {
+      "DOB": {
+        "type": "date",
+        "format": "dd-mm-yyyy"
+      },
+      "Zipcode": {
+        "type": "keyword"
+      },
+      "address": {
+        "type": "text"
+      },
+      "blood_donor": {
+        "type": "boolean"
+      },
+      "city": {
+        "type": "keyword"
+      },
+      "country": {
+        "type": "keyword"
+      },
+      "email": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "gender": {
+        "type": "keyword"
+      },
+      "id": {
+        "type": "keyword"
+      },
+      "insurance_details": {
+        "properties": {
+          "coverage": {
+            "properties": {
+              "end_date": {
+                "type": "date",
+                "format": "dd-mm-yyyy"
+              },
+              "start_date": {
+                "type": "date",
+                "format": "dd-mm-yyyy"
+              }
+            }
+          },
+          "documents": {
+            "type": "keyword"
+          },
+          "id": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "provider": {
+            "type": "keyword"
+          }
+        }
+      },
+      "isPremiumUser": {
+        "type": "boolean"
+      },
+      "landmark": {
+        "type": "text"
+      },
+      "language": {
+        "type": "keyword"
+      },
+      "locality": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "medical_records": {
+        "properties": {
+          "alcohol_user": {
+            "type": "boolean"
+          },
+          "allergies": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "blood_group": {
+            "type": "keyword"
+          },
+          "drug_user": {
+            "type": "boolean"
+          },
+          "past_procedures": {
+            "properties": {
+              "date": {
+                "type": "date",
+                "format": "dd-mm-yyyy"
+              },
+              "name": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          },
+          "pre_existing_conditions": {
+            "properties": {
+              "duration": {
+                "type": "float"
+              },
+              "name": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          },
+          "smoker": {
+            "type": "boolean"
+          }
+        }
+      },
+      "mobile": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "role": {
+        "type": "text"
+      },
+      "state": {
+        "type": "keyword"
+      },
+      "medicalDetails": {
+        "type": "nested",
+        "properties": {
+          "name": {
+            "type": "keyword"
+          },
+          "bmi": {
+            "type": "float"
+          },
+          "heartRate": {
+            "type": "float"
+          },
+          "fbcStatus": {
+            "type": "long"
+          },
+          "weight": {
+            "type": "keyword"
+          },
+          "orderDate": {
+            
+            "type": "date",
+            "format": "YYYY-MM-DD'T'HH:mm:ssZ"
+           
+          }
+        }
+      }
+    }
+  }
+}
+
+GET user_v1/_doc/5
+
+PUT user_v1/_doc/1
+{
+    "name": "Amit kumar Jha",
+    "first_name": "Amit",
+    "last_name": "kumar jha",
+    "DOB": "01-01-1990",
+    "gender": "Male",
+    "id": "4d6ddceb-2465-4332-b943-8d407e9f9afe",
+    "email": "amitkr@gmail.com",
+    "mobile": "+919999999999",
+    "address": "Line Bazaar",
+    "landmark": "shushant singh rajput chowk",
+    "locality": "Purnea sadar",
+    "city": "Purnea",
+    "state": "Bihar",
+    "country": "India",
+    "Zipcode": 854301,
+    "role": "Patient",
+    "language": "En",
+    "blood_donor": true,
+    "medical_records": {
+      "blood_group": "O+",
+      "pre_existing_conditions": [
+        {
+          "name": "Diabetes",
+          "duration": 2.5
+        }
+      ],
+      "allergies": [
+        "dust Allergy",
+        "Pollen allergy"
+      ],
+      "past_procedures": [
+        {
+          "name": "Lasik surgery",
+          "date": "01-12-1990"
+        }
+      ],
+      "smoker": false,
+      "alcohol_user": false,
+      "drug_user": false
+    },
+    "insurance_details": {
+      "id": "12345658",
+      "provider": "Policy Bazaar",
+      "coverage": {
+        "start_date": "01-01-2020",
+        "end_date": "01-01-2021"
+      },
+      "documents": "xyz.pdf"
+    },
+    "coins": 10,
+    "isPremiumUser": false,
+    "medicalDetails":[{
+      "name" : "Amit kumar Jha",
+      "bmi" : 23.7 ,
+      "heartRate" : 89 ,
+      "fbcStatus" : 145 ,
+      "weight" : 73.54,
+      "orderDate" : "1997-12-05T15:45:12-0000"
+    },{
+      "name" : "Amit kumar Jha",
+      "bmi" : 30 ,
+      "heartRate" : 89 ,
+      "fbcStatus" : 145 ,
+      "weight" : 73.54,
+      "orderDate" : "1999-09-05T15:45:12-0000"
+    },{
+      "name" : "Amit kumar Jha",
+      "bmi" : 22 ,
+      "heartRate" : 89 ,
+      "fbcStatus" : 145 ,
+      "weight" : 73.54,
+      "orderDate" : "1998-02-05T15:45:12-0000"
+    },{
+      "name" : "Amit kumar Jha",
+      "bmi" : 27 ,
+      "heartRate" : 89 ,
+      "fbcStatus" : 145 ,
+      "weight" : 73.54,
+      "orderDate" : "2002-12-05T15:45:12-0000"
+    },{
+      "name" : "Amit kumar Jha",
+      "bmi" : 20.7 ,
+      "heartRate" : 89 ,
+      "fbcStatus" : 145 ,
+      "weight" : 73.54,
+      "orderDate" : "2001-12-05T15:45:12-0000"
+    }]
+  }
+  
+  GET user_v1/_doc/4
+  
+PUT user_v1/_doc/2
+{
+    "name": "hello world",
+    "first_name": "hello",
+    "last_name": "world",
+    "DOB": "11-07-1978",
+    "gender": "Male",
+    "id": "4d6ddceb-2465-4332-b943-8d407e9f9afe",
+    "email": "helloworld.com",
+    "mobile": "+915555555555",
+    "address": "Line Bazaar",
+    "landmark": "shushant singh rajput chowk",
+    "locality": "Purnea sadar",
+    "city": "Purnea",
+    "state": "Bihar",
+    "country": "India",
+    "Zipcode": 854301,
+    "role": "Patient",
+    "language": "En",
+    "blood_donor": true,
+    "medical_records": {
+      "blood_group": "O+",
+      "pre_existing_conditions": [
+        {
+          "name": "Diabetes",
+          "duration": 2.5
+        }
+      ],
+      "allergies": [
+        "dust Allergy",
+        "Pollen allergy"
+      ],
+      "past_procedures": [
+        {
+          "name": "Lasik surgery",
+          "date": "01-12-1990"
+        }
+      ],
+      "smoker": false,
+      "alcohol_user": false,
+      "drug_user": false
+    },
+    "insurance_details": {
+      "id": "12345658",
+      "provider": "Policy Bazaar",
+      "coverage": {
+        "start_date": "01-01-2020",
+        "end_date": "01-01-2021"
+      },
+      "documents": "xyz.pdf"
+    },
+    "coins": 10,
+    "isPremiumUser": false,
+    "medicalDetails":{
+      "name" : "hello world",
+      "bmi" : 23.7 ,
+      "heartRate" : 89 ,
+      "fbcStatus" : 145 ,
+      "weight" : "73.54 Kg",
+      "orderDate" : "1997-12-05T15:45:12-0000"
+    }
+  }
+  PUT user_v1/_doc/3
+{
+    "name": "Akash Neekhara",
+    "first_name": "Akash",
+    "last_name": "Neekhara",
+    "DOB": "11-07-1978",
+    "gender": "Male",
+    "id": "4d6ddceb-2465-4332-b943-8d407e9f9afe",
+    "email": "akashneekhara.com",
+    "mobile": "+9199999999",
+    "address": "Line Bazaar",
+    "landmark": "shushant singh rajput chowk",
+    "locality": "Purnea sadar",
+    "city": "Purnea",
+    "state": "Bihar",
+    "country": "India",
+    "Zipcode": 854301,
+    "role": "Patient",
+    "language": "En",
+    "blood_donor": true,
+    "medical_records": {
+      "blood_group": "O+",
+      "pre_existing_conditions": [
+        {
+          "name": "Diabetes",
+          "duration": 2.5
+        }
+      ],
+      "allergies": [
+        "dust Allergy",
+        "Pollen allergy"
+      ],
+      "past_procedures": [
+        {
+          "name": "Lasik surgery",
+          "date": "01-12-1990"
+        }
+      ],
+      "smoker": false,
+      "alcohol_user": false,
+      "drug_user": false
+    },
+    "insurance_details": {
+      "id": "12345658",
+      "provider": "Policy Bazaar",
+      "coverage": {
+        "start_date": "01-01-2020",
+        "end_date": "01-01-2021"
+      },
+      "documents": "xyz.pdf"
+    },
+    "coins": 10,
+    "isPremiumUser": false,
+    "medicalDetails":{
+      "name" : "Akash Neekhara",
+      "bmi" : 28 ,
+      "heartRate" : 96 ,
+      "fbcStatus" : 126 ,
+      "weight" : "65.89 Kg",
+      "orderDate" : "2000-10-04T12:04:10-0000"
+    }
+  }
+
+PUT user_v1/_doc/4
+{
+    "name": "Sai bhai",
+    "first_name": "Sai",
+    "last_name": "bhai",
+    "DOB": "11-07-1978",
+    "gender": "Male",
+    "id": "4d6ddceb-2465-4332-b943-8d407e9f9afe",
+    "email": "saibhai.com",
+    "mobile": "+915555555555",
+    "address": "Line Bazaar",
+    "landmark": "shushant singh rajput chowk",
+    "locality": "Purnea sadar",
+    "city": "Purnea",
+    "state": "Bihar",
+    "country": "India",
+    "Zipcode": 854301,
+    "role": "Patient",
+    "language": "En",
+    "blood_donor": true,
+    "medical_records": {
+      "blood_group": "O+",
+      "pre_existing_conditions": [
+        {
+          "name": "Diabetes",
+          "duration": 2.5
+        }
+      ],
+      "allergies": [
+        "dust Allergy",
+        "Pollen allergy"
+      ],
+      "past_procedures": [
+        {
+          "name": "Lasik surgery",
+          "date": "01-12-1990"
+        }
+      ],
+      "smoker": false,
+      "alcohol_user": false,
+      "drug_user": false
+    },
+    "insurance_details": {
+      "id": "12345658",
+      "provider": "Policy Bazaar",
+      "coverage": {
+        "start_date": "01-01-2020",
+        "end_date": "01-01-2021"
+      },
+      "documents": "xyz.pdf"
+    },
+    "coins": 10,
+    "isPremiumUser": false,
+    "medicalDetails":{
+      "name" : "sai bhai",
+      "bmi" : 21.1 ,
+      "heartRate" : 90 ,
+      "fbcStatus" : 211 ,
+      "weight" : "62.16 Kg",
+      "orderDate" : "1996-09-04T11:25:11-0000"
+    }
+  }
+
+PUT user_v1/_doc/5
+{
+    "name": "Raj bhai",
+    "first_name": "Raj",
+    "last_name": "bhai",
+    "DOB": "11-07-1978",
+    "gender": "Male",
+    "id": "4d6ddceb-2465-4332-b943-8d407e9f9afe",
+    "email": "rajbhai.com",
+    "mobile": "+915555555555",
+    "address": "Line Bazaar",
+    "landmark": "shushant singh rajput chowk",
+    "locality": "Purnea sadar",
+    "city": "Purnea",
+    "state": "Bihar",
+    "country": "India",
+    "Zipcode": 854301,
+    "role": "Patient",
+    "language": "En",
+    "blood_donor": true,
+    "medical_records": {
+      "blood_group": "O+",
+      "pre_existing_conditions": [
+        {
+          "name": "Diabetes",
+          "duration": 2.5
+        }
+      ],
+      "allergies": [
+        "dust Allergy",
+        "Pollen allergy"
+      ],
+      "past_procedures": [
+        {
+          "name": "Lasik surgery",
+          "date": "01-12-1990"
+        }
+      ],
+      "smoker": false,
+      "alcohol_user": false,
+      "drug_user": false
+    },
+    "insurance_details": {
+      "id": "12345658",
+      "provider": "Policy Bazaar",
+      "coverage": {
+        "start_date": "01-01-2020",
+        "end_date": "01-01-2021"
+      },
+      "documents": "xyz.pdf"
+    },
+    "coins": 10,
+    "isPremiumUser": false,
+    "medicalDetails":{
+      "name" : "raj bhai",
+      "bmi" : 16.5 ,
+      "heartRate" : 85 ,
+      "fbcStatus" : 122 ,
+      "weight" : "65.56 Kg",
+      "orderDate" : "1995-05-01T11:46:09-0000"
+    }
+  }
+  
+  
+PUT _scripts/userTemplate
+{
+  "script": {
+    "lang": "mustache",
+    "source": """
+    {
+    "size": {{sizeValue}}, 
+     {{#boolSort}}
+     "sort":[
+       {"medicalDetails.orderDate":{"order":"{{sortOrder}}"}}
+    ],
+     {{/boolSort}}
+      "_source": ["medicalDetails.orderDate", "medicalDetails.{{medicalDetailsValue}}"],
+    "query": {
+    "match": {
+      "user.id": {{idValue}}
+    }
   }
 } """
   }
 }
 
-
-
 POST _render/template
 {
-  "id": "my-search-template",
+  "id": "userTemplate",
   "params": {
-    "query_string": "hello world",
-    "from": 20,
-    "size": 10
+    "sizeValue": 10,
+    "boolSort": false,
+    "medicalDetailsValue":"bmi",
+    "idValue":"4d6ddceb-2465-4332-b943-8d407e9f9afe"
   }
 }
+
+
+
+GET user/_search
+{
+  "sort": [
+    {
+      "medicalDetails.orderDate": {
+        "order": "asc",
+        "nested": {
+          "path": "medicalDetails"
+        }
+      }
+    }
+  ],
+  "query": {
+    "term": {
+      "id": "4d6ddceb-2465-4332-b943-8d407e9f9afe"
+    }
+  },
+  "_source": [
+    "medicalDetails.bmi"
+  ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
