@@ -4,7 +4,7 @@ const { json } = require('express');
 let elasticSearchClient=null
 //Akash Elastic pass
 
- var auth = 'elastic' + ":" + 'eu4oQfN7GXmxG0Z3nXvs'
+ var auth = 'elastic' + ":" + 'j*+44bej_O0ZsUlUxFH5'
  const connstring = "https://" + 'localhost' + ":" + '9200'
 
  const enable_password=true;
@@ -117,9 +117,29 @@ function getData(queryBody, paramIndex) {
           console.log("Fields successfully updated");
           return resp;
         } else {
+            console.log("Error from db is",err )
           throw err
         }
       });
+
+
+//      return  new Promise((resolve, reject) => {
+//         elasticSearchClient.update({
+//             index: paramIndex,
+//             id: Identifier,
+//             body: {
+//               doc: body,
+//             },
+//           }).then((result) => {
+//           // log.info('Results: ' + result);
+//           console.log("Fields successfully updated",result);
+//           resolve (result)
+//       }).catch((err) => {
+//           // log.error('error: ' + err);
+//           console.log("Error from db is",err )
+//           reject(err)
+//       });
+//   });
   }
   
   function createEntity(object, paramIndex) {
@@ -141,6 +161,7 @@ function getData(queryBody, paramIndex) {
           resolve(result);
         })
         .catch((err) => {
+           
           reject(err);
         });
     });
