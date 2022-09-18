@@ -3,6 +3,7 @@ const controller = require("./controller");
 const docAttributeList = require("./constants/docAttributeList");
 const _ = require("underscore");
 const { isEqual } = require("underscore");
+const e = require("express");
 const cloudinary = require('cloudinary').v2
 
 cloudinary.config({ 
@@ -58,18 +59,29 @@ function updateProfileDetails(req, res) {
   let id 
   let role
   let obj
-  const list = docAttributeList.doctorProfileAttributes;
+  let failDueToChange=false
+  const list = docAttributeList.profileAttributes;
+
   Object.keys(req.body).forEach(key => {
     if (!list.includes(key)) { 
       res.status(400).send("bad request , unknown attribute found in request");
+      failDueToChange=true
+      // return
     }
+   
   })
-  if (req.body.hasOwnProperty("id") == false || req.body.id == null || req.body.id == "") {
+  if(failDueToChange){
+    return
+  }
+   if (req.body.hasOwnProperty("id") == false || req.body.id == null || req.body.id == "") {
     res.status(400).send("bad request , id cannot be empty");
    
   } else if (req.body.hasOwnProperty("role") == false || req.body.role == null || req.body.role == "") {
     res.status(400).send("bad request , role cannot be empty");
-  } else { 
+  }
+  
+  
+  else { 
     id = req.body.id;
     role = req.body.role;
     obj = req.body;
@@ -335,7 +347,7 @@ function getDoctorReviewsByUserIdOrDoctorId(req, res) {
 router.post("/doctorDetail", getProfileDetails);
 router.post("/doctorDetail/imageUpload", uploadProfileImage);
 router.post("/create", createNewDoctorAccount);
-router.put("/doctorDetail/updateDetails", updateProfileDetails);
+router.put("/updateDetails", updateProfileDetails);
 router.post("/doctorReviews/updateDetails", updateReviewDetails);
 router.post("/doctorReviews/create", createDoctorReviews);
 router.post("/doctorReviews", getDoctorReviewsByUserIdOrDoctorId);

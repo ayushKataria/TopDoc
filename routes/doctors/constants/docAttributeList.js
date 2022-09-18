@@ -19,7 +19,7 @@ const userReviewsAttributes = [
 "patientEducationRating"
 ]
 
-const doctorProfileAttributes=
+const profileAttributes=
 [ 
     "address",
     "ailmentsTreated",
@@ -29,6 +29,9 @@ const doctorProfileAttributes=
     "designation",
     "education",
     "email",
+    "Zipcode",
+    "medical_records",
+    "language",
     "experience",
     "firstName",
     "gender",
@@ -51,6 +54,7 @@ const doctorProfileAttributes=
     "id",
     "role",
     "docImageUrl",
+    "blood_donor",
     "tags",
     "noOfReviews",
     "consultations",
@@ -82,7 +86,7 @@ const doctorProfileAttributes=
     
 
 
-module.exports = {userReviewsAttributes,doctorProfileAttributes,getRequestAttributes,sortListForReview,getRequestReviewAttributes}
+module.exports = {userReviewsAttributes,profileAttributes,getRequestAttributes,sortListForReview,getRequestReviewAttributes}
 
 
 
