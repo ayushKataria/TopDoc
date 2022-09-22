@@ -17,7 +17,7 @@ with open("./DummyData/users.json", "r") as file:
     user_data = json.load(file)
 
 for doctor in doctor_data:
-    es_db.index(index = "doctor", document=doctor)
+    es_db.index(index = "doctor", document=doctor, id=doctor['identifier'])
 
-# for user in user_data:
-#     es_db.index(index = "user", document=doctor)
+for user in user_data:
+    es_db.index(index = "user", document=user, id=user['id'])

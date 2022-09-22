@@ -1,3 +1,4 @@
+'use strict'
 const esdb = require("../../ESUtils/elasticSearch");
 
 //get doctor data with the help of docId

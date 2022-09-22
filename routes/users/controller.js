@@ -1,5 +1,8 @@
+
 const bcrypt = require('bcrypt')
 const docController = require('../doctors/controller')
+
+
 
 async function signup(request){
     try {
@@ -25,7 +28,11 @@ async function signup(request){
 }
 
 
+
 async function medicalDetails(body){
+    try{
+
+  
     console.log("Fields to fetch 1")
     id = body.id;
     role = body.role;
@@ -37,11 +44,12 @@ async function medicalDetails(body){
     // .then((data) => res.send(data))
     data=data.results[0].medicalDetails
     // .catch((err) => res.status(err.statuscode).send(err));  
-    // console.log("Fields to fetch 1", data)                               
-    data.sort(function (a, b) {
-        var dateA = new Date(a.orderDate), dateB = new Date(b.orderDate)
-        return dateB - dateA
-        });
+  console.log("Fields to fetch 1", data)                               
+    // data.sort(function (a, b) {
+    //     var dateA = new Date(a.orderDate);
+    //     var  dateB = new Date(b.orderDate)
+    //     return dateB - dateA
+    //     });
         console.log("Fields to fetchaaaaaaaaaaaaaaaaaaaa", fieldsToFetch)
     let MedicalList=[];
     console.log(fieldsToFetch)
@@ -60,6 +68,15 @@ async function medicalDetails(body){
       }
     } 
     return MedicalList ;
+} catch(error){
+    if (error.statuscode){
+        throw error
+    } else {
+        console.log("ERROR in getting ",error)
+        throw{ statuscode: 500, err: "internal server error", message: "unexpected error"}
+    }
 }
+}
+  
 
 module.exports = {medicalDetails} ;

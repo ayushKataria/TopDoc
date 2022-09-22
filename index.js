@@ -1,13 +1,10 @@
+'use strict'
 var express = require('express')
-var morgan = require('morgan')
-var compression = require('compression')
 //const bp = require('body-parser')
 const fileUpload =require('express-fileupload')
 const esdb = require("./ESUtils/elasticSearch");
 var app = express()
 app.use(express.json());
-app.use(morgan('tiny'))
-app.use(compression())
 
 app.use(fileUpload({
     useTempFiles : true
