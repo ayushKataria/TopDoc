@@ -3,7 +3,7 @@
     "name": "Amit kumar Jha",
     "first_name": "Amit",
     "last_name": "kumar jha",
-    "DOB": "01-01-1990",
+    "DOB": "01/01/1990",
     "gender": "Male",
     "id": "4d6ddceb-2465-4332-b943-8d407e9f9afe",
     "email": "amitkr@gmail.com",
@@ -13,7 +13,7 @@
     "locality": "Purnea sadar",
     "city": "Purnea",
     "state": "Bihar",
-    "country": "India",
+    "country": "India" ,
     "Zipcode": 854301,
     "role": "Patient",
     "language": "En",
@@ -33,7 +33,7 @@
       "past_procedures": [
         {
           "name": "Lasik surgery",
-          "date": "01-12-1990"
+          "date": "01/12/1990"
         }
       ],
       "smoker": false,
@@ -44,8 +44,8 @@
       "id": "12345658",
       "provider": "Policy Bazaar",
       "coverage": {
-        "start_date": "01-01-2020",
-        "end_date": "01-01-2021"
+        "start_date": "01/01/2020",
+        "end_date": "01/01/2021"
       },
       "documents": "xyz.pdf"
     },
@@ -56,7 +56,7 @@
     "name": "Sai Sarthak Mohanty",
     "first_name": "Sai",
     "last_name": "Mohanty",
-    "DOB": "17-07-1996",
+    "DOB": "17/07/1996",
     "gender": "Male",
     "id": "pd6ddceb-2465-4332-b943-8d407e9f9afe",
     "email": "saisarthakmohanty1996@gmail.com",
@@ -86,7 +86,7 @@
       "past_procedures": [
         {
           "name": "Lasik surgery",
-          "date": "01-12-1990"
+          "date": "01/12/1990"
         }
       ],
       "smoker": false,
@@ -97,8 +97,8 @@
       "id": "12345688",
       "provider": "Policy Bazaar",
       "coverage": {
-        "start_date": "01-01-2020",
-        "end_date": "01-01-2021"
+        "start_date": "01/01/2020",
+        "end_date": "01/01/2021"
       },
       "documents": "xyz.pdf"
     },
@@ -109,7 +109,7 @@
     "name": "Akash Neekhara",
     "first_name": "Akash",
     "last_name": "Neekhara",
-    "DOB": "17-07-1996",
+    "DOB": "17/07/1996",
     "gender": "Male",
     "id": "wd6ddceb-2465-4332-b943-8d407e9f9afe",
     "email": "Akashneekahara2000@gmail.com",
@@ -139,7 +139,7 @@
       "past_procedures": [
         {
           "name": "Lasik surgery",
-          "date": "01-12-1990"
+          "date": "01/12/1990"
         }
       ],
       "smoker": false,
@@ -150,8 +150,8 @@
       "id": "12345679",
       "provider": "Policy Bazaar",
       "coverage": {
-        "start_date": "01-01-2020",
-        "end_date": "01-01-2021"
+        "start_date": "01/01/2020",
+        "end_date": "01/01/2021"
       },
       "documents": "xyz.pdf"
     },
@@ -162,7 +162,7 @@
     "name": "Shyamprasad Raghuvend Kanak Rao ",
     "first_name": "Shyamprasad",
     "last_name": "Rao",
-    "DOB": "12-07-1996",
+    "DOB": "12/07/1996",
     "gender": "Male",
     "id": "ld6ddceb-2465-4332-b903-8d407e9f9afe",
     "email": "Shyamprasadkr@gmail.com",
@@ -192,7 +192,7 @@
       "past_procedures": [
         {
           "name": "Lasik surgery",
-          "date": "01-12-1990"
+          "date": "01/12/1990"
         }
       ],
       "smoker": false,
@@ -203,8 +203,8 @@
       "id": "12345679",
       "provider": "Policy Bazaar",
       "coverage": {
-        "start_date": "01-01-2020",
-        "end_date": "01-01-2021"
+        "start_date": "01/01/2020",
+        "end_date": "01/01/2021"
       },
       "documents": "xyz.pdf"
     },

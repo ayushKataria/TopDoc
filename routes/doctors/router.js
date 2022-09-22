@@ -1,3 +1,4 @@
+'use strict'
 const router = require("express").Router();
 const controller = require("./controller");
 const docAttributeList = require("./constants/docAttributeList");
@@ -193,7 +194,7 @@ function createDoctorReviews(req, res) {
     res.status(400).send("bad request , userId cannot be empty");
   }else if (req.body.hasOwnProperty("userName") == false || req.body.userName == null || req.body.userName == "") {
     res.status(400).send("bad request , userName cannot be empty");
-  }else if (req.body.hasOwnProperty("isVerifiedUser") == false || req.body.isVerifiedUser == null || req.body.isVerifiedUser == "") {
+  }else if (req.body.hasOwnProperty("isVerifiedUser") == false || req.body.isVerifiedUser == null) {
     res.status(400).send("bad request , isVerifiedUser cannot be empty");
   }else if (req.body.hasOwnProperty("reviewlastEditedOn") == false || req.body.reviewlastEditedOn == null || req.body.reviewlastEditedOn == "") {
     res.status(400).send("bad request , reviewlastEditedOn cannot be empty");
@@ -252,7 +253,7 @@ function updateReviewDetails(req, res) {
     res.status(400).send("bad request , userId cannot be empty");
   }else if (req.body.hasOwnProperty("userName") == false || req.body.userName == null || req.body.userName == "") {
     res.status(400).send("bad request , userName cannot be empty");
-  }else if (req.body.hasOwnProperty("isVerifiedUser") == false || req.body.isVerifiedUser == null || req.body.isVerifiedUser == "") {
+  }else if (req.body.hasOwnProperty("isVerifiedUser") == false || req.body.isVerifiedUser == null ) {
     res.status(400).send("bad request , isVerifiedUser cannot be empty");
   }else if (req.body.hasOwnProperty("reviewlastEditedOn") == false || req.body.reviewlastEditedOn == null || req.body.reviewlastEditedOn == "") {
     res.status(400).send("bad request , reviewlastEditedOn cannot be empty");
@@ -295,7 +296,7 @@ function getDoctorReviewsByUserIdOrDoctorId(req, res) {
   let sortBy = Object.keys(req.body.sort);
 
   const sortList = docAttributeList.sortListForReview;
-  for (i = 0; i < sortBy.length; i++) {
+  for (let i = 0; i < sortBy.length; i++) {
     if (!sortList.includes(sortBy[i])) {
       res
         .status(400)
