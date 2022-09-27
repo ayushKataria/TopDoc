@@ -205,92 +205,95 @@ function templateSearch(queryBody, paramIndex, paramsTemplate) {
         reject(result);
         console.log("bata bhai", err);
       });
-  }
-  
-  function createEntity(object, paramIndex) {
-    //  //console.log("Esdb invoked perfectly",object)
-    if (elasticSearchClient == null) {
-      connectClient();
-    }
-  
-    return new Promise((resolve, reject) => {
-      elasticSearchClient
-        .index({
-          index: paramIndex,
-          id:object.id,
-          body: object,
-        })
-        .then((result) => {
-          // return { statuscode: 200, message: "Doctor Created Successfully"}
-          //console.log("The result is ",result)
-          resolve(result);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  
-    // //console.log("logging data")
-    // return elasticSearchClient.index({
-    //     index: paramIndex,
-    //     document: object
-    // }).then(function(resp) {
-    //     //console.log("here")
-    //   return resp.status(200).json({message:'Doctor profile created successfuly'})
-  
-    // }).catch(err=>{
-    //     return   { statuscode: 404, message: "Doctor profile Creation Failed"}
-    // });
-  }
-,
+  });
+}
 
-  function templateSearch(queryBody, paramIndex, paramsTemplate) {
-    console.log("Template Search called")
-    if (elasticSearchClient == null) {
-        connectClient();
-    }
-    console.log("Template Search 2 called")
-    // paramIndexList = paramIndex.split(',')
-    // indexNamesList = []
-    // paramIndexList.forEach(element => {
-    //     indexNamesList.push(indexDict[element])
-    // });
-    // indexNames = indexNamesList.join(',')
-    // console.log(indexNames)
+function createEntity(object, paramIndex) {
+  //  //console.log("Esdb invoked perfectly",object)
+  if (elasticSearchClient == null) {
+    connectClient();
+  }
 
-    // temporay code starts
-   queryBody.genderAggregation=true
-   queryBody.averageRatingAggregation=true,
-   queryBody.averageRatingAggregationComma=true,
-      queryBody.languagesAggregation=true,
-    queryBody.languagesAggregationComma=true,
-    queryBody.specializationAggregation=true,
-    queryBody.specializationAggregationComma=true,
-    queryBody.cityAggregation=true,
-    queryBody.cityAggregationComma=true,
-    queryBody.countryAggregation=true,
-    queryBody.countryAggregationComma=true,
-    queryBody.yearsOfExperienceAggregation=true,
-    queryBody.yearsOfExperienceAggregationComma=true
+  return new Promise((resolve, reject) => {
+    elasticSearchClient
+      .index({
+        index: paramIndex,
+        id: object.id,
+        body: object,
+      })
+      .then((result) => {
+        // return { statuscode: 200, message: "Doctor Created Successfully"}
+        //console.log("The result is ",result)
+        resolve(result);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+
+  // //console.log("logging data")
+  // return elasticSearchClient.index({
+  //     index: paramIndex,
+  //     document: object
+  // }).then(function(resp) {
+  //     //console.log("here")
+  //   return resp.status(200).json({message:'Doctor profile created successfuly'})
+
+  // }).catch(err=>{
+  //     return   { statuscode: 404, message: "Doctor profile Creation Failed"}
+  // });
+}
+
+function templateSearch(queryBody, paramIndex, paramsTemplate) {
+  console.log("Template Search called");
+  if (elasticSearchClient == null) {
+    connectClient();
+  }
+  console.log("Template Search 2 called");
+  // paramIndexList = paramIndex.split(',')
+  // indexNamesList = []
+  // paramIndexList.forEach(element => {
+  //     indexNamesList.push(indexDict[element])
+  // });
+  // indexNames = indexNamesList.join(',')
+  // console.log(indexNames)
+
+  // temporay code starts
+  queryBody.genderAggregation = true;
+  (queryBody.averageRatingAggregation = true),
+    (queryBody.averageRatingAggregationComma = true),
+    (queryBody.languagesAggregation = true),
+    (queryBody.languagesAggregationComma = true),
+    (queryBody.specializationAggregation = true),
+    (queryBody.specializationAggregationComma = true),
+    (queryBody.cityAggregation = true),
+    (queryBody.cityAggregationComma = true),
+    (queryBody.countryAggregation = true),
+    (queryBody.countryAggregationComma = true),
+    (queryBody.yearsOfExperienceAggregation = true),
+    (queryBody.yearsOfExperienceAggregationComma = true);
   // temporay code sends
-    console.log("ssssssssssqueryBody is",queryBody )
-    return new Promise((resolve, reject) => {
-        elasticSearchClient.searchTemplate({
-            index: paramIndex,
-            // type: indexDict[paramType],
-            body: {
-                "id": paramsTemplate,
-                "params": queryBody
-            }
-        }).then((result) => {
-            console.log('Results: ' + JSON.stringify(result));
-            resolve(result)
-        }).catch((err) => {
-            // log.error('error: ' + err);
-            reject(err)
-            console.log("bata bhai" ,err)
-        })
-    })
+  console.log("ssssssssssqueryBody is", queryBody);
+  return new Promise((resolve, reject) => {
+    elasticSearchClient
+      .searchTemplate({
+        index: paramIndex,
+        // type: indexDict[paramType],
+        body: {
+          id: paramsTemplate,
+          params: queryBody,
+        },
+      })
+      .then((result) => {
+        console.log("Results: " + JSON.stringify(result));
+        resolve(result);
+      })
+      .catch((err) => {
+        // log.error('error: ' + err);
+        reject(err);
+        console.log("bata bhai", err);
+      });
+  });
 }
 const aggsDisplayName = {
   cityAggs: "Cities",

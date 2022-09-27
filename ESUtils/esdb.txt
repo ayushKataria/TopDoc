@@ -1283,6 +1283,23 @@ PUT _scripts/doctorTemplate
               "locality^10",
               "specialization^1",
               "address"
+            ],
+              "fuzziness" : "AUTO",
+              "prefix_length" : 2
+          }
+        }
+      ],  
+       "should": [
+        {
+          "multi_match": {
+            "query": "{{queryValue}}",
+            "fields": [
+              "ailmentsTreated^2",
+              "*name^3",
+              "city",
+              "locality^10",
+              "specialization^1",
+              "address"
             ]
           }
         }
