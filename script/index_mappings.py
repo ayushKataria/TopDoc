@@ -34,7 +34,8 @@ doctor_mappings = {
                         "type": "keyword"
                     },
                     "date": {
-                        "type": "date"
+                        "type": "date",
+                        "format": "basic_date_time_no_millis"
                     }
                 }
             },
@@ -115,7 +116,8 @@ doctor_mappings = {
                             "type": "keyword"
                     },
                     "endDate": {
-                            "type": "date"
+                            "type": "date",
+                            "format": "basic_date_time_no_millis"
                     },
                     "fieldOfStudy": {
                             "type": "keyword"
@@ -124,7 +126,8 @@ doctor_mappings = {
                             "type": "keyword"
                     },
                     "startDate": {
-                            "type": "date"
+                            "type": "date",
+                            "format": "basic_date_time_no_millis"
                     }
                 }
             },
@@ -146,13 +149,15 @@ doctor_mappings = {
                             "type": "keyword"
                     },
                     "endDate": {
-                            "type": "date"
+                            "type": "date",
+                            "format": "basic_date_time_no_millis"
                     },
                     "location": {
                             "type": "keyword"
                     },
                     "startDate": {
-                            "type": "date"
+                            "type": "date",
+                            "format": "basic_date_time_no_millis"
                     },
                     "title": {
                             "type": "keyword"
@@ -440,7 +445,7 @@ user_mappings = {
         "properties": {
             "DOB": {
                 "type": "date",
-                "format": "dd/mm/yyyy"
+                "format": "basic_date_time_no_millis"
             },
             "Zipcode": {
                 "type": "keyword"
@@ -478,11 +483,11 @@ user_mappings = {
                         "properties": {
                             "end_date": {
                                 "type": "date",
-                                "format": "dd/mm/yyyy"
+                                "format": "basic_date_time_no_millis"
                             },
                             "start_date": {
                                 "type": "date",
-                                "format": "dd/mm/yyyy"
+                                "format": "basic_date_time_no_millis"
                             }
                         }
                     },
@@ -524,7 +529,7 @@ user_mappings = {
             "medical_records": {
                 "properties": {
                     "alcohol_user": {
-                        "type": "boolean"
+                        "type": "text"
                     },
                     "allergies": {
                         "type": "text",
@@ -539,13 +544,13 @@ user_mappings = {
                         "type": "keyword"
                     },
                     "drug_user": {
-                        "type": "boolean"
+                        "type": "text"
                     },
                     "past_procedures": {
                         "properties": {
                             "date": {
                                 "type": "date",
-                                "format": "dd/mm/yyyy"
+                                "format": "basic_date_time_no_millis"
                             },
                             "name": {
                                 "type": "text",
@@ -575,7 +580,7 @@ user_mappings = {
                         }
                     },
                     "smoker": {
-                        "type": "boolean"
+                        "type": "text"
                     }
                 }
             },
@@ -638,7 +643,7 @@ review_mappings = {
             },
             "reviewDate" : {
             "type" : "date",
-            "format" : "yyyyMMdd'T'HHmmss.SSSZ"
+            "format" : "basic_date_time_no_millis"
             },
             "userId" : {
             "type" : "keyword"
@@ -660,7 +665,7 @@ review_mappings = {
             },
             "reviewlastEditedOn" : {
             "type" : "date",
-            "format" : "yyyyMMdd'T'HHmmss.SSSZ"
+            "format" : "basic_date_time_no_millis"
             },
              "userScheduleId": {
                 "type": "keyword"
@@ -754,6 +759,3 @@ review_mappings = {
 
 
 
-# date - mapping according to format date.now()---yyyy-MM-dd'T'HH:mm:ss.SSSZ for new Date().toISOString()
-# search dynamic 
-# overall rating 

@@ -12,5 +12,5 @@ module.exports = {
     serverPort,
     esServer,
     esUserName,
-    esPassword
+    esPassword,
 }

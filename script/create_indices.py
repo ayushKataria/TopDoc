@@ -5,21 +5,21 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 es_db = Elasticsearch("https://localhost:9200", basic_auth=('elastic',
-                      'TNCn9w5B4rjmy*A+jJ0t'), verify_certs=False, ssl_show_warn=False)
+                      'prMQZkpxu8he__rgcCgR'), verify_certs=False, ssl_show_warn=False)
 
 indices_instructions = {
     "doctor": {
         "old_version": "v1",
-        "new_version": "v1",
-        "create": False,
+        "new_version": "v2",
+        "create": True,
         "reindex_alias": False,
         "reindex": False,
-        "alias": False,
+        "alias": True,
         "mapping": doctor_mappings
     },
     "schedule": {
         "old_version": "v1",
-        "new_version": "v1",
+        "new_version": "v2",
         "create": True,
         "reindex_alias": False,
         "reindex": False,
@@ -28,11 +28,11 @@ indices_instructions = {
     },
     "user": {
         "old_version": "v1",
-        "new_version": "v1",
-        "create": False,
+        "new_version": "v3",
+        "create": True,
         "reindex_alias": False,
         "reindex": False,
-        "alias": False,
+        "alias": True,
         "mapping": user_mappings
     }
 }
