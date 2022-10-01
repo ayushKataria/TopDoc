@@ -156,32 +156,49 @@ async function addMedicalDetails(req, res) {
   }
 }
 
-async function MedicalDetails(req, res) {
-  try {
-    if (
-      req.body.hasOwnProperty("id") == false ||
-      req.body.id == null ||
-      req.body.id == ""
-    ) {
-      res.status(400).send("bad request , id cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("role") == false ||
-      req.body.role == null ||
-      req.body.role == ""
-    ) {
-      res.status(400).send("bad request , role cannot be empty");
-    } else {
-      await controller
-        .medicalDetails(req.body)
-        .then((data) => res.send(data))
-        .catch((err) => res.status(err.statuscode).send(err));
-    }
-  } catch (error) {
-    console.log(error);
-    throw {
-      statuscode: 500,
-      message: "Unexpected error occured",
-    };
+async function medicalDetails(req, res) {
+  console.log("print");
+  if (
+    req.body.hasOwnProperty("id") == false ||
+    req.body.id == null ||
+    req.body.id == ""
+  ) {
+    res.status(400).send("bad request , id cannot be empty");
+  } else if (
+    req.body.hasOwnProperty("role") == false ||
+    req.body.role == null ||
+    req.body.role == ""
+  ) {
+    res.status(400).send("bad request , role cannot be empty");
+  } else {
+    // console.log("error", err)
+    controller
+      .medicalDetails(req.body)
+      .then((data) => res.send(data))
+      .catch((err) => res.status(err.statuscode).send(err));
+  }
+}
+
+async function favouriteDoctor(req, res) {
+  console.log("printAkash");
+  if (
+    req.body.hasOwnProperty("id") == false ||
+    req.body.id == null ||
+    req.body.id == ""
+  ) {
+    res.status(400).send("bad request , id cannot be empty");
+  } else if (
+    req.body.hasOwnProperty("role") == false ||
+    req.body.role == null ||
+    req.body.role == ""
+  ) {
+    res.status(400).send("bad request , role cannot be empty");
+  } else {
+    // console.log("error", err);
+    controller
+      .favouriteDoctor(req.body)
+      .then((data) =>{console.log("Data from controller",data); res.send(data)})
+      .catch((err) => res.status(err.statuscode).send(err));
   }
 }
 

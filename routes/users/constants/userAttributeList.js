@@ -37,6 +37,8 @@ const userUpdateAttributes = [
   "mobile",
   "name",
   "state",
+  "first_name",
+  "last_name",
   "medicalDetails",
   "blood_group",
 ];

@@ -5,16 +5,16 @@ const properties_util = require("./properties_util");
 let esClient = null;
 
 async function setClient() {
-    esClient = new Client({
-        node: properties_util.esServer,
-        auth: {
-            username: 'elastic',
-            password: 'j*+44bej_O0ZsUlUxFH5'
-        },
-        tls: {
-            rejectUnauthorized: false
-        }
-    })
+  esClient = new Client({
+    node: properties_util.esServer,
+    auth: {
+      username: properties_util.esUserName,
+      password: properties_util.esPassword,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
 }
 
 async function ping() {

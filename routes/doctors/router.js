@@ -99,13 +99,16 @@ async function updateProfileDetails(req, res) {
     }
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
+       console.log("iunknown attribute",key)
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail){
+      res
+      .status(400)
+      .send("bad request , unknown attribute found in request");
+      
+      return};
 
     if (
       req.body.hasOwnProperty("id") == false ||
