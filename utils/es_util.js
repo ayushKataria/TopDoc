@@ -8,8 +8,8 @@ async function setClient() {
     esClient = new Client({
         node: properties_util.esServer,
         auth: {
-            username: properties_util.esUserName,
-            password: properties_util.esPassword
+            username: 'elastic',
+            password: 'j*+44bej_O0ZsUlUxFH5'
         },
         tls: {
             rejectUnauthorized: false
