@@ -1,9 +1,8 @@
-"use strict";
 var router = require("express").Router();
 var controller = require("./controller");
 const _ = require("underscore");
 const docController = require("../doctors/controller");
-const userAttributeList = require("./constants/userAttributeList");
+const userAttributeList = require("./constants/addMedicalDetailsAttribute");
 function test(req, res) {
   res.send("APP SUCCESS");
 }
@@ -31,24 +30,21 @@ router.post("/signup", function (req, res) {
   } else if (!req.body.hasOwnProperty("confirmPassword")) {
     res.status(400).send("confirmPassword field cannot be empty");
   } else {
-    if (!validatePassword(req.body.password)) {
-      res.status(403).send("password is not valid");
-    }
+    // if(!validatePassword(req.body.password)){
+    //     res.status(403).send("password is not valid")
+    // }
     controller
       .signup(req.body)
-      .then((data) => res.send(data))
+      .then((data) => {
+        console.log(data);
+        res.send(data);
+      })
       .catch((err) => res.status(err.statuscode).send(err));
   }
 });
 
 router.post("/login", function (req, res) {
   if (
-    !req.body.hasOwnProperty("loginId") ||
-    req.body.loginId == null ||
-    req.body.loginId == ""
-  ) {
-    res.status(400).send("Full name is mandatory");
-  } else if (
     (!req.body.hasOwnProperty("mobileNumber") ||
       req.body.mobileNumber == null ||
       req.body.mobileNumber == "") &&
@@ -59,19 +55,96 @@ router.post("/login", function (req, res) {
     res.status(400).send("one of Mobile Number or Email id is mandatory");
   } else if (!req.body.hasOwnProperty("password")) {
     res.status(400).send("Password cannot be empty");
-  } else if (!req.body.hasOwnProperty("confirmPassword")) {
-    res.status(400).send("confirmPassword field cannot be empty");
   } else {
-    if (!validatePassword(req.body.password)) {
-      res.status(403).send("password is not valid");
-    }
+    // if(!validatePassword(req.body.password)){
+    //     res.status(403).send("password is not valid")
+    // }
     controller
-      .signup(req.body)
+      .login(req.body)
       .then((data) => res.send(data))
       .catch((err) => res.status(err.statuscode).send(err));
   }
 });
 
+router.post("/changePassword", function (req, res) {
+  console.log(req.body);
+  if (
+    (!req.body.hasOwnProperty("mobileNumber") ||
+      req.body.mobileNumber == null ||
+      req.body.mobileNumber == "") &&
+    (!req.body.hasOwnProperty("emailId") ||
+      req.body.emailId == null ||
+      req.body.emailId == "")
+  ) {
+    res.status(400).send("one of Mobile Number or Email id is mandatory");
+  } else if (!req.body.hasOwnProperty("password")) {
+    res.status(400).send("Password cannot be empty");
+  } else if (!req.body.hasOwnProperty("newPassword")) {
+    res.status(400).send("Password cannot be empty");
+  } else if (!req.body.hasOwnProperty("confirmPassword")) {
+    res.status(400).send("confirmPassword field cannot be empty");
+  } else if (req.body.newPassword != req.body.confirmPassword) {
+    res
+      .status(400)
+      .send("New password and confirmPassword cannot be different");
+  } else if (req.body.newPassword === req.body.password) {
+    res.status(400).send("currentpassword and new password cannot be same");
+  } else {
+    // if(!validatePassword(req.body.password)){
+    //     res.status(403).send("password is not valid")
+    // }
+    controller
+      .changePassword(req.body)
+      .then((data) => res.send(data))
+      .catch((err) => res.status(err.statuscode).send(err));
+  }
+});
+
+router.post("/updateProfile", function (req, res) {
+  console.log(req.body);
+  if (
+    (!req.body.hasOwnProperty("mobileNumber") ||
+      req.body.mobileNumber == null ||
+      req.body.mobileNumber == "") &&
+    (!req.body.hasOwnProperty("emailId") ||
+      req.body.emailId == null ||
+      req.body.emailId == "")
+  ) {
+    res.status(400).send("one of Mobile Number or Email id is mandatory");
+  } else {
+    // if(!validatePassword(req.body.password)){
+    //     res.status(403).send("password is not valid")
+    // }
+    controller
+      .updateProfile(req.body)
+      .then((data) => res.send(data))
+      .catch((err) => res.status(err.statuscode).send(err));
+  }
+});
+
+router.post("/viewProfile", function (req, res) {
+  console.log(req.body);
+  if (
+    (!req.body.hasOwnProperty("mobileNumber") ||
+      req.body.mobileNumber == null ||
+      req.body.mobileNumber == "") &&
+    (!req.body.hasOwnProperty("emailId") ||
+      req.body.emailId == null ||
+      req.body.emailId == "")
+  ) {
+    res.status(400).send("one of Mobile Number or Email id is mandatory");
+  } else {
+    // if(!validatePassword(req.body.password)){
+    //     res.status(403).send("password is not valid")
+    // }
+    controller
+      .viewProfile(req.body)
+      .then((data) => res.send(data))
+      .catch((err) => res.status(err.statuscode).send(err));
+  }
+});
+
+//Upload profile Image
 async function addMedicalDetails(req, res) {
   try {
     let id;

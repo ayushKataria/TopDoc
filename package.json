@@ -19,6 +19,7 @@
     "express-fileupload": "^1.4.0",
     "json-builder": "^0.0.2",
     "morgan": "^1.10.0",
+    "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.16",
     "properties-reader": "^2.2.0",
     "python": "^0.0.4",
