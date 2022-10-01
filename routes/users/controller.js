@@ -1,82 +1,135 @@
+const bcrypt = require("bcrypt");
+const docController = require("../doctors/controller");
 
-const bcrypt = require('bcrypt')
-const docController = require('../doctors/controller')
-
-
-
-async function signup(request){
-    try {
-        if(request.hasOwnProperty("email")){
-            const user = new User({
-                email: request.body.email,
-                password: bcrypt.hash(request.body.password)
-            });
-        }
-        if(request.hasOwnProperty("phone")){
-            const user = new User({
-                email: request.body.phone,
-                password: request.body.password
-            });
-        }
-    } catch (error) {
-        if (error.statuscode){
-            throw error
-        } else {
-            throw{ statuscode: 500, err: "internal server error", message: "unexpected error"}
-        }
+async function signup(request) {
+  try {
+    if (request.hasOwnProperty("email")) {
+      const user = new User({
+        email: request.body.email,
+        password: bcrypt.hash(request.body.password),
+      });
     }
+    if (request.hasOwnProperty("phone")) {
+      const user = new User({
+        email: request.body.phone,
+        password: request.body.password,
+      });
+    }
+  } catch (error) {
+    if (error.statuscode) {
+      throw error;
+    } else {
+      throw {
+        statuscode: 500,
+        err: "internal server error",
+        message: "unexpected error",
+      };
+    }
+  }
+  if (request.hasOwnProperty("phone")) {
+    const user = new User({
+      email: request.body.phone,
+      password: request.body.password,
+    });
+  }
 }
 
-
-
-async function medicalDetails(body){
-    try{
-
-  
-    console.log("Fields to fetch 1")
+async function medicalDetails(body) {
+  try {
+    console.log("Fields to fetch 1");
     id = body.id;
     role = body.role;
     fieldsToFetch = body.fields;
-    size=body.size;
-    console.log("Fields to fetch 1", fieldsToFetch)
+    size = body.size || 10;
+    console.log("Fields to fetch 1", fieldsToFetch);
     // console.log("Fields to fetch ",fieldsToFetch)
-    let data = await docController.getProfileDetailsController(id, role, ["medicalDetails"])
+    let data = await docController.getProfileDetailsController(id, role, [
+      "medicalDetails",
+    ]);
     // .then((data) => res.send(data))
-    data=data.results[0].medicalDetails
-    // .catch((err) => res.status(err.statuscode).send(err));  
-  console.log("Fields to fetch 1", data)                               
-    // data.sort(function (a, b) {
-    //     var dateA = new Date(a.orderDate);
-    //     var  dateB = new Date(b.orderDate)
-    //     return dateB - dateA
-    //     });
-        console.log("Fields to fetchaaaaaaaaaaaaaaaaaaaa", fieldsToFetch)
-    let MedicalList=[];
-    console.log(fieldsToFetch)
-    for(let i =1;i<=size;i++){
-        // while(size>0){
-      let fieldData = data[i][fieldsToFetch];     //hardcode value is working
-      let fieldDate=data[i].orderDate;
-      console.log(fieldData)
-      console.log(fieldDate)
-      if(fieldData==null){
-        size=size+1;
-      }else{
-        MedicalList.push({date:fieldDate,data:fieldData});
+    data = data.results[0].medicalDetails;
+    // .catch((err) => res.status(err.statuscode).send(err));
+    // console.log("Fields to fetch 1", data)
+    data.sort(function (a, b) {
+      var dateA = new Date(a.orderDate),
+        dateB = new Date(b.orderDate);
+      return dateB - dateA;
+    });
+    console.log("Fields to fetchaaaaaaaaaaaaaaaaaaaa", fieldsToFetch);
+    let MedicalList = [];
+    console.log(fieldsToFetch);
+    for (let i = 1; i <= size; i++) {
+      // while(size>0){
+      let fieldData = data[i][fieldsToFetch]; //hardcode value is working
+      let fieldDate = data[i].orderDate;
+      console.log(fieldData);
+      console.log(fieldDate);
+      if (fieldData == null) {
+        size = size + 1;
+      } else {
+        MedicalList.push({ date: fieldDate, data: fieldData });
         // console.log("bbbbbbb",MedicalList)
         // size--;
       }
-    } 
-    return MedicalList ;
-} catch(error){
-    if (error.statuscode){
-        throw error
-    } else {
-        console.log("ERROR in getting ",error)
-        throw{ statuscode: 500, err: "internal server error", message: "unexpected error"}
     }
+    return MedicalList;
+  } catch (error) {
+    if (error.statuscode) {
+      throw error;
+    } else {
+      throw {
+        statuscode: 500,
+        err: "internal server error",
+        message: "unexpected error",
+      };
+    }
+  }
 }
-}
-  
 
-module.exports = {medicalDetails} ;
+async function favouriteDoctor(body) {
+  try {
+    console.log("Fields to fetch 1");
+    sort = body.sort || "desc";
+    id = body.id;
+    role = body.role;
+    fieldsToFetch = body.fields;
+    size = body.size || 10;
+    page = body.page || 1;
+    console.log("Fields to fetch 1", fieldsToFetch);
+    // console.log("Fields to fetch ",fieldsToFetch)
+    let data = await docController.getProfileDetailsController(id, role, [
+      "favouriteDoctor",
+    ]);
+    // .then((data) => res.send(data))
+    data = data.results[0].favouriteDoctor;
+    // .catch((err) => res.status(err.statuscode).send(err));
+    // console.log("Fields to fetch 1", data)
+    data.sort(function (a, b) {
+      var dateA = new Date(a.date),
+        dateB = new Date(b.date);
+      console.log(fieldsToFetch, "working");
+      return sort == "desc" ? dateB - dateA : dateA - dateB;
+    });
+    console.log("Fields to fetchaaaaaaaaaaaaaaaaaaaa", fieldsToFetch);
+    let doctorList = [];
+    //console.log(fieldsToFetch);
+    // for (let i = 1; i <= size; i++) {
+
+    let fieldData = data.slice((page - 1) * size, page * size); //hardcode value is working
+    console.log(fieldData);
+    doctorList.push(fieldData);
+    return doctorList;
+  } catch (error) {
+    if (error.statuscode) {
+      throw error;
+    } else {
+      throw {
+        statuscode: 500,
+        err: "internal server error",
+        message: "unexpected error",
+      };
+    }
+  }
+}
+
+module.exports = { medicalDetails, favouriteDoctor };
