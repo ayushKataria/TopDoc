@@ -28,7 +28,7 @@ indices_instructions = {
     },
     "user": {
         "old_version": "v1",
-        "new_version": "v3",
+        "new_version": "v2",
         "create": True,
         "reindex_alias": False,
         "reindex": False,

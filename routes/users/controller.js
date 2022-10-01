@@ -26,6 +26,12 @@ async function signup(request) {
       };
     }
   }
+  if (request.hasOwnProperty("phone")) {
+    const user = new User({
+      email: request.body.phone,
+      password: request.body.password,
+    });
+  }
 }
 
 async function medicalDetails(body) {
@@ -70,4 +76,50 @@ async function medicalDetails(body) {
   }
 }
 
-module.exports = { medicalDetails };
+async function favouriteDoctor(body) {
+  try {
+    console.log("Fields to fetch 1");
+    sort = body.sort || "desc";
+    id = body.id;
+    role = body.role;
+    fieldsToFetch = body.fields;
+    size = body.size || 10;
+    page = body.page || 1;
+    console.log("Fields to fetch 1", fieldsToFetch);
+    // console.log("Fields to fetch ",fieldsToFetch)
+    let data = await docController.getProfileDetailsController(id, role, [
+      "favouriteDoctor",
+    ]);
+    // .then((data) => res.send(data))
+    data = data.results[0].favouriteDoctor;
+    // .catch((err) => res.status(err.statuscode).send(err));
+    // console.log("Fields to fetch 1", data)
+    data.sort(function (a, b) {
+      var dateA = new Date(a.date),
+        dateB = new Date(b.date);
+      console.log(fieldsToFetch, "working");
+      return sort == "desc" ? dateB - dateA : dateA - dateB;
+    });
+    console.log("Fields to fetchaaaaaaaaaaaaaaaaaaaa", fieldsToFetch);
+    let doctorList = [];
+    //console.log(fieldsToFetch);
+    // for (let i = 1; i <= size; i++) {
+
+    let fieldData = data.slice((page - 1) * size, page * size); //hardcode value is working
+    console.log(fieldData);
+    doctorList.push(fieldData);
+    return doctorList;
+  } catch (error) {
+    if (error.statuscode) {
+      throw error;
+    } else {
+      throw {
+        statuscode: 500,
+        err: "internal server error",
+        message: "unexpected error",
+      };
+    }
+  }
+}
+
+module.exports = { medicalDetails, favouriteDoctor };
