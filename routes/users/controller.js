@@ -598,6 +598,8 @@ async function favouriteDoctor(body) {
     ]);
     // .then((data) => res.send(data))
     data = data.results[0].favouriteDoctor;
+    console.log("Data is ",data)
+    let hits =data.length
     // .catch((err) => res.status(err.statuscode).send(err));
     // console.log("Fields to fetch 1", data)
     data.sort(function (a, b) {
@@ -614,7 +616,7 @@ async function favouriteDoctor(body) {
     let fieldData = data.slice((page - 1) * size, page * size); //hardcode value is working
     console.log(fieldData);
     doctorList.push(fieldData);
-    return doctorList;
+    return{hits : hits,result : doctorList} 
   } catch (error) {
     if (error.statuscode) {
       throw error;

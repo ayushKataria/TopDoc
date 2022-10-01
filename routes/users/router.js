@@ -2,7 +2,7 @@ var router = require("express").Router();
 var controller = require("./controller");
 const _ = require("underscore");
 const docController = require("../doctors/controller");
-const userAttributeList = require("./constants/addMedicalDetailsAttribute");
+const userAttributeList = require("./constants/userAttributeList");
 function test(req, res) {
   res.send("APP SUCCESS");
 }
