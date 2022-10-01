@@ -55,6 +55,7 @@ const profileAttributes=
     "role",
     "docImageUrl",
     "blood_donor",
+    "blood_group",
     "tags",
     "noOfReviews",
     "consultations",

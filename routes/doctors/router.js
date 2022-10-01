@@ -63,17 +63,17 @@ function updateProfileDetails(req, res) {
   let failDueToChange=false
   const list = docAttributeList.profileAttributes;
 
-  Object.keys(req.body).forEach(key => {
-    if (!list.includes(key)) { 
-      res.status(400).send("bad request , unknown attribute found in request");
-      failDueToChange=true
-      // return
-    }
+  // Object.keys(req.body).forEach(key => {
+  //   if (!list.includes(key)) { 
+  //     res.status(400).send("bad request , unknown attribute found in request");
+  //     failDueToChange=true
+  //     // return
+  //   }
    
-  })
-  if(failDueToChange){
-    return
-  }
+  // })
+  // if(failDueToChange){
+  //   return
+  // }
    if (req.body.hasOwnProperty("id") == false || req.body.id == null || req.body.id == "") {
     res.status(400).send("bad request , id cannot be empty");
    
