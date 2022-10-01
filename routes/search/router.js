@@ -69,7 +69,7 @@ async function getSearchDetails(req, res) {
 
       //sorting
       let sortBy = req.body.sort;
-
+      const sortList = searchAttributeList.searchSortAttributes;
       for (let i = 0; i < sortBy.length; i++) {
         if (!sortList.includes(Object.keys(sortBy[i])[i])) {
           res
