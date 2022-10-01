@@ -1,5 +1,6 @@
 "use strict";
-const esdb = require("../../ESUtils/elasticSearch");
+// const esdb1 = require("../../ESUtils/elasticSearch");
+const esdb = require("../../utils/es_util");
 
 //get doctor data with the help of docId
 async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
@@ -27,28 +28,19 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
             },
           },
         },
-        // fields: fieldsToFetch,
       };
     }
     console.log("esdb");
     let output = {};
     output.results = [];
-    let dataOb = await esdb.getData(queryBody, role);
+    let dataOb = await esdb.search(queryBody, role);
     if (dataOb.hits.total.value == 0) {
       throw err;
     }
     output.hits = dataOb.hits.total.value;
-    for (let i = 0; i < output.hits; i++) {
-      //  console.log("lllllllllllllllllllllllllllllllllllllll")
-      dataOb.hits.hits[i]._source.id = dataOb.hits.hits[i]._id;
-    }
-    // output.results.push(dataOb.hits.hits[i])
     output.results = dataOb.hits.hits.map((e) => {
       return e._source;
     });
-
-    // output.fields=dataOb.hits.hits[0].fields
-
     return output;
   } catch (err) {
     console.log("Error is ", err);
@@ -63,19 +55,22 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
 async function updateProfileDetailsController(Identifier, role, updateFields) {
   try {
     let output = {};
-    let dataObj = await esdb.updateData(role, Identifier, updateFields);
+    let dataObj = await esdb.update(role, Identifier, updateFields);
 
-    output.results = dataObj.result;
     if (dataObj.hasOwnProperty("result") == true) {
+      if (dataObj.result == "noop") {
+        output.results = "please enter a new Field Values to update";
+      } else {
+        output.results = dataObj.result;
+      }
       return output;
     }
     return dataObj;
   } catch (err) {
-    // console.log("error caught in esdb",err)
-    // console.log(err)
+    console.log("Error is ", err);
     throw {
       statuscode: 400,
-      message: "please enter a new Field Value to update",
+      message: "There was some error in updating the data",
     };
   }
 }
@@ -86,12 +81,14 @@ async function createNewDoctorAccount(object) {
     const { v4: uuidv4 } = require("uuid");
     const newId = uuidv4();
     object.id = newId;
-    //console.log("The request in controller is ",object)
-    //console.log("The uuid is ",newId)
+    console.log("The uuid is ", newId);
 
-    let entityCreationObj = await esdb.createEntity(object, "doctor");
-    //console.log("entityCreationObj",entityCreationObj)
-    return { statuscode: 200, message: "Profile created Successfully" };
+    let entityCreationObj = await esdb.insert(object, newId, "doctor_v2");
+    if (entityCreationObj.result == "created") {
+      return { statuscode: 200, message: "Profile created Successfully" };
+    } else {
+      throw err;
+    }
   } catch (err) {
     throw {
       statuscode: 404,
@@ -106,7 +103,7 @@ async function createNewReview(object, role) {
     const newId = uuidv4();
     object.id = newId;
     let output = {};
-    let entityCreationObj = await esdb.createEntity(object, role);
+    let entityCreationObj = await esdb.insert(object, newId, role);
     if (entityCreationObj.result === "created") {
       output.result = "review posted Successfully";
     } else {
@@ -125,7 +122,6 @@ async function createNewReview(object, role) {
 
 async function getReviewsDetails(body) {
   try {
-    console.log("in controller");
     let esIndex = body.role;
     let esTemplate = "reviewTemplate";
     let params = {};
@@ -192,7 +188,6 @@ async function getReviewsDetails(body) {
       params.sortOrder = Object.values(body.sort)[0];
     }
 
-    console.log("params hereeeeeeeee", params);
     let output = {};
     let dataOb = await esdb.templateSearch(params, esIndex, esTemplate);
     output.hits = dataOb.hits.total.value;

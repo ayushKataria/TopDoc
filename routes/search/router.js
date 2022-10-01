@@ -1,104 +1,75 @@
-'use strict'
+"use strict";
 let router = require("express").Router();
 const controller = require("./controller");
+const searchAttributeList = require("./constants/searchAttributeList");
 
-function getSearchDetails(req, res) {
-    console.log("chal de bhai");
-  console.log("req. body ", req.body);
- let  pageSize =10;
- let pageNo=0;
- let didYouMean= false;
- let applyLTR=false;
-  let highlight=false;
-  let isStandAlone = false
-  if (
-    req.body.hasOwnProperty("query") == false ||
-    req.body.query == null ||
-    req.body.query == ""
-  ) {
-    res.status(400).send("bad request, query cannot be empty");
-  } else {
-    // Pagintion
-    if (req.body.hasOwnProperty("pageNo") == false) {
+async function getSearchDetails(req, res) {
+  try {
+    if (
+      req.body.hasOwnProperty("query") == false ||
+      req.body.query == null ||
+      req.body.query == ""
+    ) {
+      res.status(400).send("bad request, query cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("pageNo") == false ||
+      req.body.pageNo == null
+    ) {
       res.status(400).send("bad request, pageNo field is missing");
-    } else {
-      pageNo = Number(req.body.pageNo);
-    }
-    if (req.body.hasOwnProperty("pageSize") == false) {
+    } else if (
+      req.body.hasOwnProperty("pageSize") == false ||
+      req.body.pageSize == null ||
+      req.body.pageSize == ""
+    ) {
       res.status(400).send("bad request, pageSize field is missing");
-    } else {
-      pageSize = Number(req.body.pageNo);
-    }
-    if (req.body.hasOwnProperty("didYouMean") == false) {
+    } else if (
+      req.body.hasOwnProperty("didYouMean") == false ||
+      typeof req.body.didYouMean !== "boolean"
+    ) {
       res.status(400).send("bad request, didYouMean field is missing");
-    } else {
-      didYouMean = Boolean(req.body.didYouMean);
-    }
-    if (req.body.hasOwnProperty("applyLTR") == false) {
+    } else if (
+      req.body.hasOwnProperty("applyLTR") == false ||
+      typeof req.body.applyLTR !== "boolean"
+    ) {
       res.status(400).send("bad request, applyLTR field is missing");
-    } else {
-      applyLTR = Boolean(req.body.applyLTR);
-    }
-    if (req.body.hasOwnProperty("highlight") == false) {
+    } else if (
+      req.body.hasOwnProperty("highlight") == false ||
+      typeof req.body.highlight !== "boolean"
+    ) {
       res.status(400).send("bad request, highlight field is missing");
-    } else {
-      highlight = Boolean(req.body.highlight);
-    }
-   
-
-    //VisibleFilter
-    if (req.body.hasOwnProperty("visibleFilters") == false) {
+    } else if (
+      req.body.hasOwnProperty("visibleFilters") == false ||
+      req.body.visibleFilters == null ||
+      req.body.visibleFilters == ""
+    ) {
       res.status(400).send("bad request, visibleFilters field is missing");
+    } else if (
+      req.body.hasOwnProperty("isStandAlone") == false ||
+      typeof req.body.isStandAlone !== "boolean"
+    ) {
+      res.status(400).send("bad request, isStandAlone field is missing");
+    } else if (req.body.hasOwnProperty("filters") == false) {
+      res.status(400).send("bad request, filters field is missing");
+    } else if (req.body.hasOwnProperty("sort") == false) {
+      res.status(400).send("bad request, sort field is missing");
     } else {
-      if (req.body.visibleFilters == null || req.body.visibleFilters == "") {
-        // visibleFilters = "All"
-      } else {
-        // const filters = req.body.visibleFilters
-        // console.log(filters)
-        let visibleFilter = req.body.visibleFilters; //["specialization" , "languages"]
-        let filters = [
-          "yearsOfExperience",
-          "languages",
-          "specialization",
-          "isVideoAllowed",
-          "gender",
-          "country",
-          "averageRating",
-          "city",
-        ];
-        for (let i = 0; i < visibleFilter.length; i++) {
-          if (!filters.includes(visibleFilter[i])) {
-            res
-              .status(400)
-              .send(
-                "bad request, filter cannot be done based on the given parameter"
-              );
-            break;
-          }
+      //VisibleFilter
+      let visibleFilter = req.body.visibleFilters; //["specialization" , "languages"]
+      const filters = searchAttributeList.searchFilterAttributes;
+      for (let i = 0; i < visibleFilter.length; i++) {
+        if (!filters.includes(Object.keys(visibleFilter[i])[0])) {
+          res
+            .status(400)
+            .send(
+              "bad request, filter cannot be done based on the given parameter"
+            );
+          return;
         }
       }
-    }
 
-    if (req.body.hasOwnProperty("isStandAlone") == false) {
-      res.status(400).send("bad request, isStandAlone field is missing");
-    } else {
-      isStandAlone = Boolean(req.body.isStandAlone);
-    }
-
-    //sorting
-    if (req.body.sort) {
-      //sort[req.body.sort]  === 'desc' ? -1 :
-      // aggregate_options.push({$sort: {"data.start_date": sortOrder}});
-
+      //sorting
       let sortBy = req.body.sort;
 
-      const sortList = [
-        "yearsOfExperience",
-        "recommendation",
-        "relevence",
-        "earliestAvailable",
-        "price",
-      ];
       for (let i = 0; i < sortBy.length; i++) {
         if (!sortList.includes(Object.keys(sortBy[i])[i])) {
           res
@@ -106,22 +77,23 @@ function getSearchDetails(req, res) {
             .send(
               "bad request, sorting cannot be done based on the given parameter"
             );
+          return;
         }
       }
+      await controller
+        .getSearchDetails(req.body)
+        .then((data) => res.send(data))
+        .catch((err) => res.status(err.statuscode).send(err));
     }
-    controller
-      .getSearchDetails(req.body)
-      .then((data) => res.send(data))
-      .catch((err) => res.status(err.statuscode).send(err));
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
   }
 }
 
 router.post("/doctorSearch", getSearchDetails);
 
 module.exports = router;
-
-
-
-
- 
-

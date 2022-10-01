@@ -4,7 +4,8 @@ from elasticsearch import Elasticsearch
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-es_db = Elasticsearch("https://localhost:9200", basic_auth=('elastic', 'j*+44bej_O0ZsUlUxFH5'), verify_certs=False, ssl_show_warn=False)
+es_db = Elasticsearch("https://localhost:9200", basic_auth=('elastic',
+                      'prMQZkpxu8he__rgcCgR'), verify_certs=False, ssl_show_warn=False)
 
 indices_instructions = {
     "doctor": {
@@ -13,7 +14,7 @@ indices_instructions = {
         "create": True,
         "reindex_alias": False,
         "reindex": False,
-        "alias": False,
+        "alias": True,
         "mapping": doctor_mappings
     },
     "schedule": {
@@ -27,11 +28,11 @@ indices_instructions = {
     },
     "user": {
         "old_version": "v1",
-        "new_version": "v2",
-        "create": False,
+        "new_version": "v3",
+        "create": True,
         "reindex_alias": False,
         "reindex": False,
-        "alias": False,
+        "alias": True,
         "mapping": user_mappings
     }
 }

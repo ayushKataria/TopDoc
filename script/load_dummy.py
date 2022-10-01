@@ -5,7 +5,7 @@ import os
 
 sys.path.insert(1, os.path.split(os.getcwd())[0] + '/DummyData')
 
-es_db = Elasticsearch("https://localhost:9200", basic_auth=('elastic', 'j*+44bej_O0ZsUlUxFH5'), verify_certs=False, ssl_show_warn=False)
+es_db = Elasticsearch("https://localhost:9200", basic_auth=('elastic', 'prMQZkpxu8he__rgcCgR'), verify_certs=False, ssl_show_warn=False)
 
 doctor_data = []
 user_data = []
