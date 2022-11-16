@@ -83,4 +83,5 @@ function generateFilterStructure(params, key, value) {
 
 module.exports = {
   getSearchDetails,
+  generateFilterStructure,
 };

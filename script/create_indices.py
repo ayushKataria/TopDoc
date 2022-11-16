@@ -5,7 +5,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 es_db = Elasticsearch("https://localhost:9200", basic_auth=('elastic',
-                      'prMQZkpxu8he__rgcCgR'), verify_certs=False, ssl_show_warn=False)
+                      '8DJiecXAd+s=WaDGNF=E'), verify_certs=False, ssl_show_warn=False)
 
 indices_instructions = {
     "doctor": {

@@ -86,6 +86,16 @@ function templateSearch(queryBody, indexName, templateName) {
   });
 }
 
+async function searchAll(queryBody, indexName) {
+  if (!esClient) {
+    setClient();
+  }
+
+  return esClient.search({
+    index: indexName,
+    query: queryBody,
+  });
+}
 module.exports = {
   ping,
   getById,
@@ -93,4 +103,5 @@ module.exports = {
   update,
   insert,
   templateSearch,
+  searchAll,
 };

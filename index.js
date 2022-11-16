@@ -21,5 +21,6 @@ app.use("/api", require("./routes/appointments/router"));
 app.use("/search", require("./routes/search/router"));
 app.use("/user", require("./routes/users/router"));
 app.use("/doctors", require("./routes/doctors/router"));
+app.use("/doctorsAds", require("./routes/ads/router"));
 
 module.exports = app;
