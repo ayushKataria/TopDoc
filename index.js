@@ -5,11 +5,15 @@ var compression = require("compression");
 //const bp = require('body-parser')
 const fileUpload = require("express-fileupload");
 // const esdb = require("./ESUtils/elasticSearch");
+const cors = require('cors');
+
 var app = express();
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(compression());
-
+app.use(cors({
+  origin: 'http://localhost:4200'
+}));
 app.use(
   fileUpload({
     useTempFiles: true,
