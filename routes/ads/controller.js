@@ -1,6 +1,7 @@
 const esdb = require("../../utils/es_util");
 const search = require("../search/controller");
 const docController = require("../doctors/controller");
+const _ = require("underscore");
 
 async function createNewDoctorAds(object) {
   try {
@@ -259,7 +260,9 @@ async function searchFieldInAds(body) {
     Query.query = {};
     let output = {};
     Query.query.term = {};
-    Query.query.term = { status: body.status };
+    let obj = body;
+    obj = _.omit(obj, "role");
+    Query.query.term[Object.keys(obj)[0]] = Object.values(obj)[0];
     let adDataForGuestUser = await esdb.search(Query, esIndex);
     output.hits = adDataForGuestUser.hits.total.value;
     output.results = adDataForGuestUser.hits.hits.map((e) => {
