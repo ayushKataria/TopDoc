@@ -234,13 +234,37 @@ async function getAdsToShowToUserFromUserId(body) {
 
 async function getUserCountByDistrict(body) {
   try {
-    let esIndex = "user";
-    let query = {};
+    let esIndex = "user_v1";
+    let Query = {};
+    Query.query = {};
     let output = {};
-    query.terms = {};
-    query.terms = { "district.keyword": body.districts };
-    let adDataForGuestUser = await esdb.searchAll(query, esIndex);
+    Query.query.terms = {};
+    Query.query.terms = { "district.keyword": body.districts };
+    let adDataForGuestUser = await esdb.search(Query, esIndex);
     output.totalUserCount = adDataForGuestUser.hits.total.value;
+
+    return output;
+  } catch (err) {
+    throw {
+      statuscode: 404,
+      message: "There was some error in fetching Reviews",
+    };
+  }
+}
+
+async function searchFieldInAds(body) {
+  try {
+    let esIndex = body.role;
+    let Query = {};
+    Query.query = {};
+    let output = {};
+    Query.query.term = {};
+    Query.query.term = { status: body.status };
+    let adDataForGuestUser = await esdb.search(Query, esIndex);
+    output.hits = adDataForGuestUser.hits.total.value;
+    output.results = adDataForGuestUser.hits.hits.map((e) => {
+      return e._source;
+    });
 
     return output;
   } catch (err) {
@@ -257,4 +281,5 @@ module.exports = {
   getAdsDetailsByDoctorId,
   getAdsToShowToUserFromUserId,
   getUserCountByDistrict,
+  searchFieldInAds,
 };

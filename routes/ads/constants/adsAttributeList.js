@@ -18,6 +18,7 @@ const adsAttributes = [
   "filters",
   "pageNo",
   "pageSize",
+  "role",
 ];
 
 const adsSortList = ["startDate", "endDate"];
