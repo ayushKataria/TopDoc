@@ -234,7 +234,7 @@ async function getAdsToShowToUserFromUserId(body) {
 
 async function getUserCountByDistrict(body) {
   try {
-    let esIndex = "user_v1";
+    let esIndex = "user";
     let Query = {};
     Query.query = {};
     let output = {};
