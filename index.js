@@ -28,5 +28,6 @@ app.use("/search", require("./routes/search/router"));
 app.use("/user", require("./routes/users/router"));
 app.use("/doctors", require("./routes/doctors/router"));
 app.use("/doctorsAds", require("./routes/ads/router"));
+app.use("/payments", require("./routes/payments/router"));
 
 module.exports = app;
