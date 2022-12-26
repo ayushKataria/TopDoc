@@ -19,6 +19,7 @@ const adsAttributes = [
   "pageNo",
   "pageSize",
   "role",
+  "sortBy",
 ];
 
 const adsSortList = ["startDate", "endDate"];
