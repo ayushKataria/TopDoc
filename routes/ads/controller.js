@@ -2,8 +2,6 @@ const esdb = require("../../utils/es_util");
 const search = require("../search/controller");
 const docController = require("../doctors/controller");
 const _ = require("underscore");
-const { sortBy } = require("underscore");
-var moment = require("moment");
 
 async function createNewDoctorAds(object) {
   try {
