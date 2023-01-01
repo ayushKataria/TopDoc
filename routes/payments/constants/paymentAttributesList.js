@@ -24,6 +24,7 @@ const paymentSearchList = [
   "paymentStatus",
   "role",
   "sortBy",
+  "numberOfDocumentsToPick",
 ];
 
 module.exports = {
