@@ -1,5 +1,6 @@
 const esdb = require("../../utils/es_util");
 const search = require("../search/controller");
+const adsAttributeList = require("./constants/adsAttributeList");
 const docController = require("../doctors/controller");
 const _ = require("underscore");
 
@@ -272,8 +273,14 @@ async function searchFieldInAds(body) {
       Query.sort = {};
       Query.sort[sortBy] = { order: sortByValue };
     }
+    let keys = Object.keys(body);
+    let termToSearch = keys.filter((e) => {
+      if (!adsAttributeList.searchRequestConst.includes(e)) {
+        return e;
+      }
+    });
     obj = _.omit(obj, "role");
-    Query.query.term[Object.keys(obj)[0]] = Object.values(obj)[0];
+    Query.query.term[termToSearch[0]] = body[termToSearch];
     if (body.hasOwnProperty("numberOfDocumentsToPick") == true) {
       let numberOfDocumentsToPick = body.numberOfDocumentsToPick;
       Query = _.omit(Query, "query");
