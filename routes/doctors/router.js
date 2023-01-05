@@ -92,14 +92,26 @@ async function updateProfileDetails(req, res) {
     let obj;
     let fail;
     let list;
+     //mandatory property ion req is role and id
+if(!req.body.hasOwnProperty('id') || !req.body.hasOwnProperty('role')){
+  return res.status(401).send("bad request , Mandatory attributes are missing");
+
+}
+
     if (req.body.role == "doctor") {
       list = docAttributeList.doctorUpdateAttributes;
     } else if (req.body.role == "user") {
       list = userAttributeList.userUpdateAttributes;
     }
+
+   
+    console.log("The list is ",list)
     Object.keys(req.body).forEach((key) => {
+      console.log("the key is ",key)
+     
       if (!list.includes(key)) {
         fail = true;
+        console.log("Missing key is ",key)
       }
     });
     if (fail) {
