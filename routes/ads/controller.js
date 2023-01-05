@@ -1,5 +1,6 @@
 const esdb = require("../../utils/es_util");
 const search = require("../search/controller");
+const adsAttributeList = require("./constants/adsAttributeList");
 const docController = require("../doctors/controller");
 const _ = require("underscore");
 
@@ -256,6 +257,7 @@ async function getUserCountByDistrict(body) {
 async function searchFieldInAds(body) {
   try {
     let esIndex = body.role;
+    let results;
     let sortBy;
     let sortByValue;
     let Query = {};
@@ -263,6 +265,7 @@ async function searchFieldInAds(body) {
     let output = {};
     Query.query.term = {};
     let obj = body;
+
     if (body.hasOwnProperty("sortBy") == true) {
       sortBy = Object.keys(body.sortBy)[0];
       sortByValue = Object.values(body.sortBy)[0];
@@ -270,13 +273,39 @@ async function searchFieldInAds(body) {
       Query.sort = {};
       Query.sort[sortBy] = { order: sortByValue };
     }
-    obj = _.omit(obj, "role");
-    Query.query.term[Object.keys(obj)[0]] = Object.values(obj)[0];
-    let adDataForGuestUser = await esdb.search(Query, esIndex);
-    output.hits = adDataForGuestUser.hits.total.value;
-    output.results = adDataForGuestUser.hits.hits.map((e) => {
-      return e._source;
+    let keys = Object.keys(body);
+    let termToSearch = keys.filter((e) => {
+      if (!adsAttributeList.searchRequestConst.includes(e)) {
+        return e;
+      }
     });
+    obj = _.omit(obj, "role");
+    Query.query.term[termToSearch[0]] = body[termToSearch];
+    if (body.hasOwnProperty("numberOfDocumentsToPick") == true) {
+      let numberOfDocumentsToPick = body.numberOfDocumentsToPick;
+      Query = _.omit(Query, "query");
+      let adDataForGuestUser = await esdb.search(Query, esIndex);
+      let hits = adDataForGuestUser.hits.total.value;
+      if (numberOfDocumentsToPick > hits) {
+        output.hits = adDataForGuestUser.hits.total.value;
+        output.results = adDataForGuestUser.hits.hits.map((e) => {
+          return e._source;
+        });
+      } else {
+        output.hits = numberOfDocumentsToPick;
+        results = adDataForGuestUser.hits.hits.map((e) => {
+          return e._source;
+        });
+        output.results = results.slice(0, numberOfDocumentsToPick);
+      }
+    } else {
+      let adDataForGuestUser = await esdb.search(Query, esIndex);
+      output.hits = adDataForGuestUser.hits.total.value;
+      output.results = adDataForGuestUser.hits.hits.map((e) => {
+        return e._source;
+      });
+    }
+
     return output;
   } catch (err) {
     console.log(err);

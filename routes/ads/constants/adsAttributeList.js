@@ -31,10 +31,12 @@ const adsShowToUserAttributes = [
   "state",
   "userId",
 ];
+const searchRequestConst = ["role", "sortBy", "numberOfDocumentsToPick"];
 
 module.exports = {
   adsAttributes,
   adsSortList,
   adsFilterList,
   adsShowToUserAttributes,
+  searchRequestConst,
 };
