@@ -334,10 +334,48 @@ async function getUserNumberByDistrict(req, res) {
   }
 }
 
+async function searchFieldInAds(req, res) {
+  try {
+    let fail = false;
+    const list = adsAttributeList.adsAttributes;
+    Object.keys(req.body).forEach((key) => {
+      if (!list.includes(key)) {
+        res
+          .status(400)
+          .send("bad request , unknown attribute found in request");
+        fail = true;
+      }
+    });
+    if (fail) return;
+
+    if (
+      req.body.hasOwnProperty("role") == false ||
+      req.body.role == null ||
+      req.body.role == ""
+    ) {
+      res.status(400).send("bad request ,  role cannot be empty");
+    } else if (Object.keys(req.body).length <= 1) {
+      res.status(400).send("bad request , please enter a field to search");
+    } else {
+      console.log("in router");
+      await controller
+        .searchFieldInAds(req.body)
+        .then((data) => res.send(data))
+        .catch((err) => res.status(err.statuscode).send(err));
+    }
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
+
 router.post("/updateAdDetails", updateDoctorAds);
 router.post("/create", createDoctorAds);
 router.post("/getAdsByDoctorId", getDoctorAdsByDoctorId);
 router.post("/showAdsToUser", getDoctorAdsToShowUser);
 router.post("/getUsersInDistricts", getUserNumberByDistrict);
-
+router.post("/searchInAds", searchFieldInAds);
 module.exports = router;

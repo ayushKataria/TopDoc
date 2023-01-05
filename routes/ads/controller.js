@@ -1,6 +1,7 @@
 const esdb = require("../../utils/es_util");
 const search = require("../search/controller");
 const docController = require("../doctors/controller");
+const _ = require("underscore");
 
 async function createNewDoctorAds(object) {
   try {
@@ -235,15 +236,50 @@ async function getAdsToShowToUserFromUserId(body) {
 async function getUserCountByDistrict(body) {
   try {
     let esIndex = "user";
-    let query = {};
+    let Query = {};
+    Query.query = {};
     let output = {};
-    query.terms = {};
-    query.terms = { "district.keyword": body.districts };
-    let adDataForGuestUser = await esdb.searchAll(query, esIndex);
+    Query.query.terms = {};
+    Query.query.terms = { "district.keyword": body.districts };
+    let adDataForGuestUser = await esdb.search(Query, esIndex);
     output.totalUserCount = adDataForGuestUser.hits.total.value;
 
     return output;
   } catch (err) {
+    throw {
+      statuscode: 404,
+      message: "There was some error in fetching Reviews",
+    };
+  }
+}
+
+async function searchFieldInAds(body) {
+  try {
+    let esIndex = body.role;
+    let sortBy;
+    let sortByValue;
+    let Query = {};
+    Query.query = {};
+    let output = {};
+    Query.query.term = {};
+    let obj = body;
+    if (body.hasOwnProperty("sortBy") == true) {
+      sortBy = Object.keys(body.sortBy)[0];
+      sortByValue = Object.values(body.sortBy)[0];
+      obj = _.omit(obj, "sort");
+      Query.sort = {};
+      Query.sort[sortBy] = { order: sortByValue };
+    }
+    obj = _.omit(obj, "role");
+    Query.query.term[Object.keys(obj)[0]] = Object.values(obj)[0];
+    let adDataForGuestUser = await esdb.search(Query, esIndex);
+    output.hits = adDataForGuestUser.hits.total.value;
+    output.results = adDataForGuestUser.hits.hits.map((e) => {
+      return e._source;
+    });
+    return output;
+  } catch (err) {
+    console.log(err);
     throw {
       statuscode: 404,
       message: "There was some error in fetching Reviews",
@@ -257,4 +293,5 @@ module.exports = {
   getAdsDetailsByDoctorId,
   getAdsToShowToUserFromUserId,
   getUserCountByDistrict,
+  searchFieldInAds,
 };
