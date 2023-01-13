@@ -1,6 +1,7 @@
 "use strict";
 const esUtil = require("../../utils/es_util");
 const uuid = require("uuid");
+const docController = require("../doctors/controller");
 
 async function bookAppointment(patientId, reqBody) {
   try {
@@ -161,7 +162,94 @@ function formatDateHHcolonMM(date) {
   );
 }
 
+async function createSessions(body) {
+  try {
+    console.log("Fields to fetch 1", body);
+    let duration = body.duration;
+    let days = body.days;
+
+    for (let i = 0; i < days.length; i++) {
+      console.log("for loop 1", days[i]);
+
+      for (let j = 0; j < days[i].sessions.length; j++) {
+        console.log("for loop 2", days[i].sessions[j]);
+        // let currentTime = new Date(days[i].sessions[j].startTime);
+        // const end = new Date(days[i].sessions[j].endTime);
+        let currentTime = convertToInt(days[i].sessions[j].startTime);
+        const end = convertToInt(days[i].sessions[j].endTime);
+        console.log("try", currentTime, "again ", end);
+        let slots = days[i].sessions[j].sessionSlots || [];
+
+        if (
+          j + 1 < days[i].sessions.length &&
+          end > convertToInt(days[i].sessions[j + 1].startTime)
+        ) {
+          throw {
+            statuscode: 400,
+            err: "Bad Request",
+            message: "Conflict in session timings",
+          };
+        } else {
+          while (currentTime < end) {
+            // let hours = currentTime.getHours();
+            // let minutes = currentTime.getMinutes();
+            console.log("The End is "+end+"curr time is "+currentTime)
+            let hours = currentTime.toString().substring(0,2);
+            let minutes = currentTime.toString().substring(2);
+            if (minutes == "0") {
+              minutes = "00";
+            }
+            console.log("Hours is "+hours+" min is "+minutes)
+            // const seconds = currentTime.getSeconds();
+             console.log(`${hours}:${minutes}`);
+            slots.push(`${hours}:${minutes}`);
+           // currentTime.setMinutes(currentTime.getMinutes() + duration);
+            currentTime=Number(convertToInt(currentTime))+Number(duration)
+          }
+          days[i].sessions[j].sessionSlots=slots
+          console.log("Slots generated is "+slots);
+          // return slots;
+
+          // let formattedSlots = slots.map((slot) => slot.toLocaleTimeString());
+          // console.log("hii", formattedSlots);
+        }
+      }
+
+      console.log("body", body.days[0].sessions);
+      let request = {};
+      request.schedule ={schedule: body.days};
+
+      console.log( "schedule",request.schedule);
+
+      let data = await docController.updateProfileDetailsController(
+        body.doctorId,
+        "doctor",
+        request.schedule
+      );
+
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    if (error.statuscode) {
+      throw error;
+    } else {
+      throw {
+        statuscode: 500,
+        err: "internal server error",
+        message: "unexpected error",
+      };
+    }
+  }
+  function   convertToInt(entry){
+    console.log("Entry is ",entry)
+    entry=entry.toString()
+    return Number(entry.toString().substring(0,entry.indexOf(':'))+entry.toString().substring(entry.indexOf(':')+1))
+  }
+}
+
 module.exports = {
   getSchedule,
   bookAppointment,
+  createSessions,
 };
