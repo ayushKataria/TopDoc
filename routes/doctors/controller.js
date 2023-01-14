@@ -235,10 +235,49 @@ async function getReviewsDetails(body) {
   }
 }
 
+async function ConvertDateFormat(date) {
+  try {
+    let temp = new Date(date).toISOString();
+    let timeZone = new Date(date).getTimezoneOffset();
+    let finalFormat;
+    let finalTimeZone;
+    let isNegative;
+    if (timeZone < 0) {
+      timeZone = timeZone * -1;
+      isNegative = true;
+    }
+    let hours = timeZone / 60;
+    let rhours = Math.floor(hours);
+    let minutes = (hours - rhours) * 60;
+    let rminutes = Math.round(minutes);
+    if (Math.floor(rhours / 10) == 0) {
+      rhours = "0" + rhours;
+    } else if (Math.floor(rminutes / 10) == 0) {
+      rminutes = "0" + rminutes;
+    } else {
+      finalTimeZone = rhours + rminutes;
+    }
+    finalTimeZone = rhours + rminutes;
+    if (isNegative) {
+      finalTimeZone = "-" + finalTimeZone;
+    } else {
+      finalTimeZone = "+" + finalTimeZone;
+    }
+    finalFormat = temp.replace("Z", finalTimeZone);
+    return finalFormat;
+  } catch (err) {
+    throw {
+      statuscode: 400,
+      message: "There was some error in converting Date Format",
+    };
+  }
+}
+
 module.exports = {
   getProfileDetailsController,
   createNewDoctorAccount,
   updateProfileDetailsController,
   createNewReview,
   getReviewsDetails,
+  ConvertDateFormat,
 };

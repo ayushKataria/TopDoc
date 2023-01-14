@@ -191,6 +191,7 @@ async function createSessions(body) {
           while (currentTime < end) {
             let hours = currentTime.getHours();
             let minutes = currentTime.getMinutes();
+
             if (minutes == "0") {
               minutes = "00";
             }
@@ -210,7 +211,7 @@ async function createSessions(body) {
       console.log("body", body.days[0].sessions);
       let request = {};
       request.schedule = body;
-
+      docController.ConvertDateFormat(body.bookingTimeStamp);
       console.log(request.sch, "schedule");
 
       let data = await docController.updateProfileDetailsController(
@@ -235,8 +236,32 @@ async function createSessions(body) {
   }
 }
 
+async function bookingAppointment(body) {
+  try {
+    let slotId = body.slotId;
+    body.appointmentId = uuid.v4();
+    body.bookingTimeStamp = await docController.ConvertDateFormat(
+      body.bookingTimeStamp
+    );
+    console.log(body);
+
+    let booking = await docController.updateProfileDetailsController(
+      slotId,
+      "booking",
+      body
+    );
+
+    return booking;
+  } catch (err) {
+    throw {
+      statuscode: 404,
+      message: "There was some error in creating Review",
+    };
+  }
+}
 module.exports = {
   getSchedule,
   bookAppointment,
   createSessions,
+  bookingAppointment,
 };
