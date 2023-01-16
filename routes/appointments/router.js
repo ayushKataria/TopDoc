@@ -24,6 +24,65 @@ function bookAppointment(req, res) {
 
 async function createSessions(req, res) {
   console.log("printAkash");
+  let days = req.body.days;
+  if (days.length > 0) {
+    for (let i = 0; i < days.length; i++) {
+      if (
+        days[i].hasOwnProperty("dayName") == false ||
+        days[i].dayName == null ||
+        days[i].dayName == ""
+      ) {
+        res.status(400).send("bad request , day name cannot be empty");
+      } else if (
+        days[i].hasOwnProperty("date") == false ||
+        days[i].date == null ||
+        days[i].date == ""
+      ) {
+        res.status(400).send("bad request , date cannot be empty");
+      }
+      if (days[i].sessions.length > 0) {
+        for (let j = 0; j < days[i].sessions.length; j++) {
+          if (
+            days[i].sessions[j].hasOwnProperty("sessionId") == false ||
+            days[i].sessions[j].sessionId == null ||
+            days[i].sessions[j].sessionId == ""
+          ) {
+            res.status(400).send("bad request , sessionId cannot be empty");
+          } else if (
+            days[i].sessions[j].hasOwnProperty("startTime") == false ||
+            days[i].sessions[j].startTime == null ||
+            days[i].sessions[j].startTime == ""
+          ) {
+            res.status(400).send("bad request , startTime cannot be empty");
+          } else if (
+            days[i].sessions[j].hasOwnProperty("endTime") == false ||
+            days[i].sessions[j].endTime == null ||
+            days[i].sessions[j].endTime == ""
+          ) {
+            res.status(400).send("bad request , endTime cannot be empty");
+          } else if (
+            days[i].sessions[j].hasOwnProperty("clinic") == false ||
+            days[i].sessions[j].clinic == null ||
+            days[i].sessions[j].clinic == ""
+          ) {
+            res.status(400).send("bad request , clinic cannot be empty");
+          } else if (
+            days[i].sessions[j].hasOwnProperty("sessionSlots") == false
+          ) {
+            res
+              .status(400)
+              .send("bad request , sessionSlots field is mandatory");
+          } else if (
+            days[i].sessions[j].hasOwnProperty("prioritySlots") == false
+          ) {
+            res
+              .status(400)
+              .send("bad request , prioritySlots field is mandatory");
+          }
+        }
+      }
+    }
+  }
   if (
     req.body.hasOwnProperty("doctorId") == false ||
     req.body.doctorId == null ||
@@ -38,57 +97,11 @@ async function createSessions(req, res) {
     res.status(400).send("bad request , duration cannot be empty");
   } else if (
     req.body.hasOwnProperty("days") == false ||
-    req.body.days == null ||
-    req.body.days == ""
+    days == null ||
+    days == ""
   ) {
     res.status(400).send("bad request , days cannot be empty");
-  } 
-  // else if (
-  //   req.body.days[0].hasOwnProperty("dayName") == false ||
-  //   req.body.days[0].dayName == null ||
-  //   req.body.days[0].dayName == ""
-  // ) {
-  //   res.status(400).send("bad request , day name cannot be empty");
-  // } else if (
-  //   req.body.days[0].hasOwnProperty("date") == false ||
-  //   req.body.days[0].date == null ||
-  //   req.body.days[0].date == ""
-  // ) {
-  //   res.status(400).send("bad request , date cannot be empty");
-  // } 
-  // else if (
-  //   req.body.days[0].hasOwnProperty("sessions") == false ||
-  //   req.body.days[0].sessions == null ||
-  //   req.body.days[0].sessions == ""
-  // ) {
-  //   res.status(400).send("bad request , sessions cannot be empty");
-  // } 
-  // else if (
-  //   req.body.days[0].sessions[0].hasOwnProperty("sessionId") == false ||
-  //   req.body.days[0].sessions[0].sessionId == null ||
-  //   req.body.days[0].sessions[0].sessionId == ""
-  // ) {
-  //   res.status(400).send("bad request , sessionId cannot be empty");
-  // } else if (
-  //   req.body.days[0].sessions[0].hasOwnProperty("starttime") == false ||
-  //   req.body.days[0].sessions[0].starttime == null ||
-  //   req.body.days[0].sessions[0].starttime == ""
-  // ) {
-  //   res.status(400).send("bad request , starttime cannot be empty");
-  // } else if (
-  //   req.body.days[0].sessions[0].hasOwnProperty("endtime") == false ||
-  //   req.body.days[0].sessions[0].endtime == null ||
-  //   req.body.days[0].sessions[0].endtime == ""
-  // ) {
-  //   res.status(400).send("bad request , endtime cannot be empty");
-  // } else if (
-  //   req.body.days[0].sessions[0].hasOwnProperty("clinic") == false ||
-  //   req.body.days[0].sessions[0].clinic == null ||
-  //   req.body.days[0].sessions[0].clinic == ""
-  // ) {
-  //   res.status(400).send("bad request , clinic cannot be empty");
-  // } 
-  else {
+  } else {
     // console.log("error", err);
     controller
       .createSessions(req.body)

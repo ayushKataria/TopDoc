@@ -173,8 +173,6 @@ async function createSessions(body) {
 
       for (let j = 0; j < days[i].sessions.length; j++) {
         console.log("for loop 2", days[i].sessions[j]);
-        // let currentTime = new Date(days[i].sessions[j].startTime);
-        // const end = new Date(days[i].sessions[j].endTime);
         let currentTime = convertToInt(days[i].sessions[j].startTime);
         const end = convertToInt(days[i].sessions[j].endTime);
         console.log("try", currentTime, "again ", end);
@@ -191,35 +189,30 @@ async function createSessions(body) {
           };
         } else {
           while (currentTime < end) {
-            // let hours = currentTime.getHours();
-            // let minutes = currentTime.getMinutes();
-            console.log("The End is "+end+"curr time is "+currentTime)
-            let hours = currentTime.toString().substring(0,2);
+            console.log("The End is " + end + "curr time is " + currentTime);
+            let hours = currentTime.toString().substring(0, 2);
             let minutes = currentTime.toString().substring(2);
             if (minutes == "0") {
               minutes = "00";
             }
-            console.log("Hours is "+hours+" min is "+minutes)
-            // const seconds = currentTime.getSeconds();
-             console.log(`${hours}:${minutes}`);
-            slots.push(`${hours}:${minutes}`);
-           // currentTime.setMinutes(currentTime.getMinutes() + duration);
-            currentTime=Number(convertToInt(currentTime))+Number(duration)
-          }
-          days[i].sessions[j].sessionSlots=slots
-          console.log("Slots generated is "+slots);
-          // return slots;
+            console.log("Hours is " + hours + " min is " + minutes);
 
-          // let formattedSlots = slots.map((slot) => slot.toLocaleTimeString());
-          // console.log("hii", formattedSlots);
+            console.log(`${hours}:${minutes}`);
+            slots.push(`${hours}:${minutes}`);
+
+            currentTime = Number(convertToInt(currentTime)) + Number(duration);
+          }
+          days[i].sessions[j].sessionSlots = slots;
+          console.log("Slots generated is " + slots);
+          // return slots;
         }
       }
 
       console.log("body", body.days[0].sessions);
       let request = {};
-      request.schedule ={schedule: body.days};
+      request.schedule = { schedule: body.days };
 
-      console.log( "schedule",request.schedule);
+      console.log("schedule", request.schedule);
 
       let data = await docController.updateProfileDetailsController(
         body.doctorId,
@@ -241,10 +234,13 @@ async function createSessions(body) {
       };
     }
   }
-  function   convertToInt(entry){
-    console.log("Entry is ",entry)
-    entry=entry.toString()
-    return Number(entry.toString().substring(0,entry.indexOf(':'))+entry.toString().substring(entry.indexOf(':')+1))
+  function convertToInt(entry) {
+    console.log("Entry is ", entry);
+    entry = entry.toString();
+    return Number(
+      entry.toString().substring(0, entry.indexOf(":")) +
+        entry.toString().substring(entry.indexOf(":") + 1)
+    );
   }
 }
 
