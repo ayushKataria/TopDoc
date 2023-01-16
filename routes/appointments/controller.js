@@ -176,7 +176,7 @@ async function createSessions(body) {
         let currentTime = convertToInt(days[i].sessions[j].startTime);
         const end = convertToInt(days[i].sessions[j].endTime);
         console.log("try", currentTime, "again ", end);
-        let slots = days[i].sessions[j].sessionSlots || [];
+        let slots = days[i].sessions[j].sessionSlots;
 
         if (
           j + 1 < days[i].sessions.length &&
@@ -207,21 +207,21 @@ async function createSessions(body) {
           // return slots;
         }
       }
-
-      console.log("body", body.days[0].sessions);
-      let request = {};
-      request.schedule = { schedule: body.days };
-
-      console.log("schedule", request.schedule);
-
-      let data = await docController.updateProfileDetailsController(
-        body.doctorId,
-        "doctor",
-        request.schedule
-      );
-
-      return data;
     }
+
+    console.log("body", days[0].sessions);
+    let request = {};
+    request.schedule = { schedule: body.days };
+
+    console.log("schedule", request.schedule);
+
+    let data = await docController.updateProfileDetailsController(
+      body.doctorId,
+      "doctor",
+      request.schedule
+    );
+
+    return data;
   } catch (error) {
     console.log(error);
     if (error.statuscode) {
