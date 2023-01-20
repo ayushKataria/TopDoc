@@ -81,11 +81,18 @@ async function createNewDoctorAccount(object) {
     const { v4: uuidv4 } = require("uuid");
     const newId = uuidv4();
     object.id = newId;
+    const role = object.role;
+    object = _.omit(object, "role");
     console.log("The uuid is ", newId);
 
-    let entityCreationObj = await esdb.insert(object, newId, "doctor_v2");
+    let entityCreationObj = await esdb.insert(object, newId, role);
+    console.log(entityCreationObj);
     if (entityCreationObj.result == "created") {
-      return { statuscode: 200, message: "Profile created Successfully" };
+      return {
+        statuscode: 200,
+        message: "Profile created Successfully",
+        id: newId,
+      };
     } else {
       throw err;
     }

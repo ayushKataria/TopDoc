@@ -173,14 +173,20 @@ async function createSessions(body) {
 
       for (let j = 0; j < days[i].sessions.length; j++) {
         console.log("for loop 2", days[i].sessions[j]);
-        let currentTime = new Date(days[i].sessions[j].starttime);
-        const end = new Date(days[i].sessions[j].endtime);
-        console.log("try", currentTime, "again ", end);
+        let startHour = days[i].sessions[j].startTime.substring(0, 2);
+        let startMinute = days[i].sessions[j].startTime.substring(3);
+        let endHour = days[i].sessions[j].endTime.substring(0, 2);
+        let endMinute = days[i].sessions[j].endTime.substring(3);
+        let startTime =
+          convertToInt(startHour) * 60 + convertToInt(startMinute);
+        const endTime = convertToInt(endHour) * 60 + convertToInt(endMinute);
         let slots = days[i].sessions[j].sessionSlots;
-
         if (
           j + 1 < days[i].sessions.length &&
-          end > new Date(days[i].sessions[j + 1].starttime)
+          endTime >
+            convertToInt(days[i].sessions[j + 1].startTime.substring(0, 2)) *
+              60 +
+              convertToInt(days[i].sessions[j + 1].startTime.substring(3))
         ) {
           throw {
             statuscode: 400,
@@ -188,40 +194,75 @@ async function createSessions(body) {
             message: "Conflict in session timings",
           };
         } else {
-          while (currentTime < end) {
-            let hours = currentTime.getHours();
-            let minutes = currentTime.getMinutes();
-
-            if (minutes == "0") {
-              minutes = "00";
+          while (startTime < endTime) {
+            console.log("The End is " + endTime + "curr time is " + startTime);
+            let hours = Math.floor(startTime / 60);
+            if (hours.toString().length < 2) {
+              hours = "0" + hours;
             }
-            // const seconds = currentTime.getSeconds();
-            // console.log(`${hours}:${minutes}`);
+            let minutes = startTime % 60;
+            if (minutes.toString().length < 2) {
+              minutes = "0" + minutes;
+            }
+            console.log("Hours is " + hours + " min is " + minutes);
+
+            console.log(`${hours}:${minutes}`);
             slots.push(`${hours}:${minutes}`);
-            currentTime.setMinutes(currentTime.getMinutes() + duration);
+
+            startTime = startTime + duration;
           }
-          console.log(slots);
-          // return slots;
-
-          // let formattedSlots = slots.map((slot) => slot.toLocaleTimeString());
-          // console.log("hii", formattedSlots);
+          console.log("Slots generated is " + slots);
         }
+        // ------------------------------------------------------
+        // let currentTime = convertToInt(days[i].sessions[j].startTime);
+        // const end = convertToInt(days[i].sessions[j].endTime);
+        // console.log("try", currentTime, "again ", end);
+        // let slots = days[i].sessions[j].sessionSlots;
+
+        // if (
+        //   j + 1 < days[i].sessions.length &&
+        //   end > convertToInt(days[i].sessions[j + 1].startTime)
+        // ) {
+        //   throw {
+        //     statuscode: 400,
+        //     err: "Bad Request",
+        //     message: "Conflict in session timings",
+        //   };
+        // } else {
+        //   while (currentTime < end) {
+        //     console.log("The End is " + end + "curr time is " + currentTime);
+        //     let hours = currentTime.toString().substring(0, 2);
+        //     let minutes = currentTime.toString().substring(2);
+        //     if (minutes == "0") {
+        //       minutes = "00";
+        //     }
+        //     console.log("Hours is " + hours + " min is " + minutes);
+
+        //     console.log(`${hours}:${minutes}`);
+        //     slots.push(`${hours}:${minutes}`);
+
+        //     currentTime = Number(convertToInt(currentTime)) + Number(duration);
+        //   }
+        //   // days[i].sessions[j].sessionSlots = slots;
+        //   console.log("Slots generated is " + slots);
+        //   // return slots;
+        // }
       }
-
-      console.log("body", body.days[0].sessions);
-      let request = {};
-      request.schedule = body;
-      docController.ConvertDateFormat(body.bookingTimeStamp);
-      console.log(request.sch, "schedule");
-
-      let data = await docController.updateProfileDetailsController(
-        body.doctorId,
-        "doctor",
-        request
-      );
-
-      return data;
     }
+
+    // console.log("body", days[0].sessions);
+    let request = {};
+    request.schedule = { schedule: body.days };
+
+    // console.log("schedule", request.schedule);
+
+    let data = await docController.updateProfileDetailsController(
+      body.doctorId,
+      "doctor",
+      request.schedule
+    );
+
+    return data;
   } catch (error) {
     console.log(error);
     if (error.statuscode) {
@@ -234,34 +275,18 @@ async function createSessions(body) {
       };
     }
   }
-}
-
-async function bookingAppointment(body) {
-  try {
-    let slotId = body.slotId;
-    body.appointmentId = uuid.v4();
-    body.bookingTimeStamp = await docController.ConvertDateFormat(
-      body.bookingTimeStamp
+  function convertToInt(entry) {
+    console.log("Entry is ", entry);
+    entry = entry.toString();
+    return Number(
+      entry.toString().substring(0, entry.indexOf(":")) +
+        entry.toString().substring(entry.indexOf(":") + 1)
     );
-    console.log(body);
-
-    let booking = await docController.updateProfileDetailsController(
-      slotId,
-      "booking",
-      body
-    );
-
-    return booking;
-  } catch (err) {
-    throw {
-      statuscode: 404,
-      message: "There was some error in creating Review",
-    };
   }
 }
+
 module.exports = {
   getSchedule,
   bookAppointment,
   createSessions,
-  bookingAppointment,
 };
