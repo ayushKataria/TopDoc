@@ -3,6 +3,7 @@ const router = require("express").Router();
 const controller = require("./controller");
 const docAttributeList = require("./constants/docAttributeList");
 const userAttributeList = require("../users/constants/userAttributeList");
+const appointmentAttributeList = require("../appointments/constants/appointmentAttributeList");
 const _ = require("underscore");
 const cloudinary = require("cloudinary").v2;
 
@@ -92,14 +93,28 @@ async function updateProfileDetails(req, res) {
     let obj;
     let fail;
     let list;
+    //mandatory property ion req is role and id
+    if (!req.body.hasOwnProperty("id") || !req.body.hasOwnProperty("role")) {
+      return res
+        .status(401)
+        .send("bad request , Mandatory attributes are missing");
+    }
+
     if (req.body.role == "doctor") {
       list = docAttributeList.doctorUpdateAttributes;
     } else if (req.body.role == "user") {
       list = userAttributeList.userUpdateAttributes;
+    } else if (req.body.role == "payment") {
+      list = appointmentAttributeList.bookingUpdateAttributes;
     }
+
+    console.log("The list is ", list);
     Object.keys(req.body).forEach((key) => {
+      console.log("the key is ", key);
+
       if (!list.includes(key)) {
         fail = true;
+        console.log("Missing key is ", key);
       }
     });
     if (fail) {
