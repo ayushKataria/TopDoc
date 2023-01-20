@@ -168,11 +168,14 @@ async function createNewDoctorAccount(req, res) {
   try {
     if (req.body.hasOwnProperty("address") == false) {
       res.status(400).send("bad request, address field is missing");
-    } else if (req.body.hasOwnProperty("ailmentsTreated") == false) {
-      res.status(400).send("bad request, ailmentsTreated field is missing");
-    } else if (req.body.hasOwnProperty("averageRating") == false) {
-      res.status(400).send("bad request, averageRating field is missing");
-    } else if (req.body.hasOwnProperty("city") == false) {
+    } 
+    // else if (req.body.hasOwnProperty("ailmentsTreated") == false) {
+    //   res.status(400).send("bad request, ailmentsTreated field is missing");
+    // } 
+    // else if (req.body.hasOwnProperty("averageRating") == false) {
+    //   res.status(400).send("bad request, averageRating field is missing");
+    // }
+     else if (req.body.hasOwnProperty("city") == false) {
       res.status(400).send("bad request, city field is missing");
     } else if (req.body.hasOwnProperty("country") == false) {
       res.status(400).send("bad request, country field is missing");
@@ -188,43 +191,58 @@ async function createNewDoctorAccount(req, res) {
       res.status(400).send("bad request, firstName field is missing");
     } else if (req.body.hasOwnProperty("gender") == false) {
       res.status(400).send("bad request, gender field is missing");
-    } else if (req.body.hasOwnProperty("hospital") == false) {
-      res.status(400).send("bad request, hospital field is missing");
-    } else if (
-      req.body.hasOwnProperty("isPersonAllowed") == false ||
-      typeof req.body.isPersonAllowed !== "boolean"
-    ) {
-      res.status(400).send("bad request, isPersonAllowed field is missing");
-    } else if (
-      req.body.hasOwnProperty("isVideoAllowed") == false ||
-      typeof req.body.isVideoAllowed !== "boolean"
-    ) {
-      res.status(400).send("bad request, isVideoAllowed field is missing");
-    } else if (req.body.hasOwnProperty("landmark") == false) {
-      res.status(400).send("bad request, landmark field is missing");
-    } else if (req.body.hasOwnProperty("languages") == false) {
+    } 
+    // else if (req.body.hasOwnProperty("hospital") == false) {
+    //   res.status(400).send("bad request, hospital field is missing");
+    // }
+    //  else if (
+    //   req.body.hasOwnProperty("isPersonAllowed") == false ||
+    //   typeof req.body.isPersonAllowed !== "boolean"
+    // ) {
+    //   res.status(400).send("bad request, isPersonAllowed field is missing");
+    // } else if (
+    //   req.body.hasOwnProperty("isVideoAllowed") == false ||
+    //   typeof req.body.isVideoAllowed !== "boolean"
+    // ) 
+    // {
+    //   res.status(400).send("bad request, isVideoAllowed field is missing");
+    // }
+    //  else if (req.body.hasOwnProperty("landmark") == false) {
+    //   res.status(400).send("bad request, landmark field is missing");
+    // } 
+    else if (req.body.hasOwnProperty("languages") == false) {
       res.status(400).send("bad request, languages field is missing");
-    } else if (req.body.hasOwnProperty("lastName") == false) {
-      res.status(400).send("bad request, lastName field is missing");
-    } else if (req.body.hasOwnProperty("licenses") == false) {
-      res.status(400).send("bad request, licenses field is missing");
-    } else if (req.body.hasOwnProperty("locality") == false) {
+    } 
+    // else if (req.body.hasOwnProperty("lastName") == false) {
+    //   res.status(400).send("bad request, lastName field is missing");
+    // } 
+    // else if (req.body.hasOwnProperty("licenses") == false) {
+    //   res.status(400).send("bad request, licenses field is missing");
+    // } 
+    else if (req.body.hasOwnProperty("locality") == false) {
       res.status(400).send("bad request, locality field is missing");
-    } else if (req.body.hasOwnProperty("location") == false) {
-      res.status(400).send("bad request, location field is missing");
-    } else if (req.body.hasOwnProperty("name") == false) {
+    }
+    //  else if (req.body.hasOwnProperty("location") == false) {
+    //   res.status(400).send("bad request, location field is missing");
+    // } 
+    else if (req.body.hasOwnProperty("name") == false) {
       res.status(400).send("bad request, name field is missing");
-    } else if (req.body.hasOwnProperty("phone") == false) {
-      res.status(400).send("bad request, phone field is missing");
-    } else if (req.body.hasOwnProperty("schedule") == false) {
-      res.status(400).send("bad request, schedule field is missing");
-    } else if (req.body.hasOwnProperty("specialization") == false) {
+    } 
+    else if (req.body.hasOwnProperty("mobile") == false) {
+      res.status(400).send("bad request, mobile field is missing");
+    }
+    //  else if (req.body.hasOwnProperty("schedule") == false) {
+    //   res.status(400).send("bad request, schedule field is missing");
+    // }
+     else if (req.body.hasOwnProperty("specialization") == false) {
       res.status(400).send("bad request, specialization field is missing");
     } else if (req.body.hasOwnProperty("state") == false) {
       res.status(400).send("bad request, state field is missing");
-    } else if (req.body.hasOwnProperty("yearsOfExperience") == false) {
-      res.status(400).send("bad request, yearsOfExperience field is missing");
-    } else {
+    } 
+    // else if (req.body.hasOwnProperty("yearsOfExperience") == false) {
+    //   res.status(400).send("bad request, yearsOfExperience field is missing");
+    // }
+     else {
       await controller
         .createNewDoctorAccount(req.body)
         .then((data) => res.send(data))
