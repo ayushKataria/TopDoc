@@ -395,11 +395,7 @@ async function searchInBooking(req, res) {
       });
     }
     if (fail) return;
-
-    // let filtersAttributes = req.body.filters.map((e) => {
-    //   return Object.keys(e)[0];
-    // });
-    // console.log(filtersAttributes);
+    
     if (req.body.hasOwnProperty("filters") == true) {
       list = appointmentAttributeList.filterAttributes;
       req.body.filters

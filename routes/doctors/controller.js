@@ -1,6 +1,8 @@
 "use strict";
 // const esdb1 = require("../../ESUtils/elasticSearch");
 const esdb = require("../../utils/es_util");
+const uuid = require("uuid");
+const _ = require("underscore");
 
 //get doctor data with the help of docId
 async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
@@ -78,8 +80,8 @@ async function updateProfileDetailsController(Identifier, role, updateFields) {
 //create new doctor
 async function createNewDoctorAccount(object) {
   try {
-    const { v4: uuidv4 } = require("uuid");
-    const newId = uuidv4();
+    // console.log("inside controller");
+    const newId = uuid.v4();
     object.id = newId;
     const role = object.role;
     object = _.omit(object, "role");

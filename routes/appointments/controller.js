@@ -166,7 +166,7 @@ function formatDateHHcolonMM(date) {
 
 async function createSessions(body) {
   try {
-    console.log("Fields to fetch 1", body);
+    // console.log("Fields to fetch 1", body);
     let duration = body.duration;
     let days = body.days;
     let year;
@@ -202,12 +202,7 @@ async function createSessions(body) {
           currentMinute
         );
         const end = new Date(year, month, day, endHour, endMinute);
-        // let currentTime = convertToInt(days[i].sessions[j].startTime);
-        // const end = convertToInt(days[i].sessions[j].endTime);
-        // console.log("try", currentTime, "again ", end);
         slots = days[i].sessions[j].sessionSlots;
-        // let fh = parseInt(days[i].sessions[j + 1].startTime);
-        // let fmin = parseInt(days[i].sessions[j + 1].startTime);
         let prioritySlots = [];
         for (let k = 1; k < 6; k++) {
           let priorityBody = {};
@@ -238,15 +233,6 @@ async function createSessions(body) {
           while (currentTime < end) {
             let hours = currentTime.getHours();
             let minutes = currentTime.getMinutes();
-            // console.log("The End is " + end + "curr time is " + currentTime);
-            // let hours = Number(currentTime.toString().substring(0, 2));
-            // let minutes = Number(currentTime.toString().substring(2));
-
-            // if (minutes >= 60) {
-            //   hours = hours + Math.floor(minutes / 60);
-            //   minutes = minutes - 60;
-            //   currentTime = hours * 100 + minutes;
-            // }
             if (minutes == "0") {
               minutes = "00";
             }
@@ -259,31 +245,9 @@ async function createSessions(body) {
             if (hours < 10 && hours > 0) {
               hours = "0" + hours;
             }
-            // console.log("Hours is " + hours + " min is " + minutes);
-            // const seconds = currentTime.getSeconds();
-            // if (Number(`${hours}${minutes}`) > end) {
-            //   hours = Number(end.toString().substring(0, 2));
-            //   minutes = Number(end.toString().substring(2));
-            //   if (minutes == "0") {
-            //     minutes = "00";
-            //   }
-            //   if (minutes < 10 && minutes > 0) {
-            //     slots.push(`${hours}:0${minutes}`);
-            //   } else {
             slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
             tempBody.slotId = `${hours}:${minutes}${days[i].sessions[j].sessionId}`;
-            // console.log(tempBody, "         ", tempBody.slotId);
             await esUtil.insert(tempBody, tempBody.slotId, index);
-            // }
-            // } else {
-            // console.log(`${hours}:${minutes}`);
-            // if (minutes < 10 && minutes > 0) {
-            //   slots.push(`${hours}:0${minutes}`);
-            // } else {
-            //   slots.push(`${hours}:${minutes}`);
-            // }
-            // }
-
             currentTime.setMinutes(currentTime.getMinutes() + duration);
             if (currentTime >= end) {
               currentTime = end;
@@ -303,29 +267,19 @@ async function createSessions(body) {
               }
               slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
               tempBody.slotId = `${hours}:${minutes}${days[i].sessions[j].sessionId}`;
-              // console.log(tempBody, "         ", tempBody.slotId);
               await esUtil.insert(tempBody, tempBody.slotId, index);
             }
-            // currentTime = Number(convertToInt(currentTime)) + Number(duration);
           }
           days[i].sessions[j].sessionSlots = slots;
-          // console.log("Slots generated is " + slots);
-          // return slots;
-
-            startTime = startTime + duration;
-          }
-          console.log("Slots generated is " + slots);
         }
+        // console.log("Slots generated is " + slots);
       }
     }
-
-    console.log("body", body.days[0].sessions);
-    console.log("body", body.days[1].sessions);
+    // console.log("body", body.days[0].sessions);
+    // console.log("body", body.days[1].sessions);
     let request = {};
     request.schedule = { schedule: body.days };
-
     // console.log("schedule", request.schedule);
-
     let data = await docController.updateProfileDetailsController(
       body.doctorId,
       "doctor",
@@ -357,7 +311,6 @@ async function bookingAppointment(body) {
     body.bookingTimeStamp = await docController.ConvertDateFormat(
       body.bookingTimeStamp
     );
-    console.log(body);
     if (body.userType == "registered") {
       slotId = body.slotId;
       booking = await docController.updateProfileDetailsController(
@@ -375,61 +328,21 @@ async function bookingAppointment(body) {
       if (userOutput.result === "created") {
         body.userId = userBody.id;
       } else {
-        body.userId = "profileNotCreated";
+        body.userId = "userProfileNotCreated";
       }
       let query = {};
-      // console.log(query);
       query.sort = [];
-      // console.log(query);
       query.sort[0] = { slotId: "asc" };
-      // console.log(query);
       query.query = {};
-      // console.log(query);
       query.query.bool = {};
-      // console.log(query);
       query.query.bool.must = [];
-      // console.log(query);
       query.query.bool.filter = [];
-      // console.log(query);
       query.query.bool.must[0] = { term: { sessionId: body.sessionId } };
-      // console.log(JSON.stringify(query));
-      // query.query.bool.must[0].term = { sessionId: body.sessionId };
       query.query.bool.filter[0] = { term: { status: "notBooked" } };
-      // console.log(query);
-      // query.query.bool.must[0].term.sessionId = body.sessionId;
-      // query.query.bool.filter[0].term.status = "notBooked";
-      console.log("before query  :", query);
-      // query = {
-      //   sort: [
-      //     {
-      //       slotId: "asc",
-      //     },
-      //   ],
-      //   query: {
-      //     bool: {
-      //       must: [
-      //         {
-      //           term: {
-      //             sessionId: body.sessionId,
-      //           },
-      //         },
-      //       ],
-      //       filter: [
-      //         {
-      //           term: {
-      //             status: "notBooked",
-      //           },
-      //         },
-      //       ],
-      //     },
-      //   },
-      // };
-      console.log("after query");
       let res = await esUtil.search(query, index);
-      console.log("1st query response   :", res);
+      console.log(res);
       if (res.hits.total.value > 0) {
         slotId = res.hits.hits[0]._source.slotId;
-        console.log("slotId   :", slotId);
         body.slotId = slotId;
         body.slotTime = res.hits.hits[0]._source.slotTime;
         booking = await docController.updateProfileDetailsController(
@@ -438,95 +351,87 @@ async function bookingAppointment(body) {
           body
         );
       } else {
-        console.log(
-          "hereeeeeeeeeeeeeeee   ",
-          query.query.bool.filter[0].term.status
-        );
-        query.sort[0] = { slotTime: "desc" };
-        console.log(query);
-
+        query.sort[1] = { slotTime: "desc" };
+        query.sort[0] = {
+          appointmentDate: "desc",
+        };
         query.query.bool.filter[0] = { term: { status: "booked" } };
-        console.log("unReg  Query    :", query);
-        //  query = {
-        //   sort: [
-        //     {
-        //       slotId: asc,
-        //     },
-        //   ],
-        //   query: {
-        //     bool: {
-        //       must: [
-        //         {
-        //           term: {
-        //             sessionId: body.sessionId,
-        //           },
-        //         },
-        //       ],
-        //       filter: [
-        //         {
-        //           term: {
-        //             status: notBooked,
-        //           },
-        //         },
-        //       ],
-        //     },
-        //   },
-        // };
         let resForUnRegUser = await esUtil.search(query, index);
-        // let slotTime = resForUnRegUser.hits.hits[0]._source.slotTime;
-        console.log("unreg  response  :", resForUnRegUser);
         let slotDate = resForUnRegUser.hits.hits[0]._source.appointmentDate;
-        console.log(slotDate);
         let year = slotDate.toString().substring(0, 4);
-        console.log(year);
         let month = slotDate.toString().substring(5, 7);
-        console.log(month);
         let day = slotDate.toString().substring(8);
-        console.log(day);
         let hour = resForUnRegUser.hits.hits[0]._source.slotTime
           .toString()
           .substring(0, 2);
-        console.log(hour);
         let minute = resForUnRegUser.hits.hits[0]._source.slotTime
           .toString()
           .substring(3);
-        console.log(minute);
         const slotDayTime = new Date(year, month, day, hour, minute);
-        console.log(
-          slotDayTime,
-          "minutes   :",
-          slotDayTime.getMinutes(),
-          "hour   :",
-          slotDayTime.getHours()
-        );
+        let currentDate = slotDayTime.toLocaleDateString();
+        console.log("before  ", slotDayTime.toLocaleDateString());
         slotDayTime.setMinutes(
           slotDayTime.getMinutes() + parseInt(body.duration)
         );
+        let appointDate = slotDayTime.toLocaleDateString();
+
         console.log(
-          slotDayTime,
-          "minutes   :",
-          slotDayTime.getMinutes(),
-          "hour   :",
-          slotDayTime.getHours()
+          "after  ",
+          slotDayTime.toLocaleDateString().replaceAll("/", "-")
         );
+        if (currentDate < appointDate || body.appointmentDate != currentDate) {
+          body.appointmentDate = `${slotDayTime.getFullYear()}-${slotDayTime.getMonth()}-${slotDayTime.getDate()}`;
+          const weekday = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ];
+
+          console.log(slotDayTime.getDay());
+          body.slotDay = weekday[slotDayTime.getDay()];
+        }
         let newHour = slotDayTime.getHours();
         let newMinutes = slotDayTime.getMinutes();
+        if (newMinutes == "0") {
+          newMinutes = "00";
+        }
+        if (newMinutes < 10 && newMinutes > 0) {
+          newMinutes = "0" + newMinutes;
+        }
+        if (newHour == "0") {
+          newHour = "00";
+        }
+        if (newHour < 10 && newHour > 0) {
+          newHour = "0" + newHour;
+        }
         let slotTime = `${newHour}:${newMinutes}`;
-        console.log(slotTime);
-
         body.slotTime = slotTime;
         let slotId = slotTime + body.sessionId;
         body.slotId = slotId;
-        console.log(body);
-        booking = await esUtil.insert(body, slotId, index);
+        let dataObj = await esUtil.insert(body, slotId, index);
+        console.log(dataObj);
+        if (dataObj.hasOwnProperty("result") == true) {
+          if (dataObj.result == "noop") {
+            booking = { results: "please enter a new Field Values to update" };
+          } else {
+            booking = { results: "created" };
+          }
+        } else {
+          booking = { results: "some error occured while booking appointment" };
+        }
       }
     }
 
     return booking;
   } catch (err) {
+    console.log(err);
     throw {
       statuscode: 404,
-      message: "There was some error in creating Review",
+      message: "There was some error in booking appointment",
     };
   }
 }
@@ -538,9 +443,6 @@ async function searchInBooking(body) {
     let params = {};
     params.fromValue = body.pageNo * body.pageSize;
     params.sizeValue = body.pageSize;
-    7;
-    console.log(Object.keys(body.search));
-
     if (Object.keys(body.search).length > 0) {
       params.boolTermQuery = true;
       params.fieldName = Object.keys(body.search)[0];
@@ -549,13 +451,10 @@ async function searchInBooking(body) {
         params.doctorAggregation = true;
       } else if (Object.keys(body.search)[0] == "sessionId") {
         params.sessionIdAggregation = true;
-        // params.sessionIdAggregationComma = true;
       } else if (Object.keys(body.search)[0] == "appointmentDate") {
         params.appointmentDateAggregation = true;
-        // params.appointmentDateAggregationComma = true;
       } else if (Object.keys(body.search)[0] == "userId") {
         params.userIdAggregation = true;
-        // params.userIdAggregationComma = true;
       }
     } else {
       params.boolTermQuery = false;
@@ -567,21 +466,6 @@ async function searchInBooking(body) {
     } else {
       params.boolSort = false;
     }
-    // temporay code starts
-    // (params.averageRatingAggregation = true),
-    //   (params.averageRatingAggregationComma = true),
-    //   (params.languagesAggregation = true),
-    //   (params.languagesAggregationComma = true),
-    //   (params.specializationAggregation = true),
-    //   (params.specializationAggregationComma = true),
-    //   (params.cityAggregation = true),
-    //   (params.cityAggregationComma = true),
-    //   (params.countryAggregation = true),
-    //   (params.countryAggregationComma = true),
-    //   (params.yearsOfExperienceAggregation = true),
-    //   (params.yearsOfExperienceAggregationComma = true);
-    // params.genderAggregation = true;
-
     //processing of Filters
     if (body.filters.length > 0) {
       params.boolFilter = true;
@@ -595,18 +479,42 @@ async function searchInBooking(body) {
       params.boolFilter = false;
     }
     let output = {};
-    console.log("params  : ", params);
-
     let dataOb = await esUtil.templateSearch(params, esIndex, esTemplate);
-    console.log("dataOb  :", dataOb);
     output.hits = dataOb.hits.total.value;
     let searchAggs = dataOb["aggregations"]["TotalAggs"];
     // let searchFilterAggs = aggsFunc.aggegrationsData(searchAggs);
     output.result = dataOb.hits.hits.map((e) => {
       return e._source;
-    }); //.map ,.filter ,.reduce
-    // output.filters = searchFilterAggs;
-    output.filters = searchAggs;
+    });
+    let key = [];
+    let arr = [];
+    if (Object.keys(body.search)[0] == "doctorId") {
+      key = Object.keys(searchAggs.doctorAggs);
+      for (let i = 0; i < key.length - 1; i++) {
+        let name = key[i + 1];
+        arr[i] = { [name]: searchAggs.doctorAggs[name] };
+      }
+    } else if (Object.keys(body.search)[0] == "sessionId") {
+      key = Object.keys(searchAggs.sessionIdAggs);
+      for (let i = 0; i < key.length - 1; i++) {
+        let name = key[i + 1];
+        arr[i] = { [name]: searchAggs.sessionIdAggs[name] };
+      }
+    } else if (Object.keys(body.search)[0] == "appointmentDate") {
+      key = Object.keys(searchAggs.appointmentDateAggs);
+      for (let i = 0; i < key.length - 1; i++) {
+        let name = key[i + 1];
+        arr[i] = { [name]: searchAggs.appointmentDateAggs[name] };
+      }
+    } else if (Object.keys(body.search)[0] == "userId") {
+      key = Object.keys(searchAggs.userIdAggs);
+      for (let i = 0; i < key.length - 1; i++) {
+        let name = key[i + 1];
+        arr[i] = { [name]: searchAggs.userIdAggs[name] };
+      }
+    }
+
+    output.filters = arr;
 
     return output;
   } catch (err) {

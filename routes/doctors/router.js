@@ -171,14 +171,7 @@ async function createNewDoctorAccount(req, res) {
   try {
     if (req.body.hasOwnProperty("address") == false) {
       res.status(400).send("bad request, address field is missing");
-    } 
-    // else if (req.body.hasOwnProperty("ailmentsTreated") == false) {
-    //   res.status(400).send("bad request, ailmentsTreated field is missing");
-    // } 
-    // else if (req.body.hasOwnProperty("averageRating") == false) {
-    //   res.status(400).send("bad request, averageRating field is missing");
-    // }
-     else if (req.body.hasOwnProperty("city") == false) {
+    } else if (req.body.hasOwnProperty("city") == false) {
       res.status(400).send("bad request, city field is missing");
     } else if (req.body.hasOwnProperty("country") == false) {
       res.status(400).send("bad request, country field is missing");
@@ -194,58 +187,21 @@ async function createNewDoctorAccount(req, res) {
       res.status(400).send("bad request, firstName field is missing");
     } else if (req.body.hasOwnProperty("gender") == false) {
       res.status(400).send("bad request, gender field is missing");
-    } 
-    // else if (req.body.hasOwnProperty("hospital") == false) {
-    //   res.status(400).send("bad request, hospital field is missing");
-    // }
-    //  else if (
-    //   req.body.hasOwnProperty("isPersonAllowed") == false ||
-    //   typeof req.body.isPersonAllowed !== "boolean"
-    // ) {
-    //   res.status(400).send("bad request, isPersonAllowed field is missing");
-    // } else if (
-    //   req.body.hasOwnProperty("isVideoAllowed") == false ||
-    //   typeof req.body.isVideoAllowed !== "boolean"
-    // ) 
-    // {
-    //   res.status(400).send("bad request, isVideoAllowed field is missing");
-    // }
-    //  else if (req.body.hasOwnProperty("landmark") == false) {
-    //   res.status(400).send("bad request, landmark field is missing");
-    // } 
-    else if (req.body.hasOwnProperty("languages") == false) {
+    } else if (req.body.hasOwnProperty("languages") == false) {
       res.status(400).send("bad request, languages field is missing");
-    } 
-    // else if (req.body.hasOwnProperty("lastName") == false) {
-    //   res.status(400).send("bad request, lastName field is missing");
-    // } 
-    // else if (req.body.hasOwnProperty("licenses") == false) {
-    //   res.status(400).send("bad request, licenses field is missing");
-    // } 
-    else if (req.body.hasOwnProperty("locality") == false) {
+    } else if (req.body.hasOwnProperty("locality") == false) {
       res.status(400).send("bad request, locality field is missing");
-    }
-    //  else if (req.body.hasOwnProperty("location") == false) {
-    //   res.status(400).send("bad request, location field is missing");
-    // } 
-    else if (req.body.hasOwnProperty("name") == false) {
+    } else if (req.body.hasOwnProperty("name") == false) {
       res.status(400).send("bad request, name field is missing");
-    } 
-    else if (req.body.hasOwnProperty("mobile") == false) {
+    } else if (req.body.hasOwnProperty("mobile") == false) {
       res.status(400).send("bad request, mobile field is missing");
-    }
-    //  else if (req.body.hasOwnProperty("schedule") == false) {
-    //   res.status(400).send("bad request, schedule field is missing");
-    // }
-     else if (req.body.hasOwnProperty("specialization") == false) {
+    } else if (req.body.hasOwnProperty("role") == false) {
+      res.status(400).send("bad request, role field is missing");
+    } else if (req.body.hasOwnProperty("specialization") == false) {
       res.status(400).send("bad request, specialization field is missing");
     } else if (req.body.hasOwnProperty("state") == false) {
       res.status(400).send("bad request, state field is missing");
-    } 
-    // else if (req.body.hasOwnProperty("yearsOfExperience") == false) {
-    //   res.status(400).send("bad request, yearsOfExperience field is missing");
-    // }
-     else {
+    } else {
       await controller
         .createNewDoctorAccount(req.body)
         .then((data) => res.send(data))
@@ -381,6 +337,78 @@ async function createDoctorReviews(req, res) {
       obj = _.omit(obj, "role");
       await controller
         .createNewReview(obj, role)
+        .then((data) => res.send(data))
+        .catch((err) => res.status(err.statuscode).send(err));
+    }
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
+
+//Creating new staff for a Doctor
+async function createNewStaff(req, res) {
+  try {
+    let fail = false;
+    const list = docAttributeList.createNewStaffAttributes;
+    Object.keys(req.body).forEach((key) => {
+      if (!list.includes(key)) {
+        res
+          .status(400)
+          .send("bad request , unknown attribute found in request");
+        fail = true;
+      }
+    });
+    if (fail) return;
+
+    if (
+      req.body.hasOwnProperty("mappedTo") == false ||
+      req.body.mappedTo == null ||
+      req.body.mappedTo == ""
+    ) {
+      res.status(400).send("bad request , mappedTo cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("role") == false ||
+      req.body.role == null ||
+      req.body.role == ""
+    ) {
+      res.status(400).send("bad request , role cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("email") == false ||
+      req.body.email == null ||
+      req.body.email == ""
+    ) {
+      res.status(400).send("bad request , email cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("designation") == false ||
+      req.body.designation == null ||
+      req.body.designation == ""
+    ) {
+      res.status(400).send("bad request , designation cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("mobile") == false ||
+      req.body.mobile == null ||
+      req.body.mobile == ""
+    ) {
+      res.status(400).send("bad request , mobile cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("lastName") == false ||
+      req.body.lastName == null ||
+      req.body.lastName == ""
+    ) {
+      res.status(400).send("bad request , lastName cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("firstName") == false ||
+      req.body.firstName == null ||
+      req.body.firstName == ""
+    ) {
+      res.status(400).send("bad request , firstName cannot be empty");
+    } else {
+      await controller
+        .createNewDoctorAccount(obj)
         .then((data) => res.send(data))
         .catch((err) => res.status(err.statuscode).send(err));
     }
@@ -628,4 +656,5 @@ router.put("/updateDetails", updateProfileDetails);
 router.post("/doctorReviews/updateDetails", updateReviewDetails);
 router.post("/doctorReviews/create", createDoctorReviews);
 router.post("/doctorReviews", getDoctorReviewsByUserIdOrDoctorId);
+router.post("/staff/create", createNewStaff);
 module.exports = router;

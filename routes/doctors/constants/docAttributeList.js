@@ -73,10 +73,21 @@ const getRequestReviewAttributes = [
   "sort",
 ];
 
+const createNewStaffAttributes = [
+  "mappedTo",
+  "email",
+  "designation",
+  "mobile",
+  "lastName",
+  "firstName",
+  "role",
+];
+
 module.exports = {
   userReviewsAttributes,
   doctorUpdateAttributes,
   getRequestAttributes,
   sortListForReview,
   getRequestReviewAttributes,
+  createNewStaffAttributes,
 };
