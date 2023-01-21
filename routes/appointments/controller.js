@@ -179,7 +179,6 @@ async function createSessions(body) {
     let slots;
     let tempBody = {};
     tempBody.status = "notBooked";
-    tempBody.sessionId = body.sessionId;
     tempBody.doctorId = body.doctorId;
     let index = "booking";
     for (let i = 0; i < days.length; i++) {
@@ -209,7 +208,7 @@ async function createSessions(body) {
         for (let k = 1; k < 6; k++) {
           let priorityBody = {};
           priorityBody.status = "notBooked";
-          priorityBody.sessionId = body.sessionId;
+          priorityBody.sessionId = days[i].sessions[j].sessionId;
           priorityBody.doctorId = body.doctorId;
           priorityBody.prioritySlotId = `ps0${k}${days[i].sessions[j].sessionId}`;
           prioritySlots.push(`ps0${k}${days[i].sessions[j].sessionId}`);
@@ -269,6 +268,7 @@ async function createSessions(body) {
               if (hours < 10 && hours > 0) {
                 hours = "0" + hours;
               }
+              tempBody.sessionId = days[i].sessions[j].sessionId;
               slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
               tempBody.slotId = `${hours}:${minutes}${days[i].sessions[j].sessionId}`;
               await esUtil.insert(tempBody, tempBody.slotId, index);
