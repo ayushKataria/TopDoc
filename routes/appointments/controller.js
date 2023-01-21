@@ -179,6 +179,8 @@ async function createSessions(body) {
     let slots;
     let tempBody = {};
     tempBody.status = "notBooked";
+    tempBody.sessionId = body.sessionId;
+    tempBody.doctorId = body.doctorId;
     let index = "booking";
     for (let i = 0; i < days.length; i++) {
       // console.log("for loop 1", days[i]);
@@ -207,6 +209,8 @@ async function createSessions(body) {
         for (let k = 1; k < 6; k++) {
           let priorityBody = {};
           priorityBody.status = "notBooked";
+          priorityBody.sessionId = body.sessionId;
+          priorityBody.doctorId = body.doctorId;
           priorityBody.prioritySlotId = `ps0${k}${days[i].sessions[j].sessionId}`;
           prioritySlots.push(`ps0${k}${days[i].sessions[j].sessionId}`);
           await esUtil.insert(priorityBody, priorityBody.prioritySlotId, index);
