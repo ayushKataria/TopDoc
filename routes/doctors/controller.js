@@ -1,6 +1,8 @@
 "use strict";
 // const esdb1 = require("../../ESUtils/elasticSearch");
 const esdb = require("../../utils/es_util");
+const uuid = require("uuid");
+const _ = require("underscore");
 
 //get doctor data with the help of docId
 async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
@@ -78,14 +80,21 @@ async function updateProfileDetailsController(Identifier, role, updateFields) {
 //create new doctor
 async function createNewDoctorAccount(object) {
   try {
-    const { v4: uuidv4 } = require("uuid");
-    const newId = uuidv4();
+    // console.log("inside controller");
+    const newId = uuid.v4();
     object.id = newId;
+    const role = object.role;
+    object = _.omit(object, "role");
     console.log("The uuid is ", newId);
 
-    let entityCreationObj = await esdb.insert(object, newId, "doctor");
+    let entityCreationObj = await esdb.insert(object, newId, role);
+    console.log(entityCreationObj);
     if (entityCreationObj.result == "created") {
-      return { statuscode: 200, message: "Profile created Successfully",id:newId };
+      return {
+        statuscode: 200,
+        message: "Profile created Successfully",
+        id: newId,
+      };
     } else {
       throw err;
     }
@@ -235,10 +244,49 @@ async function getReviewsDetails(body) {
   }
 }
 
+async function ConvertDateFormat(date) {
+  try {
+    let temp = new Date(date).toISOString();
+    let timeZone = new Date(date).getTimezoneOffset();
+    let finalFormat;
+    let finalTimeZone;
+    let isNegative;
+    if (timeZone < 0) {
+      timeZone = timeZone * -1;
+      isNegative = true;
+    }
+    let hours = timeZone / 60;
+    let rhours = Math.floor(hours);
+    let minutes = (hours - rhours) * 60;
+    let rminutes = Math.round(minutes);
+    if (Math.floor(rhours / 10) == 0) {
+      rhours = "0" + rhours;
+    } else if (Math.floor(rminutes / 10) == 0) {
+      rminutes = "0" + rminutes;
+    } else {
+      finalTimeZone = rhours + rminutes;
+    }
+    finalTimeZone = rhours + rminutes;
+    if (isNegative) {
+      finalTimeZone = "-" + finalTimeZone;
+    } else {
+      finalTimeZone = "+" + finalTimeZone;
+    }
+    finalFormat = temp.replace("Z", finalTimeZone);
+    return finalFormat;
+  } catch (err) {
+    throw {
+      statuscode: 400,
+      message: "There was some error in converting Date Format",
+    };
+  }
+}
+
 module.exports = {
   getProfileDetailsController,
   createNewDoctorAccount,
   updateProfileDetailsController,
   createNewReview,
   getReviewsDetails,
+  ConvertDateFormat,
 };
