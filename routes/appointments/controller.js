@@ -223,8 +223,12 @@ async function createSessions(body) {
               year,
               month,
               day,
-              parseInt(days[i].sessions[j + 1].startTime),
-              parseInt(days[i].sessions[j + 1].startTime)
+              parseInt(
+                days[i].sessions[j + 1].startTime.toString().substring(0, 2)
+              ),
+              parseInt(
+                days[i].sessions[j + 1].startTime.toString().substring(3)
+              )
             )
         ) {
           throw {
