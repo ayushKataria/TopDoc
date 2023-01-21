@@ -248,6 +248,7 @@ async function createSessions(body) {
             if (hours < 10 && hours > 0) {
               hours = "0" + hours;
             }
+            tempBody.sessionId = days[i].sessions[j].sessionId;
             slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
             tempBody.slotId = `${hours}:${minutes}${days[i].sessions[j].sessionId}`;
             await esUtil.insert(tempBody, tempBody.slotId, index);
