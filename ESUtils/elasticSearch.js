@@ -1,11 +1,14 @@
 const elasticsearch = require("elasticsearch");
+
+const esdb = require("../utils/es_util")
 const { json } = require("express");
 
 let elasticSearchClient = null;
+let esClient = null;
 //Akash Elastic pass
 
-var auth = "elastic" + ":" + "N=D14f7buQbu74p*iq3+";
-const connstring = "https://" + "localhost" + ":" + "9200";
+var auth = "elastic" + ":" + "j*+44bej_O0ZsUlUxFH5";
+const connstring = "http://" + "localhost" + ":" + "9200";
 
 const enable_password = true;
 function connectClient() {
@@ -43,14 +46,16 @@ function connectClient() {
 
 //get profile details
 function getData(queryBody, paramIndex) {
-  console.log("hello elastic ");
-  if (elasticSearchClient == null) {
-    connectClient();
-    console.log("connect client elastic");
+  console.log("hello elastic ",paramIndex+ " query is "+JSON.stringify(queryBody));
+  if (esdb == null) {
+   // connectClient();
+   esdb.setClient()
+    console.log("connect client elastic",esdb);
   }
-
+  console.log("connect client elastic",esdb);
+//console.log("ElasticSearch client called is ",elasticSearchClient)
   return new Promise((resolve, reject) => {
-    elasticSearchClient
+    esdb
       .search({
         index: paramIndex,
         body: queryBody,
@@ -60,7 +65,7 @@ function getData(queryBody, paramIndex) {
         resolve(result);
       })
       .catch((err) => {
-        // log.error('error: ' + err);
+       console.log("Error is ",err)
         reject(err);
       });
   });

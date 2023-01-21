@@ -32,13 +32,13 @@ async function createSessions(req, res) {
         days[i].dayName == null ||
         days[i].dayName == ""
       ) {
-        res.status(400).send("bad request , day name cannot be empty");
+       return res.status(400).send("bad request , day name cannot be empty");
       } else if (
         days[i].hasOwnProperty("date") == false ||
         days[i].date == null ||
         days[i].date == ""
       ) {
-        res.status(400).send("bad request , date cannot be empty");
+       return res.status(400).send("bad request , date cannot be empty");
       }
       if (days[i].sessions.length > 0) {
         for (let j = 0; j < days[i].sessions.length; j++) {
@@ -47,35 +47,35 @@ async function createSessions(req, res) {
             days[i].sessions[j].sessionId == null ||
             days[i].sessions[j].sessionId == ""
           ) {
-            res.status(400).send("bad request , sessionId cannot be empty");
+            return  res.status(400).send("bad request , sessionId cannot be empty");
           } else if (
             days[i].sessions[j].hasOwnProperty("startTime") == false ||
             days[i].sessions[j].startTime == null ||
             days[i].sessions[j].startTime == ""
           ) {
-            res.status(400).send("bad request , startTime cannot be empty");
+            return  res.status(400).send("bad request , startTime cannot be empty");
           } else if (
             days[i].sessions[j].hasOwnProperty("endTime") == false ||
             days[i].sessions[j].endTime == null ||
             days[i].sessions[j].endTime == ""
           ) {
-            res.status(400).send("bad request , endTime cannot be empty");
+            return  res.status(400).send("bad request , endTime cannot be empty");
           } else if (
             days[i].sessions[j].hasOwnProperty("clinic") == false ||
             days[i].sessions[j].clinic == null ||
             days[i].sessions[j].clinic == ""
           ) {
-            res.status(400).send("bad request , clinic cannot be empty");
+            return  res.status(400).send("bad request , clinic cannot be empty");
           } else if (
             days[i].sessions[j].hasOwnProperty("sessionSlots") == false
           ) {
-            res
+           return res
               .status(400)
               .send("bad request , sessionSlots field is mandatory");
           } else if (
             days[i].sessions[j].hasOwnProperty("prioritySlots") == false
           ) {
-            res
+           return res
               .status(400)
               .send("bad request , prioritySlots field is mandatory");
           }
@@ -101,7 +101,8 @@ async function createSessions(req, res) {
     days == ""
   ) {
     res.status(400).send("bad request , days cannot be empty");
-  } else {
+  } 
+  else {
     // console.log("error", err);
     controller
       .createSessions(req.body)

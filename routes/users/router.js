@@ -280,7 +280,54 @@ async function favouriteDoctor(req, res) {
       .catch((err) => res.status(err.statuscode).send(err));
   }
 }
-
+//For doctor
+router.post("/login/doc", function (req, res) {
+  console.log("Req is ",req.body)
+  if (
+    (!req.body.hasOwnProperty("mobile") ||
+      req.body.mobile == null ||
+      req.body.mobile == "") &&
+    (!req.body.hasOwnProperty("emailId") ||
+      req.body.emailId == null ||
+      req.body.emailId == "")
+  ) {
+    res.status(400).send("one of Mobile Number or Email id is mandatory");
+  } else if (!(req.body.hasOwnProperty("password") || req.body.hasOwnProperty("pin"))) {
+    res.status(400).send("Password or Pin is required");
+  } else {
+    // if(!validatePassword(req.body.password)){
+    //     res.status(403).send("password is not valid")
+    // }
+    controller
+      .loginDoc(req.body)
+      .then((data) => res.send(data))
+      .catch((err) => res.status(err.statuscode).send(err));
+  }
+});
+//For staff
+router.post("/login/staff", function (req, res) {
+  if (
+    (!req.body.hasOwnProperty("mobileNumber") ||
+      req.body.mobileNumber == null ||
+      req.body.mobileNumber == "")
+    //    &&
+    // (!req.body.hasOwnProperty("emailId") ||
+    //   req.body.emailId == null ||
+    //   req.body.emailId == "")
+  ) {
+    res.status(400).send("Mobile number is required");
+  } else if (!req.body.hasOwnProperty("pin")) {
+    res.status(400).send("Password cannot be empty");
+  } else {
+    // if(!validatePassword(req.body.password)){
+    //     res.status(403).send("password is not valid")
+    // }
+    controller
+      .loginStaff(req.body)
+      .then((data) => res.send(data))
+      .catch((err) => res.status(err.statuscode).send(err));
+  }
+});
 router.post("/userDetails/addMedicalDetails", addMedicalDetails);
 router.post("/userDetails/getMedicalDetails", medicalDetails);
 router.post("/userDetails/favouriteDoctor", favouriteDoctor);

@@ -38,6 +38,7 @@ const userUpdateAttributes = [
   "name",
   "state",
   "first_name",
+  'gender',
   "last_name",
   "medicalDetails",
   "blood_group",

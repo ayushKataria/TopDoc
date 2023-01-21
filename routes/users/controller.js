@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const docController = require("../doctors/controller");
 const jwt = require("jsonwebtoken");
 const esdb = require("../../ESUtils/elasticSearch");
+const esdb1=require("../../utils/es_util")
 const queryBuilder = require("../../utils/queryBuilder.js");
 const uuid = require("uuid");
 const userSchema = require("./userSchema");
@@ -14,17 +15,21 @@ function getDocByemailId(emailId, paramIndex) {
       },
     },
   };
-  return esdb.getData(queryBody, paramIndex);
+  return esdb1.search(queryBody, paramIndex)
 }
-function getDocByPhone(mobile, paramIndex) {
+async function getDocByPhone(mobile, paramIndex) {
+  
   let queryBody = {
     query: {
       term: {
-        mobile: mobile,
-      },
-    },
+        "mobile": mobile
+      }
+    }
   };
-  return esdb.getData(queryBody, paramIndex);
+  console.log("Reaching the spot",JSON.stringify(queryBody))
+ // return esdb.getData(queryBody, paramIndex);
+ console.log("ESDB! IS ",esdb1)
+ return await esdb1.search(queryBody, paramIndex)
 }
 
 function getUserQueryBody(req, id, emailId = null, phone = null, hashpassword) {
@@ -62,6 +67,8 @@ async function compareHashPassword(req_password, saved_Password) {
       req_password,
       saved_Password
     );
+
+    console.log("Comparehashed pwd is ",comparehashedPassword)
     return comparehashedPassword;
   } catch (error) {
     if (error.statuscode) {
@@ -228,6 +235,211 @@ async function login(req, res) {
       let userData = await getDocByPhone(req.mobileNumber, "user");
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
+        isVerified = await compareHashPassword(req.password, savedPassword);
+        if (isVerified) {
+          const token = jwt.sign(
+            {
+              mobileNo: userData["hits"]["hits"][0]["_source"]["mobile"],
+              id: userData["hits"]["hits"][0]["_source"]["id"],
+            },
+            "secretKey",
+            {
+              expiresIn: "1h",
+            }
+          );
+          result = {
+            statuscode: 200,
+            message: "Authorization successfull",
+            token: token,
+          };
+        } else {
+          result = { statuscode: 401, message: "Authorization failed" };
+        }
+      } else {
+        throw {
+          statuscode: 401,
+          err: "access denied",
+          message: "Authorization failed",
+        };
+      }
+    }
+
+    return result;
+  } catch (error) {
+    if (error.statuscode) {
+      throw error;
+    } else {
+      throw {
+        statuscode: 500,
+        err: "internal server error",
+        message: "unexpected error",
+      };
+    }
+  }
+}
+//for doc
+async function loginDoc(req, res) {
+  try {
+    let result = {};
+    let id = null;
+    let hashpassword = null;
+    let isVerified = false;
+    console.log("In login Doc block",req.password);
+    if (req.hasOwnProperty("emailId")) {
+      let userData = await getDocByemailId(req.emailId, "doctor");
+      let userDetailsRec=userData.hits.hits[0]._source
+
+      if (userData["hits"]["total"]["value"] > 0) {
+        let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
+        console.log("Saved pwd is ",savedPassword)
+        isVerified = await compareHashPassword(req.password, savedPassword);
+        if (isVerified) {
+          const token = jwt.sign(
+            {
+              email: userData["hits"]["hits"][0]["_source"]["email"],
+              id: userData["hits"]["hits"][0]["_source"]["id"],
+            },
+            "secretKey",
+            {
+              expiresIn: "1h",
+            }
+          );
+          result = {
+            statuscode: 200,
+            message: "Authorization successfull",
+            token: token,
+            docDetails:{
+              mobile:userDetailsRec.mobile,
+              name:userDetailsRec.name,
+              profImageUrl:userDetailsRec.profImageUrl,
+              userId:userDetailsRec.id,
+              email:userDetailsRec.email,
+              gender:userDetailsRec.gender,
+              username:userDetailsRec.username,
+              first_name:userDetailsRec.firstName,
+              last_name:userDetailsRec.lastName
+
+            }
+          };
+        } else {
+          result = { statuscode: 401, message: "Authorization failed" };
+        }
+      } else {
+        throw {
+          statuscode: 401,
+          err: "access denied",
+          message: "Authorization failed",
+        };
+      }
+    }
+    console.log("phone present ",req.hasOwnProperty("mobile"))
+    if (req.hasOwnProperty("mobile")) {
+      let userData = await getDocByPhone(req.mobile, "doctor");
+      console.log("USER IS ",userData.hits.hits[0]._source)
+      let userDetailsRec=userData.hits.hits[0]._source
+      if (userData["hits"]["total"]["value"] > 0) {
+        let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
+        isVerified = true
+        if (isVerified) {
+          const token = jwt.sign(
+            {
+              phone: userData["hits"]["hits"][0]["_source"]["mobile"],
+              id: userData["hits"]["hits"][0]["_source"]["id"],
+            },
+            "secretKey",
+            {
+              expiresIn: "1h",
+            }
+          );
+          console.log("jwt token is ",token)
+          result = {
+            statuscode: 200,
+            message: "Authorization successfull",
+            token: token,
+            
+            docDetails:{
+              mobile:userDetailsRec.mobile,
+              name:userDetailsRec.name,
+              profImageUrl:userDetailsRec.profImageUrl,
+              userId:userDetailsRec.id,
+              email:userDetailsRec.email,
+              gender:userDetailsRec.gender,
+              username:userDetailsRec.username,
+              first_name:userDetailsRec.firstName,
+              last_name:userDetailsRec.lastName
+
+            }
+          };
+        } else {
+          result = { statuscode: 401, message: "Authorization failed" };
+        }
+      } else {
+        throw {
+          statuscode: 401,
+          err: "access denied",
+          message: "Authorization failed",
+        };
+      }
+    }
+
+    return result;
+  } catch (error) {
+    if (error.statuscode) {
+      throw error;
+    } else {
+      throw {
+        statuscode: 500,
+        err: "internal server error",
+        message: "unexpected error",
+      };
+    }
+  }
+}
+//for staff login
+async function loginStaff(req, res) {
+  try {
+    let result = {};
+    let id = null;
+    let hashpassword = null;
+    let isVerified = false;
+    console.log("In login block for staff");
+    // if (req.hasOwnProperty("emailId")) {
+    //   let userData = await getDocByemailId(req.emailId, "user");
+    //   if (userData["hits"]["total"]["value"] > 0) {
+    //     let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
+    //     isVerified = await compareHashPassword(req.password, savedPassword);
+    //     if (isVerified) {
+    //       const token = jwt.sign(
+    //         {
+    //           email: userData["hits"]["hits"][0]["_source"]["email"],
+    //           id: userData["hits"]["hits"][0]["_source"]["id"],
+    //         },
+    //         "secretKey",
+    //         {
+    //           expiresIn: "1h",
+    //         }
+    //       );
+    //       result = {
+    //         statuscode: 200,
+    //         message: "Authorization successfull",
+    //         token: token,
+    //       };
+    //     } else {
+    //       result = { statuscode: 401, message: "Authorization failed" };
+    //     }
+    //   } else {
+    //     throw {
+    //       statuscode: 401,
+    //       err: "access denied",
+    //       message: "Authorization failed",
+    //     };
+    //   }
+    // }
+    if (req.hasOwnProperty("mobileNumber")) {
+      let userData = await getDocByPhone(req.mobileNumber, "user");
+     
+      if (userData["hits"]["total"]["value"] > 0) {
+        let savedPassword = userData["hits"]["hits"][0]["_source"]["pin"];
         isVerified = await compareHashPassword(req.password, savedPassword);
         if (isVerified) {
           const token = jwt.sign(
@@ -633,6 +845,8 @@ async function favouriteDoctor(body) {
 module.exports = {
   signup,
   login,
+  loginStaff,
+  loginDoc,
   changePassword,
   updateProfile,
   viewProfile,
