@@ -282,7 +282,7 @@ async function favouriteDoctor(req, res) {
 }
 //For doctor
 router.post("/login/doc", function (req, res) {
-  console.log("Req is ",req.body)
+  console.log("Req is ", req.body);
   if (
     (!req.body.hasOwnProperty("mobile") ||
       req.body.mobile == null ||
@@ -292,7 +292,9 @@ router.post("/login/doc", function (req, res) {
       req.body.emailId == "")
   ) {
     res.status(400).send("one of Mobile Number or Email id is mandatory");
-  } else if (!(req.body.hasOwnProperty("password") || req.body.hasOwnProperty("pin"))) {
+  } else if (
+    !(req.body.hasOwnProperty("password") || req.body.hasOwnProperty("pin"))
+  ) {
     res.status(400).send("Password or Pin is required");
   } else {
     // if(!validatePassword(req.body.password)){
@@ -304,19 +306,64 @@ router.post("/login/doc", function (req, res) {
       .catch((err) => res.status(err.statuscode).send(err));
   }
 });
+
+async function staffIsRegistredOrUnregistered(req, res) {
+  try {
+    let fail = false;
+    const list = userAttributeList.staffRegistredAttributes;
+    Object.keys(req.body).forEach((key) => {
+      if (!list.includes(key)) {
+        res
+          .status(400)
+          .send("bad request , unknown attribute found in request");
+        fail = true;
+      }
+    });
+    if (fail) return;
+
+    // if (
+    //   req.body.hasOwnProperty("mobile") == false ||
+    //   req.body.mobile == null ||
+    //   req.body.mobile == ""
+    // ) {
+    //   res.status(400).send("bad request , mobile cannot be empty");
+    // } else
+    if (
+      req.body.hasOwnProperty("role") == false ||
+      req.body.role == null ||
+      req.body.role == ""
+    ) {
+      res.status(400).send("bad request , role cannot be empty");
+    } else {
+      await controller
+        .staffIsRegistredOrUnregistered(req.body)
+        .then((data) => res.send(data))
+        .catch((err) => res.status(err.statuscode).send(err));
+    }
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
 //For staff
 router.post("/login/staff", function (req, res) {
   if (
-    (!req.body.hasOwnProperty("mobileNumber") ||
-      req.body.mobileNumber == null ||
-      req.body.mobileNumber == "")
+    !req.body.hasOwnProperty("mobileNumber") ||
+    req.body.mobileNumber == null ||
+    req.body.mobileNumber == ""
     //    &&
     // (!req.body.hasOwnProperty("emailId") ||
     //   req.body.emailId == null ||
     //   req.body.emailId == "")
   ) {
     res.status(400).send("Mobile number is required");
-  } else if (!req.body.hasOwnProperty("pin") || !req.body.hasOwnProperty("password") ) {
+  } else if (
+    !req.body.hasOwnProperty("pin") ||
+    !req.body.hasOwnProperty("password")
+  ) {
     res.status(400).send("Password or Pin is required");
   } else {
     // if(!validatePassword(req.body.password)){
@@ -331,5 +378,6 @@ router.post("/login/staff", function (req, res) {
 router.post("/userDetails/addMedicalDetails", addMedicalDetails);
 router.post("/userDetails/getMedicalDetails", medicalDetails);
 router.post("/userDetails/favouriteDoctor", favouriteDoctor);
+router.post("/staff/mobilecheck", staffIsRegistredOrUnregistered);
 
 module.exports = router;

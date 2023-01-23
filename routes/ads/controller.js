@@ -266,7 +266,7 @@ async function searchFieldInAds(body) {
     Query.query.term = {};
     let obj = body;
 
-    if (body.hasOwnProperty("sortBy") == true) {
+    if (body.hasOwnProperty("sortBy") == true && Object.keys(body.sortBy) > 0) {
       sortBy = Object.keys(body.sortBy)[0];
       sortByValue = Object.values(body.sortBy)[0];
       obj = _.omit(obj, "sort");
@@ -311,7 +311,7 @@ async function searchFieldInAds(body) {
     console.log(err);
     throw {
       statuscode: 404,
-      message: "There was some error in fetching Reviews",
+      message: "There was some error in fetching the result",
     };
   }
 }
