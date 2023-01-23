@@ -30,6 +30,8 @@ const doctorUpdateAttributes = [
   "firstName",
   "gender",
   "hospital",
+  "testsKeywordList",
+  "symptomsKeywordList",
   "identifier",
   "isPersonAllowed",
   "isVideoAllowed",

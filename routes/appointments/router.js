@@ -46,29 +46,28 @@ async function createSessions(req, res) {
         for (let j = 0; j < days[i].sessions.length; j++) {
           if (
             days[i].sessions[j].hasOwnProperty("sessionId") == false ||
-            days[i].sessions[j].sessionId == null ||
-            days[i].sessions[j].sessionId == ""
+            days[i].sessions[j].sessionId == null 
           ) {
-           return res.status(400).send("bad request , sessionId cannot be empty");
-          } else if (
+           return res.status(400).send("bad request , sessionId missing");
+          }
+           else if (
             days[i].sessions[j].hasOwnProperty("startTime") == false ||
-            days[i].sessions[j].startTime == null ||
-            days[i].sessions[j].startTime == ""
+            days[i].sessions[j].startTime == null 
           ) {
             return res.status(400).send("bad request , startTime cannot be empty");
           } else if (
             days[i].sessions[j].hasOwnProperty("endTime") == false ||
-            days[i].sessions[j].endTime == null ||
-            days[i].sessions[j].endTime == ""
+            days[i].sessions[j].endTime == null 
           ) {
            return res.status(400).send("bad request , endTime cannot be empty");
-          } else if (
+          } 
+          else if (
             days[i].sessions[j].hasOwnProperty("clinic") == false ||
-            days[i].sessions[j].clinic == null ||
-            days[i].sessions[j].clinic == ""
+            days[i].sessions[j].clinic == null 
           ) {
            return res.status(400).send("bad request , clinic cannot be empty");
-          } else if (
+          } 
+          else if (
             days[i].sessions[j].hasOwnProperty("sessionSlots") == false
           ) {
            return res

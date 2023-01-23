@@ -317,7 +317,9 @@ async function loginDoc(req, res) {
               gender:userDetailsRec.gender,
               username:userDetailsRec.username,
               first_name:userDetailsRec.firstName,
-              last_name:userDetailsRec.lastName
+              last_name:userDetailsRec.lastName,
+              testKeywordList:userDetailsRec.testsKeywordList,
+              symptomsKeywordList:userDetailsRec.symptomsKeywordList
 
             }
           };
@@ -351,7 +353,7 @@ async function loginDoc(req, res) {
               expiresIn: "1h",
             }
           );
-          console.log("jwt token is ",token)
+          console.log("jwt token is ",token+ " test list is "+userDetailsRec.testsKeywordList)
           result = {
             statuscode: 200,
             message: "Authorization successfull",
@@ -366,7 +368,9 @@ async function loginDoc(req, res) {
               gender:userDetailsRec.gender,
               username:userDetailsRec.username,
               first_name:userDetailsRec.firstName,
-              last_name:userDetailsRec.lastName
+              last_name:userDetailsRec.lastName,
+              testKeywordList:userDetailsRec.testsKeywordList,
+              symptomsKeywordList:userDetailsRec.symptomsKeywordList
 
             }
           };

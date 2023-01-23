@@ -316,8 +316,8 @@ router.post("/login/staff", function (req, res) {
     //   req.body.emailId == "")
   ) {
     res.status(400).send("Mobile number is required");
-  } else if (!req.body.hasOwnProperty("pin")) {
-    res.status(400).send("Password cannot be empty");
+  } else if (!req.body.hasOwnProperty("pin") || !req.body.hasOwnProperty("password") ) {
+    res.status(400).send("Password or Pin is required");
   } else {
     // if(!validatePassword(req.body.password)){
     //     res.status(403).send("password is not valid")
