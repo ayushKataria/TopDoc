@@ -148,9 +148,7 @@ async function searchFieldInPayment(req, res) {
       req.body.role == ""
     ) {
       res.status(400).send("bad request ,  role cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("sortBy") == false 
-    ) {
+    } else if (req.body.hasOwnProperty("sortBy") == false) {
       res.status(400).send("bad request ,  sortBy cannot be empty");
     } else if (Object.keys(req.body).length <= 1) {
       res.status(400).send("bad request , please enter a field to search");

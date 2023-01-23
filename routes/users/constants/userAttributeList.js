@@ -38,13 +38,16 @@ const userUpdateAttributes = [
   "name",
   "state",
   "first_name",
-  'gender',
+  "gender",
   "last_name",
   "medicalDetails",
   "blood_group",
 ];
+
+const staffRegistredAttributes = ["mobile", "role", "id"];
 module.exports = {
   userAttributes,
   userMedicalDetailsAttributes,
   userUpdateAttributes,
+  staffRegistredAttributes,
 };

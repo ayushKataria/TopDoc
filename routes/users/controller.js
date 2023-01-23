@@ -2,10 +2,12 @@ const bcrypt = require("bcrypt");
 const docController = require("../doctors/controller");
 const jwt = require("jsonwebtoken");
 const esdb = require("../../ESUtils/elasticSearch");
-const esdb1=require("../../utils/es_util")
+const esdb1 = require("../../utils/es_util");
 const queryBuilder = require("../../utils/queryBuilder.js");
 const uuid = require("uuid");
 const userSchema = require("./userSchema");
+const adsController = require("../ads/controller");
+const { result } = require("underscore");
 
 function getDocByemailId(emailId, paramIndex) {
   let queryBody = {
@@ -15,21 +17,20 @@ function getDocByemailId(emailId, paramIndex) {
       },
     },
   };
-  return esdb1.search(queryBody, paramIndex)
+  return esdb1.search(queryBody, paramIndex);
 }
 async function getDocByPhone(mobile, paramIndex) {
-  
   let queryBody = {
     query: {
       term: {
-        "mobile": mobile
-      }
-    }
+        mobile: mobile,
+      },
+    },
   };
-  console.log("Reaching the spot",JSON.stringify(queryBody))
- // return esdb.getData(queryBody, paramIndex);
- console.log("ESDB! IS ",esdb1)
- return await esdb1.search(queryBody, paramIndex)
+  console.log("Reaching the spot", JSON.stringify(queryBody));
+  // return esdb.getData(queryBody, paramIndex);
+  console.log("ESDB! IS ", esdb1);
+  return await esdb1.search(queryBody, paramIndex);
 }
 
 function getUserQueryBody(req, id, emailId = null, phone = null, hashpassword) {
@@ -68,7 +69,7 @@ async function compareHashPassword(req_password, saved_Password) {
       saved_Password
     );
 
-    console.log("Comparehashed pwd is ",comparehashedPassword)
+    console.log("Comparehashed pwd is ", comparehashedPassword);
     return comparehashedPassword;
   } catch (error) {
     if (error.statuscode) {
@@ -284,14 +285,14 @@ async function loginDoc(req, res) {
     let id = null;
     let hashpassword = null;
     let isVerified = false;
-    console.log("In login Doc block",req.password);
+    console.log("In login Doc block", req.password);
     if (req.hasOwnProperty("emailId")) {
       let userData = await getDocByemailId(req.emailId, "doctor");
-      let userDetailsRec=userData.hits.hits[0]._source
+      let userDetailsRec = userData.hits.hits[0]._source;
 
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
-        console.log("Saved pwd is ",savedPassword)
+        console.log("Saved pwd is ", savedPassword);
         isVerified = await compareHashPassword(req.password, savedPassword);
         if (isVerified) {
           const token = jwt.sign(
@@ -308,20 +309,19 @@ async function loginDoc(req, res) {
             statuscode: 200,
             message: "Authorization successfull",
             token: token,
-            docDetails:{
-              mobile:userDetailsRec.mobile,
-              name:userDetailsRec.name,
-              profImageUrl:userDetailsRec.profImageUrl,
-              userId:userDetailsRec.id,
-              email:userDetailsRec.email,
-              gender:userDetailsRec.gender,
-              username:userDetailsRec.username,
-              first_name:userDetailsRec.firstName,
-              last_name:userDetailsRec.lastName,
-              testKeywordList:userDetailsRec.testsKeywordList,
-              symptomsKeywordList:userDetailsRec.symptomsKeywordList
-
-            }
+            docDetails: {
+              mobile: userDetailsRec.mobile,
+              name: userDetailsRec.name,
+              profImageUrl: userDetailsRec.profImageUrl,
+              userId: userDetailsRec.id,
+              email: userDetailsRec.email,
+              gender: userDetailsRec.gender,
+              username: userDetailsRec.username,
+              first_name: userDetailsRec.firstName,
+              last_name: userDetailsRec.lastName,
+              testKeywordList: userDetailsRec.testsKeywordList,
+              symptomsKeywordList: userDetailsRec.symptomsKeywordList,
+            },
           };
         } else {
           result = { statuscode: 401, message: "Authorization failed" };
@@ -334,14 +334,14 @@ async function loginDoc(req, res) {
         };
       }
     }
-    console.log("phone present ",req.hasOwnProperty("mobile"))
+    console.log("phone present ", req.hasOwnProperty("mobile"));
     if (req.hasOwnProperty("mobile")) {
       let userData = await getDocByPhone(req.mobile, "doctor");
-      console.log("USER IS ",userData.hits.hits[0]._source)
-      let userDetailsRec=userData.hits.hits[0]._source
+      console.log("USER IS ", userData.hits.hits[0]._source);
+      let userDetailsRec = userData.hits.hits[0]._source;
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
-        isVerified = true
+        isVerified = true;
         if (isVerified) {
           const token = jwt.sign(
             {
@@ -353,26 +353,28 @@ async function loginDoc(req, res) {
               expiresIn: "1h",
             }
           );
-          console.log("jwt token is ",token+ " test list is "+userDetailsRec.testsKeywordList)
+          console.log(
+            "jwt token is ",
+            token + " test list is " + userDetailsRec.testsKeywordList
+          );
           result = {
             statuscode: 200,
             message: "Authorization successfull",
             token: token,
-            
-            docDetails:{
-              mobile:userDetailsRec.mobile,
-              name:userDetailsRec.name,
-              profImageUrl:userDetailsRec.profImageUrl,
-              userId:userDetailsRec.id,
-              email:userDetailsRec.email,
-              gender:userDetailsRec.gender,
-              username:userDetailsRec.username,
-              first_name:userDetailsRec.firstName,
-              last_name:userDetailsRec.lastName,
-              testKeywordList:userDetailsRec.testsKeywordList,
-              symptomsKeywordList:userDetailsRec.symptomsKeywordList
 
-            }
+            docDetails: {
+              mobile: userDetailsRec.mobile,
+              name: userDetailsRec.name,
+              profImageUrl: userDetailsRec.profImageUrl,
+              userId: userDetailsRec.id,
+              email: userDetailsRec.email,
+              gender: userDetailsRec.gender,
+              username: userDetailsRec.username,
+              first_name: userDetailsRec.firstName,
+              last_name: userDetailsRec.lastName,
+              testKeywordList: userDetailsRec.testsKeywordList,
+              symptomsKeywordList: userDetailsRec.symptomsKeywordList,
+            },
           };
         } else {
           result = { statuscode: 401, message: "Authorization failed" };
@@ -441,7 +443,7 @@ async function loginStaff(req, res) {
     // }
     if (req.hasOwnProperty("mobileNumber")) {
       let userData = await getDocByPhone(req.mobileNumber, "user");
-     
+
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["pin"];
         isVerified = await compareHashPassword(req.password, savedPassword);
@@ -814,8 +816,8 @@ async function favouriteDoctor(body) {
     ]);
     // .then((data) => res.send(data))
     data = data.results[0].favouriteDoctor;
-    console.log("Data is ",data)
-    let hits =data.length
+    console.log("Data is ", data);
+    let hits = data.length;
     // .catch((err) => res.status(err.statuscode).send(err));
     // console.log("Fields to fetch 1", data)
     data.sort(function (a, b) {
@@ -832,7 +834,7 @@ async function favouriteDoctor(body) {
     let fieldData = data.slice((page - 1) * size, page * size); //hardcode value is working
     console.log(fieldData);
     doctorList.push(fieldData);
-    return{hits : hits,result : doctorList} 
+    return { hits: hits, result: doctorList };
   } catch (error) {
     if (error.statuscode) {
       throw error;
@@ -843,6 +845,61 @@ async function favouriteDoctor(body) {
         message: "unexpected error",
       };
     }
+  }
+}
+
+async function staffIsRegistredOrUnregistered(req) {
+  try {
+    let output = await adsController.searchFieldInAds(req);
+    console.log(output);
+
+    if (output.hits == 0) {
+      return {
+        statuscode: 404,
+        message: "Document not found",
+        staffStatus: "notPresent",
+      };
+    } else if (output.hits == 1) {
+      if (
+        output.results[0].hasOwnProperty("pin") &&
+        output.results[0].hasOwnProperty("password") &&
+        output.results[0].pin != "" &&
+        output.results[0].password != ""
+      ) {
+        return {
+          statuscode: 200,
+          message: "staff is registered",
+          staffStatus: "registered",
+        };
+      } else if (
+        output.results[0].hasOwnProperty("pin") == false ||
+        output.results[0].hasOwnProperty("password") == false ||
+        output.results[0].pin == "" ||
+        output.results[0].password == ""
+      ) {
+        return {
+          statuscode: 200,
+          message: "staff is unRegistered",
+          staffStatus: "unRegistered",
+          staffId: output.results[0].staffId,
+        };
+      }
+    } else if (output.hits > 1) {
+      return {
+        statuscode: 200,
+        message: "More than one Document found",
+        documents: output,
+      };
+    } else {
+      throw error;
+    }
+    return;
+  } catch (error) {
+    throw {
+      statuscode: 500,
+      err: "internal server error",
+      message: "unexpected error",
+    };
   }
 }
 
@@ -857,4 +914,5 @@ module.exports = {
   medicalDetails,
   favouriteDoctor,
   getUserQueryBody,
+  staffIsRegistredOrUnregistered,
 };
