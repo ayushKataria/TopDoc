@@ -43,8 +43,23 @@ const userUpdateAttributes = [
   "medicalDetails",
   "blood_group",
 ];
+const staffUpdateAttributes=[
+  "firstName",
+  "lastName",
+  "mobile",
+  "email",
+  "mappedTo",
+  "education",
+  "experience",
+    "role",
+  "pin",
+  "password",
+  "staffId",
+  "designation"
+]
 module.exports = {
   userAttributes,
+  staffUpdateAttributes,
   userMedicalDetailsAttributes,
   userUpdateAttributes,
 };
