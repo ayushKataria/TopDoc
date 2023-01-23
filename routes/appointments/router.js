@@ -48,35 +48,38 @@ async function createSessions(req, res) {
             days[i].sessions[j].hasOwnProperty("sessionId") == false ||
             days[i].sessions[j].sessionId == null 
           ) {
-           return res.status(400).send("bad request , sessionId missing");
-          }
-           else if (
+            return res
+              .status(400)
+              .send("bad request , sessionId cannot be empty");
+          } else if (
             days[i].sessions[j].hasOwnProperty("startTime") == false ||
             days[i].sessions[j].startTime == null 
           ) {
-            return res.status(400).send("bad request , startTime cannot be empty");
+            return res
+              .status(400)
+              .send("bad request , startTime cannot be empty");
           } else if (
             days[i].sessions[j].hasOwnProperty("endTime") == false ||
             days[i].sessions[j].endTime == null 
           ) {
-           return res.status(400).send("bad request , endTime cannot be empty");
-          } 
-          else if (
+            return res
+              .status(400)
+              .send("bad request , endTime cannot be empty");
+          } else if (
             days[i].sessions[j].hasOwnProperty("clinic") == false ||
             days[i].sessions[j].clinic == null 
           ) {
-           return res.status(400).send("bad request , clinic cannot be empty");
-          } 
-          else if (
+            return res.status(400).send("bad request , clinic cannot be empty");
+          } else if (
             days[i].sessions[j].hasOwnProperty("sessionSlots") == false
           ) {
-           return res
+            return res
               .status(400)
               .send("bad request , sessionSlots field is mandatory");
           } else if (
             days[i].sessions[j].hasOwnProperty("prioritySlots") == false
           ) {
-           return res
+            return res
               .status(400)
               .send("bad request , prioritySlots field is mandatory");
           }
@@ -395,7 +398,7 @@ async function searchInBooking(req, res) {
       });
     }
     if (fail) return;
-    
+
     if (req.body.hasOwnProperty("filters") == true) {
       list = appointmentAttributeList.filterAttributes;
       req.body.filters
@@ -463,11 +466,72 @@ async function searchInBooking(req, res) {
   }
 }
 
+async function delaySessionByDuration(req, res) {
+  try {
+    let fail = false;
+    const list = appointmentAttributeList.sessionDelayAttributes;
+    Object.keys(req.body).forEach((key) => {
+      if (!list.includes(key)) {
+        res
+          .status(400)
+          .send("bad request , unknown attribute found in request");
+        fail = true;
+      }
+    });
+    if (fail) return;
+
+    if (
+      req.body.hasOwnProperty("message") == false ||
+      req.body.message == null
+    ) {
+      res.status(400).send("bad request , message is mandatory");
+    } else if (
+      req.body.hasOwnProperty("doctorId") == false ||
+      req.body.doctorId == null ||
+      req.body.doctorId == ""
+    ) {
+      res.status(400).send("bad request , doctorId cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("sessionDate") == false ||
+      req.body.sessionDate == null ||
+      req.body.sessionDate == ""
+    ) {
+      res.status(400).send("bad request , sessionDate cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("sessionId") == false ||
+      req.body.sessionId == null ||
+      req.body.sessionId == ""
+    ) {
+      res.status(400).send("bad request , sessionId cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("sessionDelayDuration") == false ||
+      req.body.sessionDelayDuration == null ||
+      req.body.sessionDelayDuration == ""
+    ) {
+      res
+        .status(400)
+        .send("bad request , sessionDelayDuration cannot be empty");
+    } else {
+      await controller
+        .delaySessionByDuration(req.body)
+        .then((data) => res.send(data))
+        .catch((err) => res.status(err.statuscode).send(err));
+    }
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
+
 router.get("/v1/appointment/schedule/:doctorId", getSchedule);
 
 router.post("/v1/appointment/book/", bookAppointment);
 router.post("/v1/appointment/booking/", bookingAppointment);
 router.post("/v1/appointment/search/", searchInBooking);
 router.post("/v1/appointment/create/", createSessions);
+router.post("/v1/appointment/sessiondelay/", delaySessionByDuration);
 
 module.exports = router;

@@ -3,7 +3,9 @@ const esUtil = require("../../utils/es_util");
 const uuid = require("uuid");
 const docController = require("../doctors/controller");
 const searchController = require("../search/controller");
+const appointmentAttributeList = require("./constants/appointmentAttributeList");
 const aggsFunc = require("../search/searchAggrigation");
+const _ = require("underscore");
 
 async function bookAppointment(patientId, reqBody) {
   try {
@@ -183,9 +185,9 @@ async function createSessions(body) {
     let index = "booking";
     for (let i = 0; i < days.length; i++) {
       // console.log("for loop 1", days[i]);
-      year = parseInt(days[i].date);
-      month = Number(days[i].date.toString().substring(5, 7));
-      day = Number(days[i].date.toString().substring(8));
+      year = days[i].date.toString().substring(0, 4);
+      month = parseInt(days[i].date.toString().substring(5, 7)) - 1;
+      day = days[i].date.toString().substring(8);
 
       for (let j = 0; j < days[i].sessions.length; j++) {
         // console.log("for loop 2", days[i].sessions[j]);
@@ -210,6 +212,7 @@ async function createSessions(body) {
           priorityBody.status = "notBooked";
           priorityBody.sessionId = days[i].sessions[j].sessionId;
           priorityBody.doctorId = body.doctorId;
+          priorityBody.slotType = "priority";
           priorityBody.prioritySlotId = `ps0${k}${days[i].sessions[j].sessionId}`;
           prioritySlots.push(`ps0${k}${days[i].sessions[j].sessionId}`);
           await esUtil.insert(priorityBody, priorityBody.prioritySlotId, index);
@@ -238,42 +241,28 @@ async function createSessions(body) {
           };
         } else {
           while (currentTime < end) {
-            let hours = currentTime.getHours();
-            let minutes = currentTime.getMinutes();
-            if (minutes == "0") {
-              minutes = "00";
-            }
-            if (minutes < 10 && minutes > 0) {
-              minutes = "0" + minutes;
-            }
-            if (hours == "0") {
-              hours = "00";
-            }
-            if (hours < 10 && hours > 0) {
-              hours = "0" + hours;
-            }
+            let hours = currentTime.getHours().toString().padStart(2, "0");
+            let minutes = currentTime.getMinutes().toString().padStart(2, "0");
             tempBody.sessionId = days[i].sessions[j].sessionId;
+            tempBody.slotTime = `${hours}:${minutes}`;
+            tempBody.appointmentDate = days[i].date;
+            tempBody.slotType = "normal";
+            tempBody.slotDay =
+              appointmentAttributeList.weekday[currentTime.getDay()];
             slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
             tempBody.slotId = `${hours}:${minutes}${days[i].sessions[j].sessionId}`;
             await esUtil.insert(tempBody, tempBody.slotId, index);
             currentTime.setMinutes(currentTime.getMinutes() + duration);
             if (currentTime >= end) {
               currentTime = end;
-              hours = currentTime.getHours();
-              minutes = currentTime.getMinutes();
-              if (minutes == "0") {
-                minutes = "00";
-              }
-              if (minutes < 10 && minutes > 0) {
-                minutes = "0" + minutes;
-              }
-              if (hours == "0") {
-                hours = "00";
-              }
-              if (hours < 10 && hours > 0) {
-                hours = "0" + hours;
-              }
+              hours = currentTime.getHours().toString().padStart(2, "0");
+              minutes = currentTime.getMinutes().toString().padStart(2, "0");
               tempBody.sessionId = days[i].sessions[j].sessionId;
+              tempBody.slotTime = `${hours}:${minutes}`;
+              tempBody.appointmentDate = days[i].date;
+              tempBody.slotType = "normal";
+              tempBody.slotDay =
+                appointmentAttributeList.weekday[currentTime.getDay()];
               slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
               tempBody.slotId = `${hours}:${minutes}${days[i].sessions[j].sessionId}`;
               await esUtil.insert(tempBody, tempBody.slotId, index);
@@ -348,11 +337,13 @@ async function bookingAppointment(body) {
       query.query.bool.filter = [];
       query.query.bool.must[0] = { term: { sessionId: body.sessionId } };
       query.query.bool.filter[0] = { term: { status: "notBooked" } };
+      query.query.bool.filter[1] = { term: { slotType: "normal" } };
       let res = await esUtil.search(query, index);
       console.log(res);
       if (res.hits.total.value > 0) {
         slotId = res.hits.hits[0]._source.slotId;
         body.slotId = slotId;
+        body = _.omit(body, "duration", "appointmentDate", "slotDay");
         body.slotTime = res.hits.hits[0]._source.slotTime;
         booking = await docController.updateProfileDetailsController(
           slotId,
@@ -365,18 +356,28 @@ async function bookingAppointment(body) {
           appointmentDate: "desc",
         };
         query.query.bool.filter[0] = { term: { status: "booked" } };
+        query.query.bool.filter[1] = { term: { slotType: "normal" } };
         let resForUnRegUser = await esUtil.search(query, index);
+        console.log(resForUnRegUser.hits.hits[0]._source);
         let slotDate = resForUnRegUser.hits.hits[0]._source.appointmentDate;
+        console.log(slotDate);
         let year = slotDate.toString().substring(0, 4);
-        let month = slotDate.toString().substring(5, 7);
+        console.log(year);
+        let month = (parseInt(slotDate.toString().substring(5, 7)) - 1)
+          .toString()
+          .padStart(2, "0");
+        console.log(month);
         let day = slotDate.toString().substring(8);
         let hour = resForUnRegUser.hits.hits[0]._source.slotTime
           .toString()
           .substring(0, 2);
+        console.log(hour);
         let minute = resForUnRegUser.hits.hits[0]._source.slotTime
           .toString()
           .substring(3);
+        console.log(minute);
         const slotDayTime = new Date(year, month, day, hour, minute);
+        console.log(slotDayTime);
         let currentDate = slotDayTime.toLocaleDateString();
         console.log("before  ", slotDayTime.toLocaleDateString());
         slotDayTime.setMinutes(
@@ -388,36 +389,23 @@ async function bookingAppointment(body) {
           "after  ",
           slotDayTime.toLocaleDateString().replaceAll("/", "-")
         );
-        if (currentDate < appointDate || body.appointmentDate != currentDate) {
-          body.appointmentDate = `${slotDayTime.getFullYear()}-${slotDayTime.getMonth()}-${slotDayTime.getDate()}`;
-          const weekday = [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-          ];
+        // if (currentDate < appointDate || body.appointmentDate != currentDate) {
+        body.appointmentDate = `${slotDayTime.getFullYear()}-${(
+          slotDayTime.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}-${slotDayTime
+          .getDate()
+          .toString()
+          .padStart(2, "0")}`;
 
-          console.log(slotDayTime.getDay());
-          body.slotDay = weekday[slotDayTime.getDay()];
-        }
-        let newHour = slotDayTime.getHours();
-        let newMinutes = slotDayTime.getMinutes();
-        if (newMinutes == "0") {
-          newMinutes = "00";
-        }
-        if (newMinutes < 10 && newMinutes > 0) {
-          newMinutes = "0" + newMinutes;
-        }
-        if (newHour == "0") {
-          newHour = "00";
-        }
-        if (newHour < 10 && newHour > 0) {
-          newHour = "0" + newHour;
-        }
+        console.log(slotDayTime.getDay());
+        body.slotDay = appointmentAttributeList.weekday[slotDayTime.getDay()];
+        // }
+        let newHour = slotDayTime.getHours().toString().padStart(2, "0");
+        let newMinutes = slotDayTime.getMinutes().toString().padStart(2, "0");
         let slotTime = `${newHour}:${newMinutes}`;
+        console.log(slotTime);
         body.slotTime = slotTime;
         let slotId = slotTime + body.sessionId;
         body.slotId = slotId;
@@ -535,10 +523,85 @@ async function searchInBooking(body) {
   }
 }
 
+async function delaySessionByDuration(body) {
+  try {
+    let index = "booking";
+
+    let query = {};
+    query.sort = [];
+    query.sort[0] = { slotId: "asc" };
+    query.query = {};
+    query.query.bool = {};
+    query.query.bool.must = [];
+    query.query.bool.filter = [];
+    query.query.bool.must[0] = { term: { sessionId: body.sessionId } };
+    query.query.bool.filter[0] = { term: { doctorId: body.doctorId } };
+    let res = await esUtil.search(query, index);
+    let slots = res.hits.hits.map((e) => {
+      if (Object.keys(e._source).includes("slotTime")) {
+        let slotTime = e._source.slotTime;
+        let slotDate = e._source.appointmentDate;
+        let year = parseInt(slotDate.toString().substring(0, 4));
+        let month = (parseInt(slotDate.toString().substring(5, 7)) - 1)
+          .toString()
+          .padStart(2, "0");
+        let day = parseInt(slotDate.toString().substring(8));
+        let hour = parseInt(slotTime.toString().substring(0, 2))
+          .toString()
+          .padStart(2, "0");
+        let minute = parseInt(slotTime.toString().substring(3))
+          .toString()
+          .padStart(2, "0");
+        let slotDayTime = new Date(year, month, day, hour, minute);
+        slotDayTime.setMinutes(
+          slotDayTime.getMinutes() + parseInt(body.sessionDelayDuration)
+        );
+        e._source.slotTime = `${slotDayTime
+          .getHours()
+          .toString()
+          .padStart(2, "0")}:${slotDayTime
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}`;
+        e._source.appointmentDate = `${slotDayTime.getFullYear()}-${(
+          slotDayTime.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}-${slotDayTime
+          .getDate()
+          .toString()
+          .padStart(2, "0")}`;
+        e._source.slotDay = `${
+          appointmentAttributeList.weekday[slotDayTime.getDay()]
+        }`;
+        return e._source;
+      }
+    });
+    let output = [];
+    for (let i = 0; i < slots.length; i++) {
+      if (slots[i] != null) {
+        output[i] = await docController.updateProfileDetailsController(
+          slots[i].slotId,
+          index,
+          slots[i]
+        );
+      }
+    }
+    return output;
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
+
 module.exports = {
   getSchedule,
   bookAppointment,
   createSessions,
   bookingAppointment,
   searchInBooking,
+  delaySessionByDuration,
 };

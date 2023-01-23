@@ -101,6 +101,22 @@ const sortAttributes = [
   "sessionEndTime",
   "appointmentDate",
 ];
+const sessionDelayAttributes = [
+  "doctorId",
+  "sessionDelayDuration",
+  "sessionId",
+  "sessionDate",
+  "message",
+];
+const weekday = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 module.exports = {
   bookingAttributes,
@@ -110,4 +126,6 @@ module.exports = {
   filterAttributes,
   searchAttributes,
   unRegBookingAttributes,
+  sessionDelayAttributes,
+  weekday,
 };
