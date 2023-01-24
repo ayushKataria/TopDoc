@@ -361,7 +361,6 @@ async function loginDoc(req, res) {
             statuscode: 200,
             message: "Authorization successfull",
             token: token,
-
             docDetails: {
               mobile: userDetailsRec.mobile,
               name: userDetailsRec.name,
@@ -402,69 +401,82 @@ async function loginDoc(req, res) {
   }
 }
 //for staff login
-async function loginStaff(req, res) {
+async function loginStaff(req) {
   try {
     let result = {};
     let id = null;
     let hashpassword = null;
     let isVerified = false;
     console.log("In login block for staff");
-    // if (req.hasOwnProperty("emailId")) {
-    //   let userData = await getDocByemailId(req.emailId, "user");
-    //   if (userData["hits"]["total"]["value"] > 0) {
-    //     let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
-    //     isVerified = await compareHashPassword(req.password, savedPassword);
-    //     if (isVerified) {
-    //       const token = jwt.sign(
-    //         {
-    //           email: userData["hits"]["hits"][0]["_source"]["email"],
-    //           id: userData["hits"]["hits"][0]["_source"]["id"],
-    //         },
-    //         "secretKey",
-    //         {
-    //           expiresIn: "1h",
-    //         }
-    //       );
-    //       result = {
-    //         statuscode: 200,
-    //         message: "Authorization successfull",
-    //         token: token,
-    //       };
-    //     } else {
-    //       result = { statuscode: 401, message: "Authorization failed" };
-    //     }
-    //   } else {
-    //     throw {
-    //       statuscode: 401,
-    //       err: "access denied",
-    //       message: "Authorization failed",
-    //     };
-    //   }
-    // }
-    if (req.hasOwnProperty("mobileNumber")) {
-      let userData = await getDocByPhone(req.mobileNumber, "user");
-
-      if (userData["hits"]["total"]["value"] > 0) {
-        let savedPassword = userData["hits"]["hits"][0]["_source"]["pin"];
-        isVerified = await compareHashPassword(req.password, savedPassword);
-        if (isVerified) {
-          const token = jwt.sign(
-            {
-              mobileNo: userData["hits"]["hits"][0]["_source"]["mobile"],
-              id: userData["hits"]["hits"][0]["_source"]["id"],
-            },
-            "secretKey",
-            {
-              expiresIn: "1h",
-            }
-          );
-          result = {
-            statuscode: 200,
-            message: "Authorization successfull",
-            token: token,
-          };
+    if (req.body.hasOwnProperty("mobile")) {
+      let staffData = await getDocByPhone(req.mobile, "staff");
+      let staffDetailsList = staffData["hits"]["hits"][0]["_source"];
+      if (staffData["hits"]["total"]["value"] > 0) {
+        if (req.body.hasOwnProperty("pin")) {
+          let savedPin = staffData["hits"]["hits"][0]["_source"]["pin"];
+          isVerified = await compareHashPassword(req.pin, savedPin);
+          if (isVerified) {
+            const token = jwt.sign(
+              {
+                mobileNo: staffData["hits"]["hits"][0]["_source"]["mobile"],
+                id: staffData["hits"]["hits"][0]["_source"]["staffId"],
+              },
+              "secretKey",
+              {
+                expiresIn: "1h",
+              }
+            );
+            result = {
+              statuscode: 200,
+              message: "Authorization successfull",
+              token: token,
+              staffDetails: {
+                mobile: staffDetailsList.mobile,
+                staffId: staffDetailsList.staffId,
+                email: staffDetailsList.email,
+                mappedToDoctors: staffDetailsList.mappedTo,
+                first_name: staffDetailsList.firstName,
+                last_name: staffDetailsList.lastName,
+                designation: staffDetailsList.designation,
+              },
+            };
+          } else {
+            result = { statuscode: 401, message: "Authorization failed" };
+          }
+        } else if (req.body.hasOwnProperty("password")) {
+          let savedPassword =
+            staffData["hits"]["hits"][0]["_source"]["password"];
+          isVerified = await compareHashPassword(req.password, savedPassword);
+          if (isVerified) {
+            const token = jwt.sign(
+              {
+                mobileNo: staffData["hits"]["hits"][0]["_source"]["mobile"],
+                id: staffData["hits"]["hits"][0]["_source"]["staffId"],
+              },
+              "secretKey",
+              {
+                expiresIn: "1h",
+              }
+            );
+            result = {
+              statuscode: 200,
+              message: "Authorization successfull",
+              token: token,
+              staffDetails: {
+                mobile: staffDetailsList.mobile,
+                staffId: staffDetailsList.staffId,
+                email: staffDetailsList.email,
+                mappedToDoctors: staffDetailsList.mappedTo,
+                first_name: staffDetailsList.firstName,
+                last_name: staffDetailsList.lastName,
+                designation: staffDetailsList.designation,
+              },
+            };
+          } else {
+            result = { statuscode: 401, message: "Authorization failed" };
+          }
         } else {
-          result = { statuscode: 401, message: "Authorization failed" };
+          result = { statuscode: 401, message: "Staff is not registered" };
         }
       } else {
         throw {
