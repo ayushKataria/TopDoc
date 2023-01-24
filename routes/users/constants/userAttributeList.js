@@ -57,6 +57,8 @@ const staffUpdateAttributes=[
   "staffId",
   "designation"
 ]
+
+const staffRegistredAttributes = ["mobile", "role", "id"];
 module.exports = {
   userAttributes,
   staffUpdateAttributes,
