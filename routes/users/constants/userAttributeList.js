@@ -45,8 +45,23 @@ const userUpdateAttributes = [
 ];
 
 const staffRegistredAttributes = ["mobile", "role"];
+const staffUpdateAttributes = [
+  "firstName",
+  "lastName",
+  "mobile",
+  "email",
+  "mappedTo",
+  "education",
+  "experience",
+  "role",
+  "pin",
+  "password",
+  "staffId",
+  "designation",
+];
 module.exports = {
   userAttributes,
+  staffUpdateAttributes,
   userMedicalDetailsAttributes,
   userUpdateAttributes,
   staffRegistredAttributes,
