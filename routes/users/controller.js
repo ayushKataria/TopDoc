@@ -361,7 +361,6 @@ async function loginDoc(req, res) {
             statuscode: 200,
             message: "Authorization successfull",
             token: token,
-
             docDetails: {
               mobile: userDetailsRec.mobile,
               name: userDetailsRec.name,
@@ -411,7 +410,7 @@ async function loginStaff(req) {
     console.log("In login block for staff");
     if (req.body.hasOwnProperty("mobile")) {
       let staffData = await getDocByPhone(req.mobile, "staff");
-
+      let staffDetailsList = staffData["hits"]["hits"][0]["_source"];
       if (staffData["hits"]["total"]["value"] > 0) {
         if (req.body.hasOwnProperty("pin")) {
           let savedPin = staffData["hits"]["hits"][0]["_source"]["pin"];
@@ -431,6 +430,15 @@ async function loginStaff(req) {
               statuscode: 200,
               message: "Authorization successfull",
               token: token,
+              staffDetails: {
+                mobile: staffDetailsList.mobile,
+                staffId: staffDetailsList.staffId,
+                email: staffDetailsList.email,
+                mappedToDoctors: staffDetailsList.mappedTo,
+                first_name: staffDetailsList.firstName,
+                last_name: staffDetailsList.lastName,
+                designation: staffDetailsList.designation,
+              },
             };
           } else {
             result = { statuscode: 401, message: "Authorization failed" };
@@ -454,6 +462,15 @@ async function loginStaff(req) {
               statuscode: 200,
               message: "Authorization successfull",
               token: token,
+              staffDetails: {
+                mobile: staffDetailsList.mobile,
+                staffId: staffDetailsList.staffId,
+                email: staffDetailsList.email,
+                mappedToDoctors: staffDetailsList.mappedTo,
+                first_name: staffDetailsList.firstName,
+                last_name: staffDetailsList.lastName,
+                designation: staffDetailsList.designation,
+              },
             };
           } else {
             result = { statuscode: 401, message: "Authorization failed" };
