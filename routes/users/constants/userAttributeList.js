@@ -44,7 +44,7 @@ const userUpdateAttributes = [
   "blood_group",
 ];
 
-const staffRegistredAttributes = ["mobile", "role", "id"];
+const staffRegistredAttributes = ["mobile", "role"];
 module.exports = {
   userAttributes,
   userMedicalDetailsAttributes,
