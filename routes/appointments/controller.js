@@ -6,6 +6,7 @@ const searchController = require("../search/controller");
 const appointmentAttributeList = require("./constants/appointmentAttributeList");
 const aggsFunc = require("../search/searchAggrigation");
 const _ = require("underscore");
+const notification = require("../notification/wrapper");
 
 async function bookAppointment(patientId, reqBody) {
   try {
@@ -526,7 +527,9 @@ async function searchInBooking(body) {
 async function delaySessionByDuration(body) {
   try {
     let index = "booking";
-
+    let userIdList = [];
+    let doctorIdForSocket = body.doctorId;
+    let sessionIdForSocket = body.sessionId;
     let query = {};
     query.sort = [];
     query.sort[0] = { slotId: "asc" };
@@ -577,9 +580,14 @@ async function delaySessionByDuration(body) {
         return e._source;
       }
     });
+    let j = 0;
     let output = [];
     for (let i = 0; i < slots.length; i++) {
       if (slots[i] != null) {
+        if (Object.keys(slots[i]).includes("userId")) {
+          userIdList[j] = slots[i].userId;
+          j++;
+        }
         output[i] = await docController.updateProfileDetailsController(
           slots[i].slotId,
           index,
@@ -587,6 +595,12 @@ async function delaySessionByDuration(body) {
         );
       }
     }
+    notification.sessionAnnouncement(
+      doctorIdForSocket,
+      userIdList,
+      `ghar jao ${body.sessionDelayDuration} min. baad ana`,
+      ["socket"]
+    );
     return output;
   } catch (error) {
     console.log(error);
