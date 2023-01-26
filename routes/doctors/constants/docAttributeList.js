@@ -84,6 +84,21 @@ const createNewStaffAttributes = [
   "firstName",
   "role",
 ];
+const staffUpdateAttributes = [
+  "id",
+  "staffId",
+  "role",
+  "designation",
+  "password",
+  "pin",
+  "experience",
+  "education",
+  "mappedTo",
+  "email",
+  "mobile",
+  "lastName",
+  "firstName",
+];
 
 module.exports = {
   userReviewsAttributes,
@@ -92,4 +107,5 @@ module.exports = {
   sortListForReview,
   getRequestReviewAttributes,
   createNewStaffAttributes,
+  staffUpdateAttributes,
 };

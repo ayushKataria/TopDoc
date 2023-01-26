@@ -93,20 +93,34 @@ async function updateProfileDetails(req, res) {
     let obj;
     let fail;
     let list;
-    //mandatory property ion req is role and id
-    if (!req.body.hasOwnProperty("id") || !req.body.hasOwnProperty("role")) {
-      return res
-        .status(401)
-        .send("bad request , Mandatory attributes are missing");
-    }
+
+    console.log(req.body);
 
     if (req.body.role == "doctor") {
       list = docAttributeList.doctorUpdateAttributes;
+      if (!req.body.hasOwnProperty("id") || !req.body.hasOwnProperty("role")) {
+        return res
+          .status(401)
+          .send("bad request , Mandatory attributes are missing");
+      }
     } else if (req.body.role == "user") {
       list = userAttributeList.userUpdateAttributes;
     } else if (req.body.role == "payment") {
       list = appointmentAttributeList.bookingUpdateAttributes;
+    } else if (req.body.role == "staff") {
+      list = docAttributeList.staffUpdateAttributes;
+      if (
+        !req.body.hasOwnProperty("staffId") ||
+        !req.body.hasOwnProperty("role")
+      ) {
+        return res
+          .status(401)
+          .send("bad request , Mandatory attributes are missing");
+      }
+      req.body.id = req.body.staffId;
+      req.body = _.omit(req.body, "staffId");
     }
+    console.log(req.body);
 
     console.log("The list is ", list);
     Object.keys(req.body).forEach((key) => {
