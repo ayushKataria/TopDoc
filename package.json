@@ -26,6 +26,7 @@
     "properties-reader": "^2.2.0",
     "python": "^0.0.4",
     "razorpay": "^2.8.4",
+    "socket.io": "^4.5.4",
     "swagger-jsdoc": "^6.0.0",
     "swagger-ui-express": "^4.6.0",
     "underscore": "^1.13.4",
