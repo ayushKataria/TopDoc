@@ -46,28 +46,28 @@ async function createSessions(req, res) {
         for (let j = 0; j < days[i].sessions.length; j++) {
           if (
             days[i].sessions[j].hasOwnProperty("sessionId") == false ||
-            days[i].sessions[j].sessionId == null 
+            days[i].sessions[j].sessionId == null
           ) {
             return res
               .status(400)
               .send("bad request , sessionId cannot be empty");
           } else if (
             days[i].sessions[j].hasOwnProperty("startTime") == false ||
-            days[i].sessions[j].startTime == null 
+            days[i].sessions[j].startTime == null
           ) {
             return res
               .status(400)
               .send("bad request , startTime cannot be empty");
           } else if (
             days[i].sessions[j].hasOwnProperty("endTime") == false ||
-            days[i].sessions[j].endTime == null 
+            days[i].sessions[j].endTime == null
           ) {
             return res
               .status(400)
               .send("bad request , endTime cannot be empty");
           } else if (
             days[i].sessions[j].hasOwnProperty("clinic") == false ||
-            days[i].sessions[j].clinic == null 
+            days[i].sessions[j].clinic == null
           ) {
             return res.status(400).send("bad request , clinic cannot be empty");
           } else if (
@@ -105,8 +105,7 @@ async function createSessions(req, res) {
     days == ""
   ) {
     res.status(400).send("bad request , days cannot be empty");
-  } 
-  else {
+  } else {
     // console.log("error", err);
     controller
       .createSessions(req.body)
@@ -526,6 +525,41 @@ async function delaySessionByDuration(req, res) {
   }
 }
 
+async function queueManagement(req, res) {
+  try {
+    let fail = false;
+    const list = appointmentAttributeList.queueAttributes;
+    Object.keys(req.body).forEach((key) => {
+      if (!list.includes(key)) {
+        res
+          .status(400)
+          .send("bad request , unknown attribute found in request");
+        fail = true;
+      }
+    });
+    if (fail) return;
+
+    if (
+      req.body.hasOwnProperty("sessionId") == false ||
+      req.body.sessionId == null ||
+      req.body.sessionId == ""
+    ) {
+      res.status(400).send("bad request , sessionId cannot be empty");
+    } else {
+      await controller
+        .queueManagement(req.body)
+        .then((data) => res.send(data))
+        .catch((err) => res.status(err.statuscode).send(err));
+    }
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
+
 router.get("/v1/appointment/schedule/:doctorId", getSchedule);
 
 router.post("/v1/appointment/book/", bookAppointment);
@@ -533,5 +567,6 @@ router.post("/v1/appointment/booking/", bookingAppointment);
 router.post("/v1/appointment/search/", searchInBooking);
 router.post("/v1/appointment/create/", createSessions);
 router.post("/v1/appointment/sessiondelay/", delaySessionByDuration);
+router.post("/v1/appointment/queue/", queueManagement);
 
 module.exports = router;

@@ -117,6 +117,7 @@ const weekday = [
   "Friday",
   "Saturday",
 ];
+const queueAttributes = ["sessionId"];
 
 module.exports = {
   bookingAttributes,
@@ -128,4 +129,5 @@ module.exports = {
   unRegBookingAttributes,
   sessionDelayAttributes,
   weekday,
+  queueAttributes,
 };
