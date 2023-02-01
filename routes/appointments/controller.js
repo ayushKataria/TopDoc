@@ -6,6 +6,7 @@ const searchController = require("../search/controller");
 const appointmentAttributeList = require("./constants/appointmentAttributeList");
 const aggsFunc = require("../search/searchAggrigation");
 const _ = require("underscore");
+// const notification = require("../notification/wrapper");
 
 async function bookAppointment(patientId, reqBody) {
   try {
@@ -526,7 +527,9 @@ async function searchInBooking(body) {
 async function delaySessionByDuration(body) {
   try {
     let index = "booking";
-
+    let userIdList = [];
+    let doctorIdForSocket = body.doctorId;
+    let sessionIdForSocket = body.sessionId;
     let query = {};
     query.sort = [];
     query.sort[0] = { slotId: "asc" };
@@ -577,9 +580,14 @@ async function delaySessionByDuration(body) {
         return e._source;
       }
     });
+    let j = 0;
     let output = [];
     for (let i = 0; i < slots.length; i++) {
       if (slots[i] != null) {
+        if (Object.keys(slots[i]).includes("userId")) {
+          userIdList[j] = slots[i].userId;
+          j++;
+        }
         output[i] = await docController.updateProfileDetailsController(
           slots[i].slotId,
           index,
@@ -587,6 +595,151 @@ async function delaySessionByDuration(body) {
         );
       }
     }
+    notification.sessionAnnouncement(
+      doctorIdForSocket,
+      userIdList,
+      `ghar jao ${body.sessionDelayDuration} min. baad ana`,
+      ["socket"]
+    );
+    return output;
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
+
+async function queueManagement(body) {
+  try {
+    let index = "booking";
+    let totalSlotsBooked = [];
+    let totalPrioritySlotBooked = [];
+    let indexOfTotalPrioritySlotBooked = [];
+    let totalRejoinedSlots = [];
+    let upNextSlots = [];
+    let indexOfTotalRejoinedSlots = [];
+    let indexOfUpNextSlots = [];
+    let output = {};
+    let Query = {
+      sort: [
+        {
+          appointmentDate: "asc",
+        },
+        {
+          slotId: "asc",
+        },
+        {
+          rejoinTimeStamp: "asc",
+        },
+      ],
+      query: {
+        bool: {
+          must: [
+            {
+              term: {
+                sessionId: body.sessionId,
+              },
+            },
+          ],
+          must_not: [
+            {
+              term: {
+                status: "notBooked",
+              },
+            },
+            {
+              term: {
+                status: "cancelled",
+              },
+            },
+          ],
+          filter: [],
+        },
+      },
+    };
+
+    let res = await esUtil.search(Query, index);
+    output.hits = res.hits.total.value;
+    totalSlotsBooked = res.hits.hits.map((e) => {
+      return e._source;
+    });
+    let k = -1;
+    totalPrioritySlotBooked = totalSlotsBooked.filter((e) => {
+      ++k;
+      if (e.slotType == "priority") {
+        indexOfTotalPrioritySlotBooked.push(k);
+        return e;
+      }
+    });
+    let m = 0;
+    for (let x = 0; x < indexOfTotalPrioritySlotBooked.length; x++) {
+      totalSlotsBooked.splice(indexOfTotalPrioritySlotBooked[x] - m, 1);
+      m++;
+    }
+    let j = 0;
+    if (totalPrioritySlotBooked.length > 0) {
+      for (let i = 0; i < totalSlotsBooked.length; i++) {
+        if (i == 0) {
+          totalSlotsBooked.splice(i, 0, totalPrioritySlotBooked[j]);
+          j++;
+        } else if (
+          totalPrioritySlotBooked[j].appointmentDate <=
+          totalSlotsBooked[i].appointmentDate
+        ) {
+          totalSlotsBooked.splice(i, 0, totalPrioritySlotBooked[j]);
+          j++;
+        } else if (
+          i % 2 == 0 &&
+          totalPrioritySlotBooked[j].slotId > totalSlotsBooked[i].slotId
+        ) {
+          totalSlotsBooked.splice(i, 0, totalPrioritySlotBooked[j]);
+          j++;
+        }
+        if (j == totalPrioritySlotBooked.length) {
+          break;
+        }
+      }
+      if (j != totalPrioritySlotBooked.length) {
+        for (let g = j; g < totalPrioritySlotBooked.length; g++) {
+          totalSlotsBooked.push(totalPrioritySlotBooked[g]);
+        }
+      }
+    }
+
+    let l = -1;
+    totalRejoinedSlots = totalSlotsBooked.filter((e) => {
+      ++l;
+      if (e.status == "rejoined") {
+        indexOfTotalRejoinedSlots.push(l);
+        return e;
+      }
+    });
+    if (totalRejoinedSlots.length > 0) {
+      let a = -1;
+      upNextSlots = totalSlotsBooked.filter((e) => {
+        ++a;
+        if (e.status == "upNext") {
+          indexOfUpNextSlots.push(a);
+          return e;
+        }
+      });
+      let n = 0;
+      for (let x = 0; x < indexOfTotalRejoinedSlots.length; x++) {
+        totalSlotsBooked.splice(indexOfTotalRejoinedSlots[x] - n, 1);
+        n++;
+      }
+      for (let i = 1; i <= totalRejoinedSlots.length; i++) {
+        totalSlotsBooked.splice(
+          indexOfUpNextSlots[0] + i - indexOfTotalRejoinedSlots.length,
+          0,
+          totalRejoinedSlots[i - 1]
+        );
+      }
+    }
+
+    output.results = totalSlotsBooked;
     return output;
   } catch (error) {
     console.log(error);
@@ -604,4 +757,5 @@ module.exports = {
   bookingAppointment,
   searchInBooking,
   delaySessionByDuration,
+  queueManagement,
 };

@@ -3,6 +3,7 @@ const router = require("express").Router();
 const controller = require("./controller");
 const docAttributeList = require("./constants/docAttributeList");
 const userAttributeList = require("../users/constants/userAttributeList");
+const paymentAttributesList = require("../payments/constants/paymentAttributesList");
 const appointmentAttributeList = require("../appointments/constants/appointmentAttributeList");
 const _ = require("underscore");
 const cloudinary = require("cloudinary").v2;
@@ -105,15 +106,11 @@ async function updateProfileDetails(req, res) {
       }
     } else if (req.body.role == "user") {
       list = userAttributeList.userUpdateAttributes;
-    } else if (req.body.role == "payment") {
-      console.log("Fetching payments")
-      list = appointmentAttributeList.bookingUpdateAttributes;
     } else if (req.body.role == "booking") {
-      console.log("Fetching payments")
       list = appointmentAttributeList.bookingUpdateAttributes;
-    }
-    
-    else if (req.body.role == "staff") {
+    } else if (req.body.role == "payment") {
+      list = paymentAttributesList.paymentUpdateAttributes;
+    } else if (req.body.role == "staff") {
       list = docAttributeList.staffUpdateAttributes;
       if (
         !req.body.hasOwnProperty("staffId") ||
