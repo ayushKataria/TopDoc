@@ -28,13 +28,18 @@ const bookingUpdateAttributes = [
   "reasonForVisit",
   "appointmentType",
   "slotTime",
+  "symptoms",
+  "tests",
+  "diagnosis",
   "slotDay",
   "bookingTimeStamp",
   "appointmentDate",
   "sessionStartTime",
   "sessionEndTime",
+  "nextApptDate",
   "slotType",
   "clinicId",
+  "medicine"
 ];
 
 const searchInBooking = ["filters", "sort", "search", "pageNo", "pageSize"];
@@ -81,6 +86,7 @@ const unRegBookingAttributes = [
   "sessionId",
   "reasonForVisit",
   "appointmentType",
+  "diagnosis",
   "slotDay",
   "bookingTimeStamp",
   "appointmentDate",

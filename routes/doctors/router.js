@@ -106,8 +106,14 @@ async function updateProfileDetails(req, res) {
     } else if (req.body.role == "user") {
       list = userAttributeList.userUpdateAttributes;
     } else if (req.body.role == "payment") {
+      console.log("Fetching payments")
       list = appointmentAttributeList.bookingUpdateAttributes;
-    } else if (req.body.role == "staff") {
+    } else if (req.body.role == "booking") {
+      console.log("Fetching payments")
+      list = appointmentAttributeList.bookingUpdateAttributes;
+    }
+    
+    else if (req.body.role == "staff") {
       list = docAttributeList.staffUpdateAttributes;
       if (
         !req.body.hasOwnProperty("staffId") ||
