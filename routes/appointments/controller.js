@@ -623,6 +623,7 @@ async function queueManagement(body) {
     let indexOfUpNextSlots = [];
     let output = {};
     let Query = {
+      size: 10000,
       sort: [
         {
           appointmentDate: "asc",
