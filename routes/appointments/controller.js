@@ -676,10 +676,11 @@ async function delaySessionByDuration(body) {
         );
       }
     }
-    await notification.userAnnouncement(userIdList, body.sessionDelayDuration);
+    let message = `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`;
+    await notification.userAnnouncement(userIdList, message);
     let notifBody = {
       priority: "high",
-      message: `Your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
+      message: message,
       time: moment().format("h:mm:ss a"),
       status: "delivered",
       medium: ["app", "sms"],
@@ -900,7 +901,7 @@ async function queueManagement(body) {
 async function cancelDoctorSession(body) {
   try {
     let index = "booking";
-    let userIdsForNotification = [];
+    let userIdList = [];
     let totalSlots = [];
     let output = {};
     let Query = {
@@ -940,7 +941,7 @@ async function cancelDoctorSession(body) {
       e._source.status = "cancelled";
       if (e._source.hasOwnProperty("appointmentId")) {
         ++v;
-        userIdsForNotification[v] = e._source.userId;
+        userIdList[v] = e._source.userId;
       }
       return e._source;
     });
@@ -956,6 +957,18 @@ async function cancelDoctorSession(body) {
     }
 
     output.result = "updated";
+
+    let message = `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`;
+    await notification.userAnnouncement(userIdList, message);
+    let notifBody = {
+      priority: "high",
+      message: message,
+      time: moment().format("h:mm:ss a"),
+      status: "delivered",
+      medium: ["app", "sms", "mail"],
+      senderId: ["application", 7999411516, "topdoc@gmail.com"],
+    };
+    await notifController.createNotification(userIdList, notifBody);
 
     return output;
   } catch (error) {

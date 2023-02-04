@@ -12,7 +12,7 @@ io.on("connection", (socket) => {
     // usersId.push(userId);
   });
 });
-function userAnnouncement(userIdList, duration) {
+function userAnnouncement(userIdList, message) {
   console.log("Send message called", userIdList);
   let patient = [];
   console.log("usersid", usersId);
@@ -22,7 +22,7 @@ function userAnnouncement(userIdList, duration) {
   console.log("patient", patient);
   patient.forEach((user) => {
     io.to(usersId.map((obj) => obj[user])).emit("notification", {
-      message: `We regret to inform that, doctor has delayed the session by ${duration} minutes`,
+      message: message,
     });
   });
 }
