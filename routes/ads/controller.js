@@ -142,6 +142,7 @@ async function getAdsToShowToUserFromUserId(body) {
     let esIndex = "ads";
     let esTemplate = "getAdsDetailsByDoctorId";
     let query = {};
+    query.size = 10000;
     let resultDistrict = [];
     let resultState = [];
     let startArray = body.pageNo * body.pageSize;
@@ -238,6 +239,7 @@ async function getUserCountByDistrict(body) {
   try {
     let esIndex = "user";
     let Query = {};
+    Query.size = 10000;
     Query.query = {};
     let output = {};
     Query.query.terms = {};
@@ -261,6 +263,7 @@ async function searchFieldInAds(body) {
     let sortBy;
     let sortByValue;
     let Query = {};
+    Query.size = 10000;
     Query.query = {};
     let output = {};
     Query.query.term = {};

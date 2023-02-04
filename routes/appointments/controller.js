@@ -215,6 +215,7 @@ async function createSessions(body) {
           priorityBody.status = "notBooked";
           priorityBody.sessionId = days[i].sessions[j].sessionId;
           priorityBody.doctorId = body.doctorId;
+          priorityBody.appointmentDate = days[i].date;
           priorityBody.slotType = "priority";
           priorityBody.prioritySlotId = `ps0${k}${days[i].sessions[j].sessionId}`;
           prioritySlots.push(`ps0${k}${days[i].sessions[j].sessionId}`);
@@ -248,26 +249,35 @@ async function createSessions(body) {
             let minutes = currentTime.getMinutes().toString().padStart(2, "0");
             tempBody.sessionId = days[i].sessions[j].sessionId;
             tempBody.slotTime = `${hours}:${minutes}`;
+            tempBody.predictedSlotTime = `${hours}:${minutes}`;
             tempBody.appointmentDate = days[i].date;
             tempBody.slotType = "normal";
             tempBody.slotDay =
               appointmentAttributeList.weekday[currentTime.getDay()];
             slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
             tempBody.slotId = `${hours}:${minutes}${days[i].sessions[j].sessionId}`;
-            await esUtil.insert(tempBody, tempBody.slotId, index);
             currentTime.setMinutes(currentTime.getMinutes() + duration);
+            hours = currentTime.getHours().toString().padStart(2, "0");
+            minutes = currentTime.getMinutes().toString().padStart(2, "0");
+            tempBody.endTime = `${hours}:${minutes}`;
+            await esUtil.insert(tempBody, tempBody.slotId, index);
             if (currentTime >= end) {
               currentTime = end;
               hours = currentTime.getHours().toString().padStart(2, "0");
               minutes = currentTime.getMinutes().toString().padStart(2, "0");
               tempBody.sessionId = days[i].sessions[j].sessionId;
               tempBody.slotTime = `${hours}:${minutes}`;
+              tempBody.predictedSlotTime = `${hours}:${minutes}`;
               tempBody.appointmentDate = days[i].date;
               tempBody.slotType = "normal";
               tempBody.slotDay =
                 appointmentAttributeList.weekday[currentTime.getDay()];
               slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
               tempBody.slotId = `${hours}:${minutes}${days[i].sessions[j].sessionId}`;
+              currentTime.setMinutes(currentTime.getMinutes() + duration);
+              hours = currentTime.getHours().toString().padStart(2, "0");
+              minutes = currentTime.getMinutes().toString().padStart(2, "0");
+              tempBody.endTime = `${hours}:${minutes}`;
               await esUtil.insert(tempBody, tempBody.slotId, index);
             }
           }
@@ -314,6 +324,10 @@ async function bookingAppointment(body) {
     );
     if (body.userType == "registered") {
       slotId = body.slotId;
+      body.queueId =
+        body.appointmentDate.replaceAll("-", "") +
+        body.slotId.substring(0, 2) +
+        body.slotId.substring(3, 5);
       booking = await docController.updateProfileDetailsController(
         slotId,
         index,
@@ -332,6 +346,7 @@ async function bookingAppointment(body) {
         body.userId = "userProfileNotCreated";
       }
       let query = {};
+      query.size = 10000;
       query.sort = [];
       query.sort[0] = { slotId: "asc" };
       query.query = {};
@@ -348,6 +363,10 @@ async function bookingAppointment(body) {
         body.slotId = slotId;
         body = _.omit(body, "duration", "appointmentDate", "slotDay");
         body.slotTime = res.hits.hits[0]._source.slotTime;
+        body.queueId =
+          res.hits.hits[0]._source.appointmentDate.replaceAll("-", "") +
+          slotId.substring(0, 2) +
+          body.slotId.substring(3, 5);
         booking = await docController.updateProfileDetailsController(
           slotId,
           index,
@@ -379,7 +398,7 @@ async function bookingAppointment(body) {
           .toString()
           .substring(3);
         console.log(minute);
-        const slotDayTime = new Date(year, month, day, hour, minute);
+        let slotDayTime = new Date(year, month, day, hour, minute);
         console.log(slotDayTime);
         let currentDate = slotDayTime.toLocaleDateString();
         console.log("before  ", slotDayTime.toLocaleDateString());
@@ -410,8 +429,19 @@ async function bookingAppointment(body) {
         let slotTime = `${newHour}:${newMinutes}`;
         console.log(slotTime);
         body.slotTime = slotTime;
+        body.predictedSlotTime = slotTime;
         let slotId = slotTime + body.sessionId;
         body.slotId = slotId;
+        body.queueId =
+          body.appointmentDate.replaceAll("-", "") +
+          slotId.substring(0, 2) +
+          body.slotId.substring(3, 5);
+        slotDayTime.setMinutes(
+          slotDayTime.getMinutes() + parseInt(body.duration)
+        );
+        newHour = slotDayTime.getHours().toString().padStart(2, "0");
+        newMinutes = slotDayTime.getMinutes().toString().padStart(2, "0");
+        body.endTime = `${newHour}:${newMinutes}`;
         let dataObj = await esUtil.insert(body, slotId, index);
         console.log(dataObj);
         if (dataObj.hasOwnProperty("result") == true) {
@@ -447,6 +477,16 @@ async function searchInBooking(body) {
       params.boolTermQuery = true;
       params.fieldName = Object.keys(body.search)[0];
       params.fieldValue = Object.values(body.search)[0];
+      if (Object.keys(body.search).includes("range") == true) {
+        params.boolRangeComma = true;
+        params.boolRangeQuery = true;
+        params.rangeField = Object.keys(body.search.range)[0];
+        params.gteValue =
+          body.search.range[Object.keys(body.search.range)[0]].gte;
+        params.lteValue =
+          body.search.range[Object.keys(body.search.range)[0]].lte;
+        console.log("params  ", params);
+      }
       if (Object.keys(body.search)[0] == "doctorId") {
         params.doctorAggregation = true;
       } else if (Object.keys(body.search)[0] == "sessionId") {
@@ -513,6 +553,46 @@ async function searchInBooking(body) {
         arr[i] = { [name]: searchAggs.userIdAggs[name] };
       }
     }
+    if (
+      params.fieldName == "doctorId" &&
+      Object.keys(body.search).includes("range") &&
+      params.rangeField == "appointmentDate"
+    ) {
+      let finalArr = [];
+      let buckets = [];
+      let targetIndex;
+      let ind = -1;
+      arr.filter((e) => {
+        ++ind;
+        if (Object.keys(e) == "results_by_date") {
+          buckets = e.results_by_date.buckets;
+          targetIndex = ind;
+        }
+      });
+      let l = -1;
+      buckets.map((e) => {
+        ++l;
+        finalArr.push({});
+        finalArr[l].appointmentDate = e.key_as_string;
+        finalArr[l].hits = e.doc_count;
+        let g = -1;
+        let sessionsArr = [];
+        e.unique_field_values.buckets.map((w) => {
+          ++g;
+          sessionsArr.push({});
+          sessionsArr[g].sessionId = w.key;
+          sessionsArr[g].hits = w.doc_count;
+          sessionsArr[g].documents = w.documents.hits.hits;
+        });
+        finalArr[l].sessions = sessionsArr;
+      });
+      let obj = {};
+      obj.results_by_date = {};
+      obj.results_by_date.buckets = [];
+      obj.results_by_date.buckets = finalArr;
+      arr.splice(targetIndex, 1);
+      arr.splice(0, 0, obj);
+    }
 
     output.filters = arr;
 
@@ -533,6 +613,7 @@ async function delaySessionByDuration(body) {
     let doctorIdForSocket = body.doctorId;
     let sessionIdForSocket = body.sessionId;
     let query = {};
+    query.size = 10000;
     query.sort = [];
     query.sort[0] = { slotId: "asc" };
     query.query = {};
@@ -624,6 +705,292 @@ async function delaySessionByDuration(body) {
   }
 }
 
+async function queueManagement(body) {
+  try {
+    let index = "booking";
+    let totalSlotsBooked = [];
+    let totalPrioritySlotBooked = [];
+    let indexOfTotalPrioritySlotBooked = [];
+    let totalRejoinedSlots = [];
+    let upNextSlots = [];
+    let indexOfTotalRejoinedSlots = [];
+    let indexOfUpNextSlots = [];
+    let output = {};
+    let slotDelay;
+    let Query = {
+      size: 10000,
+      sort: [
+        {
+          appointmentDate: "asc",
+        },
+        {
+          slotId: "asc",
+        },
+        {
+          rejoinTimeStamp: "asc",
+        },
+      ],
+      query: {
+        bool: {
+          must: [
+            {
+              term: {
+                sessionId: body.sessionId,
+              },
+            },
+          ],
+          must_not: [
+            {
+              term: {
+                status: "notBooked",
+              },
+            },
+            {
+              term: {
+                status: "cancelled",
+              },
+            },
+          ],
+          filter: [],
+        },
+      },
+    };
+
+    let res = await esUtil.search(Query, index);
+    output.hits = res.hits.total.value;
+    totalSlotsBooked = res.hits.hits.map((e) => {
+      return e._source;
+    });
+    let k = -1;
+    totalPrioritySlotBooked = totalSlotsBooked.filter((e) => {
+      ++k;
+      if (e.slotType == "priority") {
+        indexOfTotalPrioritySlotBooked.push(k);
+        return e;
+      }
+    });
+    let m = 0;
+    for (let x = 0; x < indexOfTotalPrioritySlotBooked.length; x++) {
+      totalSlotsBooked.splice(indexOfTotalPrioritySlotBooked[x] - m, 1);
+      m++;
+    }
+    let j = 0;
+    if (totalPrioritySlotBooked.length > 0) {
+      for (let i = 0; i < totalSlotsBooked.length; i++) {
+        if (i == 0) {
+          totalSlotsBooked.splice(i, 0, totalPrioritySlotBooked[j]);
+          j++;
+        } else if (
+          totalPrioritySlotBooked[j].appointmentDate <=
+          totalSlotsBooked[i].appointmentDate
+        ) {
+          totalSlotsBooked.splice(i, 0, totalPrioritySlotBooked[j]);
+          j++;
+        } else if (
+          i % 2 == 0 &&
+          totalPrioritySlotBooked[j].slotId > totalSlotsBooked[i].slotId
+        ) {
+          totalSlotsBooked.splice(i, 0, totalPrioritySlotBooked[j]);
+          j++;
+        }
+        if (j == totalPrioritySlotBooked.length) {
+          break;
+        }
+      }
+      if (j != totalPrioritySlotBooked.length) {
+        for (let g = j; g < totalPrioritySlotBooked.length; g++) {
+          totalSlotsBooked.push(totalPrioritySlotBooked[g]);
+        }
+      }
+    }
+
+    let l = -1;
+    totalRejoinedSlots = totalSlotsBooked.filter((e) => {
+      ++l;
+      if (e.status == "rejoined") {
+        indexOfTotalRejoinedSlots.push(l);
+        return e;
+      }
+    });
+    if (totalRejoinedSlots.length > 0) {
+      let a = -1;
+      upNextSlots = totalSlotsBooked.filter((e) => {
+        ++a;
+        if (e.status == "upNext") {
+          indexOfUpNextSlots.push(a);
+          return e;
+        }
+      });
+      let n = 0;
+      for (let x = 0; x < indexOfTotalRejoinedSlots.length; x++) {
+        totalSlotsBooked.splice(indexOfTotalRejoinedSlots[x] - n, 1);
+        n++;
+      }
+      for (let i = 1; i <= totalRejoinedSlots.length; i++) {
+        totalSlotsBooked.splice(
+          indexOfUpNextSlots[0] + i - indexOfTotalRejoinedSlots.length,
+          0,
+          totalRejoinedSlots[i - 1]
+        );
+      }
+    }
+    let lastEndedObject = {};
+    let indexOfStarted;
+    let f = -1;
+    totalSlotsBooked.find((e) => {
+      ++f;
+      if (e.status == "ended" || e.status == "paused") {
+        lastEndedObject = e;
+      }
+      if (e.status == "started" || e.status == "upNext") {
+        if (e.status == "started") {
+          indexOfStarted = f + 1;
+        }
+        if (e.status == "upNext") {
+          indexOfStarted = f;
+        }
+
+        return e;
+      }
+    });
+    if (Object.keys(lastEndedObject).length > 0) {
+      let endTime = returnDateTime(
+        lastEndedObject.appointmentDate,
+        lastEndedObject.endTime
+      );
+      let actualEndTime = new Date(lastEndedObject.actualEndTime);
+      let difference = actualEndTime - endTime;
+      let differenceInMinutes = difference / 1000 / 60;
+      if (differenceInMinutes > 0) {
+        slotDelay = `${Math.floor(differenceInMinutes / 60)
+          .toString()
+          .padStart(2, "0")}:${(differenceInMinutes % 60)
+          .toString()
+          .padStart(2, "0")}`;
+      } else {
+        slotDelay = `-${(Math.ceil(differenceInMinutes / 60) * -1)
+          .toString()
+          .padStart(2, "0")}:${((differenceInMinutes % 60) * -1)
+          .toString()
+          .padStart(2, "0")}`;
+      }
+      output.delay = slotDelay;
+
+      for (let i = indexOfStarted; i < totalSlotsBooked.length; i++) {
+        let originalSlotTime = returnDateTime(
+          totalSlotsBooked[i].appointmentDate,
+          totalSlotsBooked[i].slotTime
+        );
+        let predictedTime = new Date(
+          originalSlotTime.setMinutes(
+            originalSlotTime.getMinutes() + differenceInMinutes
+          )
+        );
+        totalSlotsBooked[i].predictedSlotTime = `${predictedTime
+          .getHours()
+          .toString()
+          .padStart(2, "0")}:${predictedTime
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}`;
+      }
+    }
+
+    output.results = totalSlotsBooked;
+    return output;
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
+async function cancelDoctorSession(body) {
+  try {
+    let index = "booking";
+    let userIdsForNotification = [];
+    let totalSlots = [];
+    let output = {};
+    let Query = {
+      size: 10000,
+      sort: [
+        {
+          appointmentDate: "asc",
+        },
+        {
+          slotId: "asc",
+        },
+      ],
+      query: {
+        bool: {
+          must: [
+            {
+              term: {
+                doctorId: body.doctorId,
+              },
+            },
+          ],
+          filter: [
+            {
+              term: {
+                sessionId: body.sessionId,
+              },
+            },
+          ],
+        },
+      },
+    };
+
+    let res = await esUtil.search(Query, index);
+    output.hits = res.hits.total.value;
+    let v = -1;
+    totalSlots = res.hits.hits.map((e) => {
+      e._source.status = "cancelled";
+      if (e._source.hasOwnProperty("appointmentId")) {
+        ++v;
+        userIdsForNotification[v] = e._source.userId;
+      }
+      return e._source;
+    });
+
+    let esbody = {};
+    esbody.status = body.status;
+    for (let i = 0; i < totalSlots.length; i++) {
+      await docController.updateProfileDetailsController(
+        totalSlots[i].slotId,
+        index,
+        esbody
+      );
+    }
+
+    output.result = "updated";
+
+    return output;
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
+
+function returnDateTime(dateOfDay, timeOfDay) {
+  let year = parseInt(dateOfDay.toString().substring(0, 4));
+  let month = (parseInt(dateOfDay.toString().substring(5, 7)) - 1)
+    .toString()
+    .padStart(2, "0");
+  let day = parseInt(dateOfDay.toString().substring(8));
+  let hour = parseInt(timeOfDay.toString().substring(0, 2))
+    .toString()
+    .padStart(2, "0");
+  let minute = parseInt(timeOfDay.toString().substring(3))
+    .toString()
+    .padStart(2, "0");
+  return new Date(year, month, day, hour, minute);
+}
+
 module.exports = {
   getSchedule,
   bookAppointment,
@@ -631,4 +998,6 @@ module.exports = {
   bookingAppointment,
   searchInBooking,
   delaySessionByDuration,
+  queueManagement,
+  cancelDoctorSession,
 };

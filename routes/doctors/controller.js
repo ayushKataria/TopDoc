@@ -11,6 +11,7 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
     let queryBody;
     if (fieldsToFetch[0] === "all") {
       queryBody = {
+        size: 10000,
         _source: true,
         query: {
           term: {
@@ -22,6 +23,7 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
       };
     } else {
       queryBody = {
+        size: 10000,
         _source: fieldsToFetch,
         query: {
           term: {

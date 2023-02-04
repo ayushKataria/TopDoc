@@ -12,6 +12,20 @@ const paymentAttributes = [
   "pageSize",
 ];
 
+const paymentUpdateAttributes = [
+  "paymentType",
+  "couponApplied",
+  "doctorId",
+  "userId",
+  "userName",
+  "orderId",
+  "amount",
+  "dateAndTime",
+  "paymentStatus",
+  "pageNo",
+  "pageSize",
+];
+
 const paymentSortList = ["dateAndTime", "amount"];
 const paymentSearchList = [
   "paymentType",
@@ -31,4 +45,5 @@ module.exports = {
   paymentAttributes,
   paymentSortList,
   paymentSearchList,
+  paymentUpdateAttributes
 };
