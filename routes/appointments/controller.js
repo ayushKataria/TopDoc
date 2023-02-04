@@ -7,8 +7,7 @@ const searchController = require("../search/controller");
 const appointmentAttributeList = require("./constants/appointmentAttributeList");
 const aggsFunc = require("../search/searchAggrigation");
 const _ = require("underscore");
-const notification = require("../notification/notificationType/socket");
-const notifController = require("../notification/controller");
+const notificationWrapper = require("../notification/wrapper");
 
 async function bookAppointment(patientId, reqBody) {
   try {
@@ -676,17 +675,19 @@ async function delaySessionByDuration(body) {
         );
       }
     }
-    let message = `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`;
-    await notification.userAnnouncement(userIdList, message);
+
+    // await notification.userAnnouncement(userIdList, message);
     let notifBody = {
       priority: "high",
-      message: message,
+      message: `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
       time: moment().format("h:mm:ss a"),
       status: "delivered",
       medium: ["app", "sms"],
       senderId: ["application", 7999411516],
     };
-    await notifController.createNotification(userIdList, notifBody);
+    await notificationWrapper.sessionAnnouncement(userIdList, notifBody);
+
+    // await notifController.createNotification(userIdList, notifBody);
     return output;
   } catch (error) {
     console.log(error);
@@ -958,17 +959,19 @@ async function cancelDoctorSession(body) {
 
     output.result = "updated";
 
-    let message = `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`;
-    await notification.userAnnouncement(userIdList, message);
+    // await notification.userAnnouncement(userIdList, message);
+
     let notifBody = {
       priority: "high",
-      message: message,
+      message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
       time: moment().format("h:mm:ss a"),
       status: "delivered",
       medium: ["app", "sms", "mail"],
       senderId: ["application", 7999411516, "topdoc@gmail.com"],
     };
-    await notifController.createNotification(userIdList, notifBody);
+    await notificationWrapper.sessionAnnouncement(userIdList, notifBody);
+
+    // await notifController.createNotification(userIdList, notifBody);
 
     return output;
   } catch (error) {
