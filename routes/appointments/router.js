@@ -25,7 +25,6 @@ function bookAppointment(req, res) {
 }
 
 async function createSessions(req, res) {
-  console.log("printAkash");
   let days = req.body.days;
   if (days.length > 0) {
     for (let i = 0; i < days.length; i++) {
@@ -156,6 +155,44 @@ async function bookingAppointment(req, res) {
           req.body.sessionId == ""
         ) {
           res.status(400).send("bad request , sessionId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("userName") == false ||
+          req.body.userName == null ||
+          req.body.userName == ""
+        ) {
+          res.status(400).send("bad request , userName cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("gender") == false ||
+          req.body.gender == null ||
+          req.body.gender == ""
+        ) {
+          res.status(400).send("bad request , gender cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("dob") == false ||
+          req.body.dob == null ||
+          req.body.dob == ""
+        ) {
+          res.status(400).send("bad request , dob cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("pin") == false ||
+          req.body.pin == null ||
+          req.body.pin == ""
+        ) {
+          res.status(400).send("bad request , pin cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("endTime") == false ||
+          req.body.endTime == null ||
+          req.body.endTime == ""
+        ) {
+          res.status(400).send("bad request , endTime cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("predictedSlotTime") == false ||
+          req.body.predictedSlotTime == null ||
+          req.body.predictedSlotTime == ""
+        ) {
+          res
+            .status(400)
+            .send("bad request , predictedSlotTime cannot be empty");
         } else if (
           req.body.hasOwnProperty("doctorId") == false ||
           req.body.doctorId == null ||
@@ -291,6 +328,38 @@ async function bookingAppointment(req, res) {
           req.body.appointmentType == ""
         ) {
           res.status(400).send("bad request , appointmentType cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("gender") == false ||
+          req.body.gender == null ||
+          req.body.gender == ""
+        ) {
+          res.status(400).send("bad request , gender cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("dob") == false ||
+          req.body.dob == null ||
+          req.body.dob == ""
+        ) {
+          res.status(400).send("bad request , dob cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("pin") == false ||
+          req.body.pin == null ||
+          req.body.pin == ""
+        ) {
+          res.status(400).send("bad request , pin cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("endTime") == false ||
+          req.body.endTime == null ||
+          req.body.endTime == ""
+        ) {
+          res.status(400).send("bad request , endTime cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("predictedSlotTime") == false ||
+          req.body.predictedSlotTime == null ||
+          req.body.predictedSlotTime == ""
+        ) {
+          res
+            .status(400)
+            .send("bad request , predictedSlotTime cannot be empty");
         } else if (
           req.body.hasOwnProperty("slotDay") == false ||
           req.body.slotDay == null ||
@@ -559,6 +628,52 @@ async function queueManagement(req, res) {
     };
   }
 }
+async function cancelDoctorSession(req, res) {
+  try {
+    let fail = false;
+    const list = appointmentAttributeList.cancelDoctorSession;
+    Object.keys(req.body).forEach((key) => {
+      if (!list.includes(key)) {
+        res
+          .status(400)
+          .send("bad request , unknown attribute found in request");
+        fail = true;
+      }
+    });
+    if (fail) return;
+
+    if (
+      req.body.hasOwnProperty("sessionId") == false ||
+      req.body.sessionId == null ||
+      req.body.sessionId == ""
+    ) {
+      res.status(400).send("bad request , sessionId cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("doctorId") == false ||
+      req.body.doctorId == null ||
+      req.body.doctorId == ""
+    ) {
+      res.status(400).send("bad request , doctorId cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("status") == false ||
+      req.body.status == null ||
+      req.body.status == ""
+    ) {
+      res.status(400).send("bad request , status cannot be empty");
+    } else {
+      await controller
+        .cancelDoctorSession(req.body)
+        .then((data) => res.send(data))
+        .catch((err) => res.status(err.statuscode).send(err));
+    }
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
 
 router.get("/v1/appointment/schedule/:doctorId", getSchedule);
 
@@ -568,5 +683,6 @@ router.post("/v1/appointment/search/", searchInBooking);
 router.post("/v1/appointment/create/", createSessions);
 router.post("/v1/appointment/sessiondelay/", delaySessionByDuration);
 router.post("/v1/appointment/queue/", queueManagement);
+router.post("/v1/appointment/cancel/", cancelDoctorSession);
 
 module.exports = router;

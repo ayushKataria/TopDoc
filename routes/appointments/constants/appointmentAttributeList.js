@@ -15,6 +15,12 @@ const bookingAttributes = [
   "sessionEndTime",
   "slotType",
   "userType",
+  "predictedSlotTime",
+  "endTime",
+  "pin",
+  "dob",
+  "gender",
+  "userName",
 ];
 
 const bookingUpdateAttributes = [
@@ -40,9 +46,17 @@ const bookingUpdateAttributes = [
   "slotType",
   "clinicId",
   "medicine",
+  "predictedSlotTime",
+  "actualEndTime",
+  "endTime",
+  "pin",
+  "dob",
+  "gender",
+  "userName",
 ];
 
 const searchInBooking = ["filters", "sort", "search", "pageNo", "pageSize"];
+const cancelDoctorSession = ["doctorId", "sessionId", "status"];
 
 const searchAttributes = [
   "doctorId",
@@ -64,6 +78,13 @@ const searchAttributes = [
   "userType",
   "clinicId",
   "range",
+  "predictedSlotTime",
+  "actualEndTime",
+  "endTime",
+  "pin",
+  "dob",
+  "gender",
+  "userName",
 ];
 
 const filterAttributes = [
@@ -78,6 +99,10 @@ const filterAttributes = [
   "clinicDetails",
   "userType",
   "clinicId",
+  "pin",
+  "dob",
+  "gender",
+  "userName",
 ];
 
 const unRegBookingAttributes = [
@@ -98,6 +123,11 @@ const unRegBookingAttributes = [
   "duration",
   "mobile",
   "userName",
+  "predictedSlotTime",
+  "endTime",
+  "pin",
+  "dob",
+  "gender",
 ];
 
 const sortAttributes = [
@@ -107,6 +137,11 @@ const sortAttributes = [
   "sessionStartTime",
   "sessionEndTime",
   "appointmentDate",
+  "predictedSlotTime",
+  "actualEndTime",
+  "endTime",
+  "dob",
+  "gender",
 ];
 const sessionDelayAttributes = [
   "doctorId",
@@ -137,4 +172,5 @@ module.exports = {
   sessionDelayAttributes,
   weekday,
   queueAttributes,
+  cancelDoctorSession,
 };
