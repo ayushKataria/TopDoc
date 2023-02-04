@@ -20,6 +20,8 @@
     "express-fileupload": "^1.4.0",
     "json-builder": "^0.0.2",
     "jsonwebtoken": "^8.5.1",
+    "kafka-node": "^5.0.0",
+    "moment": "^2.29.4",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.16",
     "properties-reader": "^2.2.0",

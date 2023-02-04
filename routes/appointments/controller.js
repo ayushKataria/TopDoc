@@ -1,12 +1,14 @@
 "use strict";
 const esUtil = require("../../utils/es_util");
 const uuid = require("uuid");
+const moment = require("moment");
 const docController = require("../doctors/controller");
 const searchController = require("../search/controller");
 const appointmentAttributeList = require("./constants/appointmentAttributeList");
 const aggsFunc = require("../search/searchAggrigation");
 const _ = require("underscore");
-const notification = require("../notification/wrapper");
+const notification = require("../notification/notificationType/socket");
+const notifController = require("../notification/controller");
 
 async function bookAppointment(patientId, reqBody) {
   try {
@@ -595,12 +597,23 @@ async function delaySessionByDuration(body) {
         );
       }
     }
-    notification.sessionAnnouncement(
-      doctorIdForSocket,
-      userIdList,
-      `ghar jao ${body.sessionDelayDuration} min. baad ana`,
-      ["socket"]
-    );
+    // notification.sessionAnnouncement(
+    //   doctorIdForSocket,
+    //   userIdList,
+    //   `ghar jao ${body.sessionDelayDuration} min. baad ana`,
+    //   ["socket"]
+    // );
+
+    await notification.userAnnouncement(userIdList, body.sessionDelayDuration);
+    let notifBody = {
+      priority: "high",
+      message: `Your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
+      time: moment().format("h:mm:ss a"),
+      status: "delivered",
+      medium: ["app", "sms"],
+      senderId: ["application", 7999411516],
+    };
+    await notifController.createNotification(userIdList, notifBody);
     return output;
   } catch (error) {
     console.log(error);

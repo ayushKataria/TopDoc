@@ -1,19 +1,32 @@
-const io = require("socket.io")(http);
+const socketio = require("socket.io");
+const server = 4000;
+const io = socketio(server);
 
-// session = { userId, doctorId };
+let usersId = [];
 
-export function userAnnouncement(room) {
-  io.on("connection", (socket) => {
-    // const room = socket.handshake.session;
-
-    // Extract doctor and user data from session
-    const userArr = room.userId;
-    console.log(user);
-    socket.broadcast
-      .to(userArr)
-      .emit("notification", { message: room.message });
-
-    // Notify all users associated with doctor
-    // io.sockets.in(doctor).emit("notification", { message: session.message });
+io.on("connection", (socket) => {
+  console.log("A user connected");
+  socket.on("register", (userId) => {
+    console.log("inside register", userId);
+    usersId.push({ [userId]: socket.id });
+    // usersId.push(userId);
+  });
+});
+function userAnnouncement(userIdList, duration) {
+  console.log("Send message called", userIdList);
+  let patient = [];
+  console.log("usersid", usersId);
+  let keyarr = usersId.map((obj) => Object.keys(obj)[0]);
+  console.log(keyarr, "keyarr", userIdList);
+  patient = userIdList.filter((element) => keyarr.includes(element.toString()));
+  console.log("patient", patient);
+  patient.forEach((user) => {
+    io.to(usersId.map((obj) => obj[user])).emit("notification", {
+      message: `We regret to inform that, doctor has delayed the session by ${duration} minutes`,
+    });
   });
 }
+
+module.exports = {
+  userAnnouncement,
+};
