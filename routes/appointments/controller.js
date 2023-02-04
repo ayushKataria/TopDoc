@@ -6,6 +6,8 @@ const searchController = require("../search/controller");
 const appointmentAttributeList = require("./constants/appointmentAttributeList");
 const aggsFunc = require("../search/searchAggrigation");
 const _ = require("underscore");
+const crypto = require("crypto");
+const secret = "secret-key-for-encryption";
 // const notification = require("../notification/wrapper");
 
 async function bookAppointment(patientId, reqBody) {
@@ -312,6 +314,10 @@ async function bookingAppointment(body) {
     );
     if (body.userType == "registered") {
       slotId = body.slotId;
+      body.queueId =
+        body.appointmentDate.replaceAll("-", "") +
+        body.slotId.substring(0, 2) +
+        body.slotId.substring(3, 5);
       booking = await docController.updateProfileDetailsController(
         slotId,
         index,
@@ -346,6 +352,10 @@ async function bookingAppointment(body) {
         body.slotId = slotId;
         body = _.omit(body, "duration", "appointmentDate", "slotDay");
         body.slotTime = res.hits.hits[0]._source.slotTime;
+        body.queueId =
+          res.hits.hits[0]._source.appointmentDate.replaceAll("-", "") +
+          slotId.substring(0, 2) +
+          body.slotId.substring(3, 5);
         booking = await docController.updateProfileDetailsController(
           slotId,
           index,
@@ -410,6 +420,10 @@ async function bookingAppointment(body) {
         body.slotTime = slotTime;
         let slotId = slotTime + body.sessionId;
         body.slotId = slotId;
+        body.queueId =
+          body.appointmentDate.replaceAll("-", "") +
+          slotId.substring(0, 2) +
+          body.slotId.substring(3, 5);
         let dataObj = await esUtil.insert(body, slotId, index);
         console.log(dataObj);
         if (dataObj.hasOwnProperty("result") == true) {
@@ -445,6 +459,16 @@ async function searchInBooking(body) {
       params.boolTermQuery = true;
       params.fieldName = Object.keys(body.search)[0];
       params.fieldValue = Object.values(body.search)[0];
+      if (Object.keys(body.search).includes("range") == true) {
+        params.boolRangeComma = true;
+        params.boolRangeQuery = true;
+        params.rangeField = Object.keys(body.search.range)[0];
+        params.gteValue =
+          body.search.range[Object.keys(body.search.range)[0]].gte;
+        params.lteValue =
+          body.search.range[Object.keys(body.search.range)[0]].lte;
+        console.log("params  ", params);
+      }
       if (Object.keys(body.search)[0] == "doctorId") {
         params.doctorAggregation = true;
       } else if (Object.keys(body.search)[0] == "sessionId") {
@@ -510,6 +534,45 @@ async function searchInBooking(body) {
         let name = key[i + 1];
         arr[i] = { [name]: searchAggs.userIdAggs[name] };
       }
+    }
+    if (
+      params.fieldName == "doctorId" &&
+      Object.keys(body.search).includes("range") &&
+      params.rangeField == "appointmentDate"
+    ) {
+      let finalArr = [];
+      let buckets = [];
+      let targetIndex;
+      let ind = -1;
+      arr.filter((e) => {
+        ++ind;
+        if (Object.keys(e) == "results_by_date") {
+          buckets = e.results_by_date.buckets;
+          targetIndex = ind;
+        }
+      });
+      let l = -1;
+      buckets.map((e) => {
+        ++l;
+        finalArr.push({});
+        finalArr[l].appointmentDate = e.key_as_string;
+        finalArr[l].hits = e.doc_count;
+        let g = -1;
+        let sessionsArr = [];
+        e.unique_field_values.buckets.map((w) => {
+          ++g;
+          sessionsArr.push({});
+          sessionsArr[g].sessionId = w.key;
+          sessionsArr[g].hits = w.doc_count;
+          sessionsArr[g].documents = w.documents.hits.hits;
+        });
+        finalArr[l].sessions = sessionsArr;
+      });
+      let obj = {};
+      obj.results_by_date = {};
+      obj.results_by_date.buckets = [];
+      obj.results_by_date.buckets = finalArr;
+      arr.splice(targetIndex, 1, obj);
     }
 
     output.filters = arr;
@@ -622,6 +685,7 @@ async function queueManagement(body) {
     let indexOfTotalRejoinedSlots = [];
     let indexOfUpNextSlots = [];
     let output = {};
+    let slotDelay;
     let Query = {
       size: 10000,
       sort: [
@@ -739,6 +803,67 @@ async function queueManagement(body) {
         );
       }
     }
+    let lastEndedObject = {};
+    let indexOfStarted;
+    let f = -1;
+    totalSlotsBooked.find((e) => {
+      ++f;
+      if (e.status == "ended" || e.status == "paused") {
+        lastEndedObject = e;
+      }
+      if (e.status == "started" || e.status == "upNext") {
+        if (e.status == "started") {
+          indexOfStarted = f + 1;
+        }
+        if (e.status == "upNext") {
+          indexOfStarted = f;
+        }
+
+        return e;
+      }
+    });
+    if (Object.keys(lastEndedObject).length > 0) {
+      let endTime = returnDateTime(
+        lastEndedObject.appointmentDate,
+        lastEndedObject.endTime
+      );
+      let actualEndTime = new Date(lastEndedObject.actualEndTime);
+      let difference = actualEndTime - endTime;
+      let differenceInMinutes = difference / 1000 / 60;
+      if (differenceInMinutes > 0) {
+        slotDelay = `${Math.floor(differenceInMinutes / 60)
+          .toString()
+          .padStart(2, "0")}:${(differenceInMinutes % 60)
+          .toString()
+          .padStart(2, "0")}`;
+      } else {
+        slotDelay = `-${(Math.ceil(differenceInMinutes / 60) * -1)
+          .toString()
+          .padStart(2, "0")}:${((differenceInMinutes % 60) * -1)
+          .toString()
+          .padStart(2, "0")}`;
+      }
+      output.delay = slotDelay;
+
+      for (let i = indexOfStarted; i < totalSlotsBooked.length; i++) {
+        let originalSlotTime = returnDateTime(
+          totalSlotsBooked[i].appointmentDate,
+          totalSlotsBooked[i].slotTime
+        );
+        let predictedTime = new Date(
+          originalSlotTime.setMinutes(
+            originalSlotTime.getMinutes() + differenceInMinutes
+          )
+        );
+        totalSlotsBooked[i].predictedSlotTime = `${predictedTime
+          .getHours()
+          .toString()
+          .padStart(2, "0")}:${predictedTime
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}`;
+      }
+    }
 
     output.results = totalSlotsBooked;
     return output;
@@ -749,6 +874,21 @@ async function queueManagement(body) {
       message: "Unexpected error occured",
     };
   }
+}
+
+function returnDateTime(dateOfDay, timeOfDay) {
+  let year = parseInt(dateOfDay.toString().substring(0, 4));
+  let month = (parseInt(dateOfDay.toString().substring(5, 7)) - 1)
+    .toString()
+    .padStart(2, "0");
+  let day = parseInt(dateOfDay.toString().substring(8));
+  let hour = parseInt(timeOfDay.toString().substring(0, 2))
+    .toString()
+    .padStart(2, "0");
+  let minute = parseInt(timeOfDay.toString().substring(3))
+    .toString()
+    .padStart(2, "0");
+  return new Date(year, month, day, hour, minute);
 }
 
 module.exports = {

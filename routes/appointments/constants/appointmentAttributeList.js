@@ -39,7 +39,7 @@ const bookingUpdateAttributes = [
   "nextApptDate",
   "slotType",
   "clinicId",
-  "medicine"
+  "medicine",
 ];
 
 const searchInBooking = ["filters", "sort", "search", "pageNo", "pageSize"];
@@ -63,6 +63,7 @@ const searchAttributes = [
   "slotType",
   "userType",
   "clinicId",
+  "range",
 ];
 
 const filterAttributes = [
