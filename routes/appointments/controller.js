@@ -610,8 +610,6 @@ async function delaySessionByDuration(body) {
   try {
     let index = "booking";
     let userIdList = [];
-    let doctorIdForSocket = body.doctorId;
-    let sessionIdForSocket = body.sessionId;
     let query = {};
     query.size = 10000;
     query.sort = [];
@@ -678,13 +676,6 @@ async function delaySessionByDuration(body) {
         );
       }
     }
-    // notification.sessionAnnouncement(
-    //   doctorIdForSocket,
-    //   userIdList,
-    //   `ghar jao ${body.sessionDelayDuration} min. baad ana`,
-    //   ["socket"]
-    // );
-
     await notification.userAnnouncement(userIdList, body.sessionDelayDuration);
     let notifBody = {
       priority: "high",
