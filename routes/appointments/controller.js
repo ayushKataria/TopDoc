@@ -6,8 +6,6 @@ const searchController = require("../search/controller");
 const appointmentAttributeList = require("./constants/appointmentAttributeList");
 const aggsFunc = require("../search/searchAggrigation");
 const _ = require("underscore");
-const crypto = require("crypto");
-const secret = "secret-key-for-encryption";
 // const notification = require("../notification/wrapper");
 
 async function bookAppointment(patientId, reqBody) {
@@ -328,11 +326,23 @@ async function bookingAppointment(body) {
         body.appointmentDate.replaceAll("-", "") +
         body.slotId.substring(0, 2) +
         body.slotId.substring(3, 5);
-      booking = await docController.updateProfileDetailsController(
+      let res1 = await docController.getProfileDetailsController(
         slotId,
         index,
-        body
+        ["status"]
       );
+      if (res1.results[0].status == "booked") {
+        return {
+          statuscode: 400,
+          message: "Bad request , The slot is already booked",
+        };
+      } else {
+        booking = await docController.updateProfileDetailsController(
+          slotId,
+          index,
+          body
+        );
+      }
     } else {
       let userBody = {};
       userBody.name = body.userName;
@@ -952,8 +962,11 @@ async function cancelDoctorSession(body) {
         esbody
       );
     }
-
-    output.result = "updated";
+    if (output.hits == 0) {
+      output.result = "failed to update any record";
+    } else {
+      output.result = "updated";
+    }
 
     return output;
   } catch (error) {
