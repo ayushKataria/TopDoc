@@ -333,7 +333,7 @@ async function bookingAppointment(body) {
         ["status"]
       );
       if (res1.results[0].status == "booked") {
-        return {
+        throw {
           statuscode: 400,
           message: "Bad request , The slot is already booked",
         };
@@ -471,7 +471,7 @@ async function bookingAppointment(body) {
   } catch (err) {
     console.log(err);
     throw {
-      statuscode: 404,
+      statuscode: 400,
       message: "There was some error in booking appointment",
     };
   }
