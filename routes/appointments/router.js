@@ -115,6 +115,7 @@ async function createSessions(req, res) {
 
 // book a slot with a doctor
 async function bookingAppointment(req, res) {
+  console.log("HITTING",req.body)
   try {
     if (req.body.hasOwnProperty("userType") == true) {
       if (req.body.userType == "registered") {
@@ -122,14 +123,17 @@ async function bookingAppointment(req, res) {
         const list = appointmentAttributeList.bookingAttributes;
         Object.keys(req.body).forEach((key) => {
           if (!list.includes(key)) {
-            res
-              .status(400)
-              .send("bad request , unknown attribute found in request");
+           
             fail = true;
           }
         });
-        if (fail) return;
-
+      
+        if (fail){
+          return   res
+          .status(400)
+          .send("bad request , unknown attribute found in request");  
+        } 
+       
         if (
           req.body.hasOwnProperty("clinicDetails") == false ||
           req.body.clinicDetails == null ||
@@ -277,18 +281,24 @@ async function bookingAppointment(req, res) {
             .catch((err) => res.status(err.statuscode).send(err));
         }
       } else if (req.body.userType == "unRegistered") {
+        console.log("Unregistered triggering")
         let fail = false;
         const list = appointmentAttributeList.unRegBookingAttributes;
         Object.keys(req.body).forEach((key) => {
           if (!list.includes(key)) {
-            res
-              .status(400)
-              .send("bad request , unknown attribute found in request");
+            console.log("Invalid key ",key)
+          
             fail = true;
+          
           }
         });
-        if (fail) return;
+        if (fail){
+          return   res
+          .status(400)
+          .send("bad request , unknown attribute found in request");  
+        } 
 
+        console.log("Return triggering unreg")
         if (
           req.body.hasOwnProperty("clinicDetails") == false ||
           req.body.clinicDetails == null ||
@@ -428,6 +438,7 @@ async function bookingAppointment(req, res) {
       } else {
         res.status(400).send("bad request , unknown userType");
       }
+      console.log("SACHIN RIGHT")
     } else {
       res.status(400).send("bad request , userType is mandatory");
     }
