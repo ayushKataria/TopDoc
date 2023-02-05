@@ -1,14 +1,13 @@
 "use strict";
 const esUtil = require("../../utils/es_util");
 const uuid = require("uuid");
+const moment = require("moment");
 const docController = require("../doctors/controller");
 const searchController = require("../search/controller");
 const appointmentAttributeList = require("./constants/appointmentAttributeList");
 const aggsFunc = require("../search/searchAggrigation");
 const _ = require("underscore");
-const crypto = require("crypto");
-const secret = "secret-key-for-encryption";
-// const notification = require("../notification/wrapper");
+const notificationWrapper = require("../notification/wrapper");
 
 async function bookAppointment(patientId, reqBody) {
   try {
@@ -328,11 +327,23 @@ async function bookingAppointment(body) {
         body.appointmentDate.replaceAll("-", "") +
         body.slotId.substring(0, 2) +
         body.slotId.substring(3, 5);
-      booking = await docController.updateProfileDetailsController(
+      let res1 = await docController.getProfileDetailsController(
         slotId,
         index,
-        body
+        ["status"]
       );
+      if (res1.results[0].status == "booked") {
+        return {
+          statuscode: 400,
+          message: "Bad request , The slot is already booked",
+        };
+      } else {
+        booking = await docController.updateProfileDetailsController(
+          slotId,
+          index,
+          body
+        );
+      }
     } else {
       let userBody = {};
       userBody.name = body.userName;
@@ -610,8 +621,6 @@ async function delaySessionByDuration(body) {
   try {
     let index = "booking";
     let userIdList = [];
-    let doctorIdForSocket = body.doctorId;
-    let sessionIdForSocket = body.sessionId;
     let query = {};
     query.size = 10000;
     query.sort = [];
@@ -678,12 +687,19 @@ async function delaySessionByDuration(body) {
         );
       }
     }
-    notification.sessionAnnouncement(
-      doctorIdForSocket,
-      userIdList,
-      `ghar jao ${body.sessionDelayDuration} min. baad ana`,
-      ["socket"]
-    );
+
+    // await notification.userAnnouncement(userIdList, message);
+    let notifBody = {
+      priority: "high",
+      message: `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
+      time: moment().format("h:mm:ss a"),
+      status: "delivered",
+      medium: ["app", "sms"],
+      senderId: ["application", 7999411516],
+    };
+    await notificationWrapper.sessionAnnouncement(userIdList, notifBody);
+
+    // await notifController.createNotification(userIdList, notifBody);
     return output;
   } catch (error) {
     console.log(error);
@@ -898,7 +914,7 @@ async function queueManagement(body) {
 async function cancelDoctorSession(body) {
   try {
     let index = "booking";
-    let userIdsForNotification = [];
+    let userIdList = [];
     let totalSlots = [];
     let output = {};
     let Query = {
@@ -938,7 +954,7 @@ async function cancelDoctorSession(body) {
       e._source.status = "cancelled";
       if (e._source.hasOwnProperty("appointmentId")) {
         ++v;
-        userIdsForNotification[v] = e._source.userId;
+        userIdList[v] = e._source.userId;
       }
       return e._source;
     });
@@ -952,8 +968,25 @@ async function cancelDoctorSession(body) {
         esbody
       );
     }
+    if (output.hits == 0) {
+      output.result = "failed to update any record";
+    } else {
+      output.result = "updated";
+    }
 
-    output.result = "updated";
+    // await notification.userAnnouncement(userIdList, message);
+
+    let notifBody = {
+      priority: "high",
+      message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
+      time: moment().format("h:mm:ss a"),
+      status: "delivered",
+      medium: ["app", "sms", "mail"],
+      senderId: ["application", 7999411516, "topdoc@gmail.com"],
+    };
+    await notificationWrapper.sessionAnnouncement(userIdList, notifBody);
+
+    // await notifController.createNotification(userIdList, notifBody);
 
     return output;
   } catch (error) {
