@@ -21,6 +21,7 @@ const bookingAttributes = [
   "dob",
   "gender",
   "userName",
+  "paymentStatus",
 ];
 
 const bookingUpdateAttributes = [
@@ -53,6 +54,7 @@ const bookingUpdateAttributes = [
   "dob",
   "gender",
   "userName",
+  "paymentStatus",
 ];
 
 const searchInBooking = ["filters", "sort", "search", "pageNo", "pageSize"];
@@ -85,6 +87,7 @@ const searchAttributes = [
   "dob",
   "gender",
   "userName",
+  "paymentStatus",
 ];
 
 const filterAttributes = [
@@ -103,6 +106,7 @@ const filterAttributes = [
   "dob",
   "gender",
   "userName",
+  "paymentStatus",
 ];
 
 const unRegBookingAttributes = [
@@ -128,6 +132,7 @@ const unRegBookingAttributes = [
   "pin",
   "dob",
   "gender",
+  "paymentStatus",
 ];
 
 const sortAttributes = [
@@ -142,6 +147,7 @@ const sortAttributes = [
   "endTime",
   "dob",
   "gender",
+  "paymentStatus",
 ];
 const sessionDelayAttributes = [
   "doctorId",
