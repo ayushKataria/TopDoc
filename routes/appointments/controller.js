@@ -216,6 +216,7 @@ async function createSessions(body) {
           priorityBody.doctorId = body.doctorId;
           priorityBody.appointmentDate = days[i].date;
           priorityBody.slotType = "priority";
+          priorityBody.paymentStatus = "default";
           priorityBody.prioritySlotId = `ps0${k}${days[i].sessions[j].sessionId}`;
           prioritySlots.push(`ps0${k}${days[i].sessions[j].sessionId}`);
           await esUtil.insert(priorityBody, priorityBody.prioritySlotId, index);
@@ -251,6 +252,7 @@ async function createSessions(body) {
             tempBody.predictedSlotTime = `${hours}:${minutes}`;
             tempBody.appointmentDate = days[i].date;
             tempBody.slotType = "normal";
+            tempBody.paymentStatus = "default";
             tempBody.slotDay =
               appointmentAttributeList.weekday[currentTime.getDay()];
             slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
@@ -269,6 +271,7 @@ async function createSessions(body) {
               tempBody.predictedSlotTime = `${hours}:${minutes}`;
               tempBody.appointmentDate = days[i].date;
               tempBody.slotType = "normal";
+              tempBody.paymentStatus = "default";
               tempBody.slotDay =
                 appointmentAttributeList.weekday[currentTime.getDay()];
               slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
@@ -470,10 +473,17 @@ async function bookingAppointment(body) {
     return booking;
   } catch (err) {
     console.log(err);
-    throw {
-      statuscode: 400,
-      message: "There was some error in booking appointment",
-    };
+    if (err.message == "Bad request , The slot is already booked") {
+      throw {
+        statuscode: 400,
+        message: "Bad request , The slot is already booked",
+      };
+    } else {
+      throw {
+        statuscode: 400,
+        message: "There was some error in booking appointment",
+      };
+    }
   }
 }
 
