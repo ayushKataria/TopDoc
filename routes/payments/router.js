@@ -2,6 +2,7 @@
 const Razorpay = require("razorpay");
 const controller = require("./controller");
 const adsController = require("../ads/controller");
+const docController = require("../doctors/controller");
 
 const {
   razor_pay_keyId,
@@ -113,6 +114,9 @@ async function createPayment(req, res) {
     ) {
       res.status(400).send("bad request , orderId cannot be empty");
     } else {
+      req.body.dateAndTime = await docController.ConvertDateFormat(
+        req.body.dateAndTime
+      );
       console.log("in router");
       await controller
         .createNewPayment(req.body)
