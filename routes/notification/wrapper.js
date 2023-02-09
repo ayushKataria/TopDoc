@@ -5,6 +5,7 @@ const notifController = require("./controller");
 async function sessionAnnouncement(id, body) {
   await notifController.createNotification(id, body);
   if (body.medium.includes("app")) {
+    console.log("inside session announcement, send by app");
     socketNotif.userAnnouncement(id, body.message);
   }
   // if (medium.includes("mail")) {

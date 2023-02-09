@@ -1,14 +1,16 @@
+"use strict";
+const router = require("express").Router();
 let controller = require("./controller");
 
 async function createNotification(req, res) {
-  console.log("inside createNotification router", req);
+  console.log("inside createNotification router", req.body);
   try {
     if (
       req.body.hasOwnProperty("id") == false ||
       req.body.hasOwnProperty("id") == null ||
       req.body.hasOwnProperty("id") == ""
     ) {
-      return res.status(400).send("bad request , id cannot be empty");
+      res.status(400).send("bad request , id cannot be empty");
     } else if (
       req.body.hasOwnProperty("priority") == false ||
       req.body.hasOwnProperty("priority") == null ||
@@ -46,8 +48,10 @@ async function createNotification(req, res) {
     ) {
       res.status(400).send("bad request, senderId field is missing");
     } else {
+      console.log("inside else");
+
       controller
-        .createNotification(req.body.id, req)
+        .manualNotification(req.body)
         .then((data) => res.send(data))
         .catch((err) => res.status(err.statuscode).send(err));
     }
@@ -60,6 +64,6 @@ async function createNotification(req, res) {
   }
 }
 
-module.exports = {
-  createNotification,
-};
+router.post("/v1/create", createNotification);
+
+module.exports = router;
