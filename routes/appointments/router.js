@@ -123,17 +123,15 @@ async function bookingAppointment(req, res) {
         const list = appointmentAttributeList.bookingAttributes;
         Object.keys(req.body).forEach((key) => {
           if (!list.includes(key)) {
-           
             fail = true;
           }
         });
-      
-        if (fail){
-          return   res
-          .status(400)
-          .send("bad request , unknown attribute found in request");  
-        } 
-       
+        if (fail) {
+          return res
+            .status(400)
+            .send("bad request , unknown attribute found in request");
+        }
+
         if (
           req.body.hasOwnProperty("clinicDetails") == false ||
           req.body.clinicDetails == null ||
@@ -294,17 +292,15 @@ async function bookingAppointment(req, res) {
         const list = appointmentAttributeList.unRegBookingAttributes;
         Object.keys(req.body).forEach((key) => {
           if (!list.includes(key)) {
-            console.log("Invalid key ",key)
-          
             fail = true;
           
           }
         });
-        if (fail){
-          return   res
-          .status(400)
-          .send("bad request , unknown attribute found in request");  
-        } 
+        if (fail) {
+          return res
+            .status(400)
+            .send("bad request , unknown attribute found in request");
+        }
 
         console.log("Return triggering unreg")
         if (
@@ -473,13 +469,14 @@ async function searchInBooking(req, res) {
     let list = appointmentAttributeList.searchInBooking;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (req.body.hasOwnProperty("search") == true) {
       list = appointmentAttributeList.searchAttributes;
@@ -567,13 +564,14 @@ async function delaySessionByDuration(req, res) {
     const list = appointmentAttributeList.sessionDelayAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("message") == false ||
@@ -627,13 +625,14 @@ async function queueManagement(req, res) {
     const list = appointmentAttributeList.queueAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("sessionId") == false ||
@@ -661,13 +660,14 @@ async function cancelDoctorSession(req, res) {
     const list = appointmentAttributeList.cancelDoctorSession;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("sessionId") == false ||

@@ -1,5 +1,6 @@
 "use strict";
 const adsAttributeList = require("./constants/adsAttributeList");
+const paymentAttributesList = require("../payments/constants/paymentAttributesList");
 const _ = require("underscore");
 const docController = require("../doctors/controller");
 const controller = require("./controller");
@@ -11,13 +12,14 @@ async function updateDoctorAds(req, res) {
     const list = adsAttributeList.adsAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("adId") == false ||
@@ -50,13 +52,14 @@ async function createDoctorAds(req, res) {
     const list = adsAttributeList.adsAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("banner") == false ||
@@ -164,13 +167,14 @@ async function getDoctorAdsByDoctorId(req, res) {
     const list = adsAttributeList.adsAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
     let sortBy = Object.keys(req.body.sort);
     const sortList = adsAttributeList.adsSortList;
     for (let i = 0; i < sortBy.length; i++) {
@@ -245,13 +249,14 @@ async function getDoctorAdsToShowUser(req, res) {
     const list = adsAttributeList.adsShowToUserAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("userId") == false ||
@@ -304,13 +309,14 @@ async function getUserNumberByDistrict(req, res) {
     const list = ["districts"];
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("districts") == false ||
@@ -334,19 +340,25 @@ async function getUserNumberByDistrict(req, res) {
   }
 }
 
-async function searchFieldInAds(req, res) {
+async function searchFieldInIndex(req, res) {
   try {
     let fail = false;
-    const list = adsAttributeList.adsAttributes;
+    let list;
+    if (req.body.role == "ads") {
+      list = adsAttributeList.adsAttributes;
+    } else if (req.body.role == "payment") {
+      list = paymentAttributesList.paymentSearchList;
+    }
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("role") == false ||
@@ -359,7 +371,7 @@ async function searchFieldInAds(req, res) {
     } else {
       console.log("in router");
       await controller
-        .searchFieldInAds(req.body)
+        .searchFieldInIndex(req.body)
         .then((data) => res.send(data))
         .catch((err) => res.status(err.statuscode).send(err));
     }
@@ -377,5 +389,5 @@ router.post("/create", createDoctorAds);
 router.post("/getAdsByDoctorId", getDoctorAdsByDoctorId);
 router.post("/showAdsToUser", getDoctorAdsToShowUser);
 router.post("/getUsersInDistricts", getUserNumberByDistrict);
-router.post("/searchInAds", searchFieldInAds);
+router.post("/search", searchFieldInIndex);
 module.exports = router;
