@@ -862,7 +862,7 @@ async function favouriteDoctor(body) {
 
 async function staffIsRegistredOrUnregistered(req) {
   try {
-    let output = await adsController.searchFieldInAds(req);
+    let output = await adsController.searchFieldInIndex(req);
     console.log(output);
 
     if (output.hits == 0) {

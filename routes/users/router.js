@@ -313,13 +313,14 @@ async function staffIsRegistredOrUnregistered(req, res) {
     const list = userAttributeList.staffRegistredAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     // if (
     //   req.body.hasOwnProperty("mobile") == false ||

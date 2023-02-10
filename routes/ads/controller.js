@@ -256,66 +256,76 @@ async function getUserCountByDistrict(body) {
   }
 }
 
-async function searchFieldInAds(body) {
+async function searchFieldInIndex(body) {
   try {
     let esIndex = body.role;
-    let results;
-    let sortBy;
-    let sortByValue;
     let Query = {};
     Query.size = 10000;
     Query.query = {};
+    Query.query.bool = {};
     let output = {};
-    Query.query.term = {};
     let obj = body;
+    obj = _.omit(obj, "role");
 
-    if (body.hasOwnProperty("sortBy") == true && Object.keys(body.sortBy) > 0) {
-      sortBy = Object.keys(body.sortBy)[0];
-      sortByValue = Object.values(body.sortBy)[0];
-      obj = _.omit(obj, "sort");
-      Query.sort = {};
-      Query.sort[sortBy] = { order: sortByValue };
+    if (body.hasOwnProperty("sortBy") == true && body.sortBy.length > 0) {
+      Query.sort = [];
+      Query.sort = body.sortBy;
+      obj = _.omit(obj, "sortBy");
     }
-    let keys = Object.keys(body);
+
+    if (body.hasOwnProperty("filter") == true && body.filter.length > 0) {
+      Query.query.bool.filter = [];
+      Query.query.bool.filter = body.filter.map((term) => {
+        return { term };
+      });
+      obj = _.omit(obj, "filter");
+    }
+
+    if (body.hasOwnProperty("numberOfDocumentsToPick") == true) {
+      Query.size = body.numberOfDocumentsToPick;
+      obj = _.omit(obj, "numberOfDocumentsToPick");
+    }
+    let keys = Object.keys(obj);
     let termToSearch = keys.filter((e) => {
       if (!adsAttributeList.searchRequestConst.includes(e)) {
         return e;
       }
     });
-    obj = _.omit(obj, "role");
-    Query.query.term[termToSearch[0]] = body[termToSearch];
-    if (body.hasOwnProperty("numberOfDocumentsToPick") == true) {
-      let numberOfDocumentsToPick = body.numberOfDocumentsToPick;
-      Query = _.omit(Query, "query");
-      let adDataForGuestUser = await esdb.search(Query, esIndex);
-      let hits = adDataForGuestUser.hits.total.value;
-      if (numberOfDocumentsToPick > hits) {
-        output.hits = adDataForGuestUser.hits.total.value;
-        output.results = adDataForGuestUser.hits.hits.map((e) => {
-          return e._source;
-        });
-      } else {
-        output.hits = numberOfDocumentsToPick;
-        results = adDataForGuestUser.hits.hits.map((e) => {
-          return e._source;
-        });
-        output.results = results.slice(0, numberOfDocumentsToPick);
-      }
+
+    if (termToSearch.length != 0) {
+      Query.query.bool.must = [];
+      Query.query.bool.must[0] = {
+        term: {
+          [termToSearch[0]]: body[termToSearch[0]],
+        },
+      };
     } else {
-      let adDataForGuestUser = await esdb.search(Query, esIndex);
-      output.hits = adDataForGuestUser.hits.total.value;
-      output.results = adDataForGuestUser.hits.hits.map((e) => {
-        return e._source;
-      });
+      throw {
+        statuscode: 400,
+        message: "please enter a field to search",
+      };
     }
+
+    let adDataForGuestUser = await esdb.search(Query, esIndex);
+    output.hits = adDataForGuestUser.hits.total.value;
+    output.results = adDataForGuestUser.hits.hits.map((e) => {
+      return e._source;
+    });
 
     return output;
   } catch (err) {
     console.log(err);
-    throw {
-      statuscode: 404,
-      message: "There was some error in fetching the result",
-    };
+    if (err.message == "please enter a field to search") {
+      throw {
+        statuscode: 400,
+        message: "please enter a field to search",
+      };
+    } else {
+      throw {
+        statuscode: 404,
+        message: "There was some error in fetching the result",
+      };
+    }
   }
 }
 
@@ -325,5 +335,5 @@ module.exports = {
   getAdsDetailsByDoctorId,
   getAdsToShowToUserFromUserId,
   getUserCountByDistrict,
-  searchFieldInAds,
+  searchFieldInIndex,
 };

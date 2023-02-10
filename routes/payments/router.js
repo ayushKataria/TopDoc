@@ -65,13 +65,14 @@ async function createPayment(req, res) {
     const list = paymentAttributesList.paymentAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("paymentStatus") == false ||
@@ -132,47 +133,7 @@ async function createPayment(req, res) {
   }
 }
 
-async function searchFieldInPayment(req, res) {
-  try {
-    let fail = false;
-    const list = paymentAttributesList.paymentSearchList;
-    Object.keys(req.body).forEach((key) => {
-      if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
-        fail = true;
-      }
-    });
-    if (fail) return;
-
-    if (
-      req.body.hasOwnProperty("role") == false ||
-      req.body.role == null ||
-      req.body.role == ""
-    ) {
-      res.status(400).send("bad request ,  role cannot be empty");
-    } else if (req.body.hasOwnProperty("sortBy") == false) {
-      res.status(400).send("bad request ,  sortBy cannot be empty");
-    } else if (Object.keys(req.body).length <= 1) {
-      res.status(400).send("bad request , please enter a field to search");
-    } else {
-      console.log("in router");
-      await adsController
-        .searchFieldInAds(req.body)
-        .then((data) => res.send(data))
-        .catch((err) => res.status(err.statuscode).send(err));
-    }
-  } catch (error) {
-    console.log(error);
-    throw {
-      statuscode: 500,
-      message: "Unexpected error occured",
-    };
-  }
-}
 
 router.post("/create", createPayment);
-router.post("/searchInPayment", searchFieldInPayment);
 router.post("/create/orderId", createOrderId);
 module.exports = router;
