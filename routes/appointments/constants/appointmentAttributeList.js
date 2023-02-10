@@ -32,6 +32,7 @@ const bookingUpdateAttributes = [
   "clinicDetails",
   "sessionId",
   "slotId",
+  "userId",
   "reasonForVisit",
   "appointmentType",
   "slotTime",

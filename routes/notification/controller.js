@@ -39,9 +39,9 @@ async function manualNotification(body) {
     console.log("inside manualNotification controller", body);
     if (body.id.length > 0) {
       let ids = body.id;
-      if (req.body.medium.includes("app")) {
+      if (body.medium.includes("app")) {
         await socketNotif.userAnnouncement(ids, body.message);
-      } else if (req.medium.includes("sms")) {
+      } else if (body.medium.includes("sms")) {
         // socketNotif.userAnnouncement(id, body.message);
       } else {
         // socketNotif.userAnnouncement(id, body.message);

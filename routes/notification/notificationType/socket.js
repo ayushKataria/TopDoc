@@ -1,6 +1,6 @@
 const socketio = require("socket.io");
 const server = 4000;
-const io = socketio(server);
+const io = socketio(server,{  cors: {    origin: "*",  },});
 
 let usersId = [];
 

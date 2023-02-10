@@ -154,9 +154,9 @@ async function bookingAppointment(req, res) {
         ) {
           res.status(400).send("bad request , userType cannot be empty");
         } else if (
-          days[i].hasOwnProperty("paymentStatus") == false ||
-          days[i].paymentStatus == null ||
-          days[i].paymentStatus == ""
+          req.body.hasOwnProperty("paymentStatus") == false ||
+          req.body.paymentStatus == null ||
+          req.body.paymentStatus == ""
         ) {
           return res
             .status(400)
@@ -321,9 +321,9 @@ async function bookingAppointment(req, res) {
         ) {
           res.status(400).send("bad request , clinicId cannot be empty");
         } else if (
-          days[i].hasOwnProperty("paymentStatus") == false ||
-          days[i].paymentStatus == null ||
-          days[i].paymentStatus == ""
+          req.body.hasOwnProperty("paymentStatus") == false ||
+          req.body.paymentStatus == null ||
+          req.body.paymentStatus == ""
         ) {
           return res
             .status(400)
