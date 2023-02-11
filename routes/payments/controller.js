@@ -11,6 +11,7 @@ async function createNewPayment(object) {
       throw err;
     }
   } catch (err) {
+    console.log("payment error is ",err)
     throw {
       statuscode: 404,
       message: "There was some error in recording payment",

@@ -247,6 +247,7 @@ async function getReviewsDetails(body) {
 }
 
 async function ConvertDateFormat(date) {
+  console.log("THE DATE IS ",date)
   try {
     let temp = new Date(date).toISOString();
     let timeZone = new Date(date).getTimezoneOffset();
@@ -277,6 +278,7 @@ async function ConvertDateFormat(date) {
     finalFormat = temp.replace("Z", finalTimeZone);
     return finalFormat;
   } catch (err) {
+    console.log("Error is ",err)
     throw {
       statuscode: 400,
       message: "There was some error in converting Date Format",

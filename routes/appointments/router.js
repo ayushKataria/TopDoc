@@ -115,6 +115,7 @@ async function createSessions(req, res) {
 
 // book a slot with a doctor
 async function bookingAppointment(req, res) {
+  console.log("HITTING",req.body)
   try {
     if (req.body.hasOwnProperty("userType") == true) {
       if (req.body.userType == "registered") {
@@ -122,13 +123,14 @@ async function bookingAppointment(req, res) {
         const list = appointmentAttributeList.bookingAttributes;
         Object.keys(req.body).forEach((key) => {
           if (!list.includes(key)) {
-            res
-              .status(400)
-              .send("bad request , unknown attribute found in request");
             fail = true;
           }
         });
-        if (fail) return;
+        if (fail) {
+          return res
+            .status(400)
+            .send("bad request , unknown attribute found in request");
+        }
 
         if (
           req.body.hasOwnProperty("clinicDetails") == false ||
@@ -150,9 +152,9 @@ async function bookingAppointment(req, res) {
         ) {
           res.status(400).send("bad request , userType cannot be empty");
         } else if (
-          days[i].hasOwnProperty("paymentStatus") == false ||
-          days[i].paymentStatus == null ||
-          days[i].paymentStatus == ""
+          req.body.hasOwnProperty("paymentStatus") == false ||
+          req.body.paymentStatus == null ||
+          req.body.paymentStatus == ""
         ) {
           return res
             .status(400)
@@ -285,18 +287,22 @@ async function bookingAppointment(req, res) {
             .catch((err) => res.status(err.statuscode).send(err));
         }
       } else if (req.body.userType == "unRegistered") {
+        console.log("Unregistered triggering")
         let fail = false;
         const list = appointmentAttributeList.unRegBookingAttributes;
         Object.keys(req.body).forEach((key) => {
           if (!list.includes(key)) {
-            res
-              .status(400)
-              .send("bad request , unknown attribute found in request");
             fail = true;
+          
           }
         });
-        if (fail) return;
+        if (fail) {
+          return res
+            .status(400)
+            .send("bad request , unknown attribute found in request");
+        }
 
+        console.log("Return triggering unreg")
         if (
           req.body.hasOwnProperty("clinicDetails") == false ||
           req.body.clinicDetails == null ||
@@ -311,9 +317,9 @@ async function bookingAppointment(req, res) {
         ) {
           res.status(400).send("bad request , clinicId cannot be empty");
         } else if (
-          days[i].hasOwnProperty("paymentStatus") == false ||
-          days[i].paymentStatus == null ||
-          days[i].paymentStatus == ""
+          req.body.hasOwnProperty("paymentStatus") == false ||
+          req.body.paymentStatus == null ||
+          req.body.paymentStatus == ""
         ) {
           return res
             .status(400)
@@ -444,6 +450,7 @@ async function bookingAppointment(req, res) {
       } else {
         res.status(400).send("bad request , unknown userType");
       }
+      console.log("SACHIN RIGHT")
     } else {
       res.status(400).send("bad request , userType is mandatory");
     }
@@ -462,13 +469,14 @@ async function searchInBooking(req, res) {
     let list = appointmentAttributeList.searchInBooking;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (req.body.hasOwnProperty("search") == true) {
       list = appointmentAttributeList.searchAttributes;
@@ -556,13 +564,14 @@ async function delaySessionByDuration(req, res) {
     const list = appointmentAttributeList.sessionDelayAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("message") == false ||
@@ -616,13 +625,14 @@ async function queueManagement(req, res) {
     const list = appointmentAttributeList.queueAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("sessionId") == false ||
@@ -650,13 +660,14 @@ async function cancelDoctorSession(req, res) {
     const list = appointmentAttributeList.cancelDoctorSession;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("sessionId") == false ||

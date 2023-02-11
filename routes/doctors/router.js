@@ -135,8 +135,9 @@ async function updateProfileDetails(req, res) {
       }
     });
     if (fail) {
-      res.status(400).send("bad request , unknown attribute found in request");
-      return;
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
     }
 
     if (
@@ -241,13 +242,14 @@ async function createDoctorReviews(req, res) {
     const list = docAttributeList.userReviewsAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("doctorId") == false ||
@@ -373,13 +375,14 @@ async function createNewStaff(req, res) {
     const list = docAttributeList.createNewStaffAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("mappedTo") == false ||
@@ -449,13 +452,14 @@ async function updateReviewDetails(req, res) {
     const list = docAttributeList.userReviewsAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     if (
       req.body.hasOwnProperty("doctorId") == false ||
@@ -581,13 +585,14 @@ async function getDoctorReviewsByUserIdOrDoctorId(req, res) {
     const list = docAttributeList.getRequestReviewAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
-        res
-          .status(400)
-          .send("bad request , unknown attribute found in request");
         fail = true;
       }
     });
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
 
     let sortBy = Object.keys(req.body.sort);
 
