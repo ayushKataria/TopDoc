@@ -351,6 +351,7 @@ async function searchFieldInIndex(req, res) {
     } else {
       return res.status(400).send("bad request , please enter a valid role");
     }
+    if(list!=undefined){
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
         fail = true;
@@ -361,7 +362,7 @@ async function searchFieldInIndex(req, res) {
         .status(400)
         .send("bad request , unknown attribute found in request");
     }
-
+  }
     if (
       req.body.hasOwnProperty("role") == false ||
       req.body.role == null ||
