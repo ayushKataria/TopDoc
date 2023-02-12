@@ -584,13 +584,15 @@ async function delaySessionByDuration(req, res) {
       req.body.doctorId == ""
     ) {
       res.status(400).send("bad request , doctorId cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("sessionDate") == false ||
-      req.body.sessionDate == null ||
-      req.body.sessionDate == ""
-    ) {
-      res.status(400).send("bad request , sessionDate cannot be empty");
-    } else if (
+    } 
+    // else if (
+    //   req.body.hasOwnProperty("sessionDate") == false ||
+    //   req.body.sessionDate == null ||
+    //   req.body.sessionDate == ""
+    // ) {
+    //   res.status(400).send("bad request , sessionDate cannot be empty");
+    // } 
+    else if (
       req.body.hasOwnProperty("sessionId") == false ||
       req.body.sessionId == null ||
       req.body.sessionId == ""
