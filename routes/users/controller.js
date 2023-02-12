@@ -202,6 +202,7 @@ async function login(req, res) {
     console.log("In login block");
     if (req.hasOwnProperty("emailId")) {
       let userData = await getDocByemailId(req.emailId, "user");
+      let userDetailsRec = userData.hits.hits[0]._source;
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
         isVerified = await compareHashPassword(req.password, savedPassword);
@@ -220,6 +221,15 @@ async function login(req, res) {
             statuscode: 200,
             message: "Authorization successfull",
             token: token,
+            userDetails: {
+              mobile: userDetailsRec.mobile,
+              name: userDetailsRec.name,
+              profImageUrl: userDetailsRec.profImageUrl,
+              userId: userDetailsRec.id,
+              email: userDetailsRec.email,
+              gender: userDetailsRec.gender,
+              userType: userDetailsRec.userType,
+            },
           };
         } else {
           result = { statuscode: 401, message: "Authorization failed" };
@@ -234,6 +244,7 @@ async function login(req, res) {
     }
     if (req.hasOwnProperty("mobileNumber")) {
       let userData = await getDocByPhone(req.mobileNumber, "user");
+      let userDetailsRec = userData.hits.hits[0]._source;
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
         isVerified = await compareHashPassword(req.password, savedPassword);
@@ -252,6 +263,15 @@ async function login(req, res) {
             statuscode: 200,
             message: "Authorization successfull",
             token: token,
+            userDetails: {
+              mobile: userDetailsRec.mobile,
+              name: userDetailsRec.name,
+              profImageUrl: userDetailsRec.profImageUrl,
+              userId: userDetailsRec.id,
+              email: userDetailsRec.email,
+              gender: userDetailsRec.gender,
+              userType: userDetailsRec.userType,
+            },
           };
         } else {
           result = { statuscode: 401, message: "Authorization failed" };

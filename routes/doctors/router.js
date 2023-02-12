@@ -122,6 +122,10 @@ async function updateProfileDetails(req, res) {
       }
       req.body.id = req.body.staffId;
       req.body = _.omit(req.body, "staffId");
+    } else {
+      return res
+      .status(400)
+      .send("bad request , please enter a valid role");
     }
     console.log(req.body);
 

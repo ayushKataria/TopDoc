@@ -213,8 +213,15 @@ async function createSessions(body) {
           let priorityBody = {};
           priorityBody.status = "notBooked";
           priorityBody.sessionId = days[i].sessions[j].sessionId;
+          priorityBody.sessionStartTime = days[i].sessions[j].startTime;
+          priorityBody.sessionEndTime = days[i].sessions[j].endTime;
+          priorityBody.clinicId = days[i].sessions[j].clinic.clinicId;
+          priorityBody.clinicDetails = days[i].sessions[j].clinic;
+          priorityBody.slotDuration = body.duration;
           priorityBody.doctorId = body.doctorId;
           priorityBody.appointmentDate = days[i].date;
+          priorityBody.slotDay =
+            appointmentAttributeList.weekday[currentTime.getDay()];
           priorityBody.slotType = "priority";
           priorityBody.paymentStatus = "default";
           priorityBody.prioritySlotId = `ps0${k}${days[i].sessions[j].sessionId}`;
@@ -247,11 +254,17 @@ async function createSessions(body) {
           while (currentTime < end) {
             let hours = currentTime.getHours().toString().padStart(2, "0");
             let minutes = currentTime.getMinutes().toString().padStart(2, "0");
+            tempBody.doctorId = body.doctorId;
             tempBody.sessionId = days[i].sessions[j].sessionId;
             tempBody.slotTime = `${hours}:${minutes}`;
             tempBody.predictedSlotTime = `${hours}:${minutes}`;
             tempBody.appointmentDate = days[i].date;
             tempBody.slotType = "normal";
+            tempBody.sessionStartTime = days[i].sessions[j].startTime;
+            tempBody.sessionEndTime = days[i].sessions[j].endTime;
+            tempBody.clinicId = days[i].sessions[j].clinic.clinicId;
+            tempBody.clinicDetails = days[i].sessions[j].clinic;
+            tempBody.slotDuration = body.duration;
             tempBody.paymentStatus = "default";
             tempBody.slotDay =
               appointmentAttributeList.weekday[currentTime.getDay()];
@@ -266,11 +279,17 @@ async function createSessions(body) {
               currentTime = end;
               hours = currentTime.getHours().toString().padStart(2, "0");
               minutes = currentTime.getMinutes().toString().padStart(2, "0");
+              tempBody.doctorId = body.doctorId;
               tempBody.sessionId = days[i].sessions[j].sessionId;
               tempBody.slotTime = `${hours}:${minutes}`;
               tempBody.predictedSlotTime = `${hours}:${minutes}`;
               tempBody.appointmentDate = days[i].date;
               tempBody.slotType = "normal";
+              tempBody.sessionStartTime = days[i].sessions[j].startTime;
+              tempBody.sessionEndTime = days[i].sessions[j].endTime;
+              tempBody.clinicId = days[i].sessions[j].clinic.clinicId;
+              tempBody.clinicDetails = days[i].sessions[j].clinic;
+              tempBody.slotDuration = body.duration;
               tempBody.paymentStatus = "default";
               tempBody.slotDay =
                 appointmentAttributeList.weekday[currentTime.getDay()];
@@ -630,7 +649,8 @@ async function searchInBooking(body) {
 async function delaySessionByDuration(body) {
   try {
     let index = "booking";
-    let userIdList = [];
+    let userList = [];
+    let output = {};
     let query = {};
     query.size = 10000;
     query.sort = [];
@@ -642,74 +662,100 @@ async function delaySessionByDuration(body) {
     query.query.bool.must[0] = { term: { sessionId: body.sessionId } };
     query.query.bool.filter[0] = { term: { doctorId: body.doctorId } };
     let res = await esUtil.search(query, index);
-    let slots = res.hits.hits.map((e) => {
-      if (Object.keys(e._source).includes("slotTime")) {
-        let slotTime = e._source.slotTime;
-        let slotDate = e._source.appointmentDate;
-        let year = parseInt(slotDate.toString().substring(0, 4));
-        let month = (parseInt(slotDate.toString().substring(5, 7)) - 1)
-          .toString()
-          .padStart(2, "0");
-        let day = parseInt(slotDate.toString().substring(8));
-        let hour = parseInt(slotTime.toString().substring(0, 2))
-          .toString()
-          .padStart(2, "0");
-        let minute = parseInt(slotTime.toString().substring(3))
-          .toString()
-          .padStart(2, "0");
-        let slotDayTime = new Date(year, month, day, hour, minute);
-        slotDayTime.setMinutes(
-          slotDayTime.getMinutes() + parseInt(body.sessionDelayDuration)
-        );
-        e._source.slotTime = `${slotDayTime
-          .getHours()
-          .toString()
-          .padStart(2, "0")}:${slotDayTime
-          .getMinutes()
-          .toString()
-          .padStart(2, "0")}`;
-        e._source.appointmentDate = `${slotDayTime.getFullYear()}-${(
-          slotDayTime.getMonth() + 1
-        )
-          .toString()
-          .padStart(2, "0")}-${slotDayTime
-          .getDate()
-          .toString()
-          .padStart(2, "0")}`;
-        e._source.slotDay = `${
-          appointmentAttributeList.weekday[slotDayTime.getDay()]
-        }`;
-        return e._source;
-      }
-    });
-    let j = 0;
-    let output = [];
-    for (let i = 0; i < slots.length; i++) {
-      if (slots[i] != null) {
-        if (Object.keys(slots[i]).includes("userId")) {
-          userIdList[j] = slots[i].userId;
-          j++;
+    output.hits = res.hits.total.value;
+    if (res.hits.total.value > 0) {
+      let slots = res.hits.hits.map((e) => {
+        if (Object.keys(e._source).includes("slotTime")) {
+          let slotTime = e._source.slotTime;
+          let slotDate = e._source.appointmentDate;
+          let year = parseInt(slotDate.toString().substring(0, 4));
+          let month = (parseInt(slotDate.toString().substring(5, 7)) - 1)
+            .toString()
+            .padStart(2, "0");
+          let day = parseInt(slotDate.toString().substring(8));
+          let hour = parseInt(slotTime.toString().substring(0, 2))
+            .toString()
+            .padStart(2, "0");
+          let minute = parseInt(slotTime.toString().substring(3))
+            .toString()
+            .padStart(2, "0");
+          let slotDayTime = new Date(year, month, day, hour, minute);
+          slotDayTime.setMinutes(
+            slotDayTime.getMinutes() + parseInt(body.sessionDelayDuration)
+          );
+          e._source.slotTime = `${slotDayTime
+            .getHours()
+            .toString()
+            .padStart(2, "0")}:${slotDayTime
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")}`;
+          e._source.predictedSlotTime = `${slotDayTime
+            .getHours()
+            .toString()
+            .padStart(2, "0")}:${slotDayTime
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")}`;
+
+          e._source.appointmentDate = `${slotDayTime.getFullYear()}-${(
+            slotDayTime.getMonth() + 1
+          )
+            .toString()
+            .padStart(2, "0")}-${slotDayTime
+            .getDate()
+            .toString()
+            .padStart(2, "0")}`;
+          e._source.slotDay = `${
+            appointmentAttributeList.weekday[slotDayTime.getDay()]
+          }`;
+          slotDayTime.setMinutes(
+            slotDayTime.getMinutes() + parseInt(e._source.slotDuration)
+          );
+          e._source.endTime = `${slotDayTime
+            .getHours()
+            .toString()
+            .padStart(2, "0")}:${slotDayTime
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")}`;
+          return e._source;
         }
-        output[i] = await docController.updateProfileDetailsController(
-          slots[i].slotId,
-          index,
-          slots[i]
-        );
+      });
+      let j = 0;
+
+      for (let i = 0; i < slots.length; i++) {
+        if (slots[i] != null) {
+          if (Object.keys(slots[i]).includes("userId")) {
+            userList[j] = {
+              id: slots[i].userId,
+              mobile: slots[i].mobile,
+              email: slots[i].email,
+            };
+            j++;
+          }
+          await docController.updateProfileDetailsController(
+            slots[i].slotId,
+            index,
+            slots[i]
+          );
+        }
       }
+      output.result = "updated";
+      let notifBody = {
+        priority: "high",
+        message: `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
+        time: moment().format("h:mm:ss a"),
+        status: "delivered",
+        medium: ["app", "sms"],
+        senderId: ["application", 7999411516],
+      };
+      await notificationWrapper.sessionAnnouncement(userList, notifBody);
+    } else if (res.hits.total.value == 0) {
+      output.result = "No records found for the given sessionId";
+    } else {
+      throw error;
     }
-
-    // await notification.userAnnouncement(userIdList, message);
-    let notifBody = {
-      priority: "high",
-      message: `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
-      time: moment().format("h:mm:ss a"),
-      status: "delivered",
-      medium: ["app", "sms"],
-      senderId: ["application", 7999411516],
-    };
-    await notificationWrapper.sessionAnnouncement(userIdList, notifBody);
-
-    // await notifController.createNotification(userIdList, notifBody);
     return output;
   } catch (error) {
     console.log(error);
@@ -763,6 +809,11 @@ async function queueManagement(body) {
             {
               term: {
                 status: "cancelled",
+              },
+            },
+            {
+              term: {
+                status: "ended",
               },
             },
           ],
@@ -924,7 +975,7 @@ async function queueManagement(body) {
 async function cancelDoctorSession(body) {
   try {
     let index = "booking";
-    let userIdList = [];
+    let userList = [];
     let totalSlots = [];
     let output = {};
     let Query = {
@@ -959,44 +1010,44 @@ async function cancelDoctorSession(body) {
 
     let res = await esUtil.search(Query, index);
     output.hits = res.hits.total.value;
-    let v = -1;
-    totalSlots = res.hits.hits.map((e) => {
-      e._source.status = "cancelled";
-      if (e._source.hasOwnProperty("appointmentId")) {
-        ++v;
-        userIdList[v] = e._source.userId;
+    if (res.hits.total.value > 0) {
+      let v = -1;
+      totalSlots = res.hits.hits.map((e) => {
+        e._source.status = "cancelled";
+        if (e._source.hasOwnProperty("appointmentId")) {
+          ++v;
+          userList[v] = {
+            id: e._source.userId,
+            mobile: e._source.mobile,
+            email: e._source.email,
+          };
+        }
+        return e._source;
+      });
+      let esbody = {};
+      esbody.status = body.status;
+      for (let i = 0; i < totalSlots.length; i++) {
+        await docController.updateProfileDetailsController(
+          totalSlots[i].slotId,
+          index,
+          esbody
+        );
       }
-      return e._source;
-    });
-
-    let esbody = {};
-    esbody.status = body.status;
-    for (let i = 0; i < totalSlots.length; i++) {
-      await docController.updateProfileDetailsController(
-        totalSlots[i].slotId,
-        index,
-        esbody
-      );
-    }
-    if (output.hits == 0) {
-      output.result = "failed to update any record";
-    } else {
       output.result = "updated";
+      let notifBody = {
+        priority: "high",
+        message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
+        time: moment().format("h:mm:ss a"),
+        status: "delivered",
+        medium: ["app", "sms", "mail"],
+        senderId: ["application", 7999411516, "topdoc@gmail.com"],
+      };
+      await notificationWrapper.sessionAnnouncement(userList, notifBody);
+    } else if (res.hits.total.value == 0) {
+      output.result = "No records found for the given sessionId";
+    } else {
+      throw error;
     }
-
-    // await notification.userAnnouncement(userIdList, message);
-
-    let notifBody = {
-      priority: "high",
-      message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
-      time: moment().format("h:mm:ss a"),
-      status: "delivered",
-      medium: ["app", "sms", "mail"],
-      senderId: ["application", 7999411516, "topdoc@gmail.com"],
-    };
-    await notificationWrapper.sessionAnnouncement(userIdList, notifBody);
-
-    // await notifController.createNotification(userIdList, notifBody);
 
     return output;
   } catch (error) {

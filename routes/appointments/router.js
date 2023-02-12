@@ -151,6 +151,18 @@ async function bookingAppointment(req, res) {
         ) {
           res.status(400).send("bad request , userType cannot be empty");
         } else if (
+          req.body.hasOwnProperty("mobile") == false ||
+          req.body.mobile == null ||
+          req.body.mobile == ""
+        ) {
+          res.status(400).send("bad request , mobile cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("email") == false ||
+          req.body.email == null ||
+          req.body.email == ""
+        ) {
+          res.status(400).send("bad request , email cannot be empty");
+        } else if (
           days[i].hasOwnProperty("paymentStatus") == false ||
           days[i].paymentStatus == null ||
           days[i].paymentStatus == ""
@@ -365,6 +377,12 @@ async function bookingAppointment(req, res) {
         ) {
           res.status(400).send("bad request , pin cannot be empty");
         } else if (
+          req.body.hasOwnProperty("email") == false ||
+          req.body.email == null ||
+          req.body.email == ""
+        ) {
+          res.status(400).send("bad request , email cannot be empty");
+        } else if (
           req.body.hasOwnProperty("endTime") == false ||
           req.body.endTime == null ||
           req.body.endTime == ""
@@ -477,14 +495,15 @@ async function searchInBooking(req, res) {
       list = appointmentAttributeList.searchAttributes;
       Object.keys(req.body.search).forEach((key) => {
         if (!list.includes(key)) {
-          res
-            .status(400)
-            .send("bad request , unknown attribute found in search");
           fail = true;
         }
       });
     }
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in search");
+    }
 
     if (req.body.hasOwnProperty("filters") == true) {
       list = appointmentAttributeList.filterAttributes;
@@ -494,14 +513,15 @@ async function searchInBooking(req, res) {
         })
         .forEach((key) => {
           if (!list.includes(key)) {
-            res
-              .status(400)
-              .send("bad request , unknown attribute found in filter");
             fail = true;
           }
         });
     }
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in filter");
+    }
 
     if (req.body.hasOwnProperty("sort") == true) {
       list = appointmentAttributeList.sortAttributes;
@@ -511,14 +531,15 @@ async function searchInBooking(req, res) {
         })
         .forEach((key) => {
           if (!list.includes(key)) {
-            res
-              .status(400)
-              .send("bad request , unknown attribute found in sort");
             fail = true;
           }
         });
     }
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in sort");
+    }
 
     if (
       req.body.hasOwnProperty("pageSize") == false ||
@@ -580,12 +601,6 @@ async function delaySessionByDuration(req, res) {
     ) {
       res.status(400).send("bad request , doctorId cannot be empty");
     } else if (
-      req.body.hasOwnProperty("sessionDate") == false ||
-      req.body.sessionDate == null ||
-      req.body.sessionDate == ""
-    ) {
-      res.status(400).send("bad request , sessionDate cannot be empty");
-    } else if (
       req.body.hasOwnProperty("sessionId") == false ||
       req.body.sessionId == null ||
       req.body.sessionId == ""
@@ -635,6 +650,8 @@ async function queueManagement(req, res) {
       req.body.sessionId == ""
     ) {
       res.status(400).send("bad request , sessionId cannot be empty");
+    } else if (req.body.hasOwnProperty("lastEndedTime") == false) {
+      res.status(400).send("bad request , lastEndedTime is mandatory");
     } else {
       await controller
         .queueManagement(req.body)
