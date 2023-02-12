@@ -156,16 +156,12 @@ async function bookingAppointment(req, res) {
           req.body.mobile == ""
         ) {
           res.status(400).send("bad request , mobile cannot be empty");
-        } else if (
-          req.body.hasOwnProperty("email") == false ||
-          req.body.email == null ||
-          req.body.email == ""
-        ) {
+        } else if (req.body.hasOwnProperty("email") == false) {
           res.status(400).send("bad request , email cannot be empty");
         } else if (
-          days[i].hasOwnProperty("paymentStatus") == false ||
-          days[i].paymentStatus == null ||
-          days[i].paymentStatus == ""
+          req.body.hasOwnProperty("paymentStatus") == false ||
+          req.body.paymentStatus == null ||
+          req.body.paymentStatus == ""
         ) {
           return res
             .status(400)
@@ -298,6 +294,7 @@ async function bookingAppointment(req, res) {
             .catch((err) => res.status(err.statuscode).send(err));
         }
       } else if (req.body.userType == "unRegistered") {
+        console.log("Unregistered triggering");
         let fail = false;
         const list = appointmentAttributeList.unRegBookingAttributes;
         Object.keys(req.body).forEach((key) => {
@@ -311,6 +308,7 @@ async function bookingAppointment(req, res) {
             .send("bad request , unknown attribute found in request");
         }
 
+        console.log("Return triggering unreg");
         if (
           req.body.hasOwnProperty("clinicDetails") == false ||
           req.body.clinicDetails == null ||
@@ -325,9 +323,9 @@ async function bookingAppointment(req, res) {
         ) {
           res.status(400).send("bad request , clinicId cannot be empty");
         } else if (
-          days[i].hasOwnProperty("paymentStatus") == false ||
-          days[i].paymentStatus == null ||
-          days[i].paymentStatus == ""
+          req.body.hasOwnProperty("paymentStatus") == false ||
+          req.body.paymentStatus == null ||
+          req.body.paymentStatus == ""
         ) {
           return res
             .status(400)
@@ -376,11 +374,7 @@ async function bookingAppointment(req, res) {
           req.body.pin == ""
         ) {
           res.status(400).send("bad request , pin cannot be empty");
-        } else if (
-          req.body.hasOwnProperty("email") == false ||
-          req.body.email == null ||
-          req.body.email == ""
-        ) {
+        } else if (req.body.hasOwnProperty("email") == false) {
           res.status(400).send("bad request , email cannot be empty");
         } else if (
           req.body.hasOwnProperty("endTime") == false ||

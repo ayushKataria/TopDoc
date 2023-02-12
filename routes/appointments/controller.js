@@ -745,7 +745,7 @@ async function delaySessionByDuration(body) {
       let notifBody = {
         priority: "high",
         message: `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
-        time: moment().format("h:mm:ss a"),
+        time: moment().format("YYYY-MM-DDTHH:mm:ss"),
         status: "delivered",
         medium: ["app", "sms"],
         senderId: ["application", 7999411516],
@@ -1037,7 +1037,7 @@ async function cancelDoctorSession(body) {
       let notifBody = {
         priority: "high",
         message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
-        time: moment().format("h:mm:ss a"),
+        time: moment().format("YYYY-MM-DDTHH:mm:ss"),
         status: "delivered",
         medium: ["app", "sms", "mail"],
         senderId: ["application", 7999411516, "topdoc@gmail.com"],
