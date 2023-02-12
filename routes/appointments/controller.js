@@ -338,11 +338,12 @@ async function bookingAppointment(body) {
     let index = "booking";
     body.appointmentId = uuid.v4();
     body.status = "booked";
-    let booking;
+    let booking = {};
     let slotId;
     body.bookingTimeStamp = await docController.ConvertDateFormat(
       body.bookingTimeStamp
     );
+    console.log("bookingTime");
     if (body.userType == "registered") {
       slotId = body.slotId;
       body.queueId =
@@ -365,6 +366,9 @@ async function bookingAppointment(body) {
           index,
           body
         );
+        if (booking.results == "updated") {
+          booking.appointmentId = body.appointmentId;
+        }
       }
     } else {
       let userBody = {};
@@ -405,16 +409,21 @@ async function bookingAppointment(body) {
           index,
           body
         );
+        if (booking.results == "updated") {
+          booking.appointmentId = body.appointmentId;
+        }
       } else {
         query.sort[1] = { slotTime: "desc" };
         query.sort[0] = {
           appointmentDate: "desc",
         };
-        query.query.bool.filter[0] = { term: { status: "booked" } };
-        query.query.bool.filter[1] = { term: { slotType: "normal" } };
+        // query.query.bool.filter[0] = { term: { status: "booked" } };
+        query.query.bool.filter[0] = { term: { slotType: "normal" } };
+        // console.log("query ", JSON.stringify(query));
         let resForUnRegUser = await esUtil.search(query, index);
         console.log(resForUnRegUser.hits.hits[0]._source);
         let slotDate = resForUnRegUser.hits.hits[0]._source.appointmentDate;
+        let slotDuration = resForUnRegUser.hits.hits[0]._source.slotDuration;
         console.log(slotDate);
         let year = slotDate.toString().substring(0, 4);
         console.log(year);
@@ -436,7 +445,7 @@ async function bookingAppointment(body) {
         let currentDate = slotDayTime.toLocaleDateString();
         console.log("before  ", slotDayTime.toLocaleDateString());
         slotDayTime.setMinutes(
-          slotDayTime.getMinutes() + parseInt(body.duration)
+          slotDayTime.getMinutes() + parseInt(slotDuration)
         );
         let appointDate = slotDayTime.toLocaleDateString();
 
@@ -465,12 +474,21 @@ async function bookingAppointment(body) {
         body.predictedSlotTime = slotTime;
         let slotId = slotTime + body.sessionId;
         body.slotId = slotId;
+        body.doctorId = resForUnRegUser.hits.hits[0]._source.doctorId;
+        body.sessionId = resForUnRegUser.hits.hits[0]._source.sessionId;
+        body.sessionStartTime =
+          resForUnRegUser.hits.hits[0]._source.sessionStartTime;
+        body.sessionEndTime =
+          resForUnRegUser.hits.hits[0]._source.sessionEndTime;
+        body.clinicId = resForUnRegUser.hits.hits[0]._source.clinicId;
+        body.clinicDetails = resForUnRegUser.hits.hits[0]._source.clinicDetails;
+        body.slotDuration = slotDuration;
         body.queueId =
           body.appointmentDate.replaceAll("-", "") +
           slotId.substring(0, 2) +
           body.slotId.substring(3, 5);
         slotDayTime.setMinutes(
-          slotDayTime.getMinutes() + parseInt(body.duration)
+          slotDayTime.getMinutes() + parseInt(slotDuration)
         );
         newHour = slotDayTime.getHours().toString().padStart(2, "0");
         newMinutes = slotDayTime.getMinutes().toString().padStart(2, "0");
@@ -481,7 +499,10 @@ async function bookingAppointment(body) {
           if (dataObj.result == "noop") {
             booking = { results: "please enter a new Field Values to update" };
           } else {
-            booking = { results: "created" };
+            booking = {
+              results: "created",
+              appointmentId: body.appointmentId,
+            };
           }
         } else {
           booking = { results: "some error occured while booking appointment" };
