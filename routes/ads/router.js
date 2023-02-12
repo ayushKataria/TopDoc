@@ -348,6 +348,8 @@ async function searchFieldInIndex(req, res) {
       list = adsAttributeList.adsAttributes;
     } else if (req.body.role == "payment") {
       list = paymentAttributesList.paymentSearchList;
+    } else {
+      return res.status(400).send("bad request , please enter a valid role");
     }
     if(list!=undefined){
     Object.keys(req.body).forEach((key) => {

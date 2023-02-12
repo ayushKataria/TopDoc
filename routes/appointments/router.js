@@ -115,7 +115,6 @@ async function createSessions(req, res) {
 
 // book a slot with a doctor
 async function bookingAppointment(req, res) {
-  console.log("HITTING",req.body)
   try {
     if (req.body.hasOwnProperty("userType") == true) {
       if (req.body.userType == "registered") {
@@ -151,6 +150,14 @@ async function bookingAppointment(req, res) {
           req.body.userType == ""
         ) {
           res.status(400).send("bad request , userType cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("mobile") == false ||
+          req.body.mobile == null ||
+          req.body.mobile == ""
+        ) {
+          res.status(400).send("bad request , mobile cannot be empty");
+        } else if (req.body.hasOwnProperty("email") == false) {
+          res.status(400).send("bad request , email cannot be empty");
         } else if (
           req.body.hasOwnProperty("paymentStatus") == false ||
           req.body.paymentStatus == null ||
@@ -287,13 +294,12 @@ async function bookingAppointment(req, res) {
             .catch((err) => res.status(err.statuscode).send(err));
         }
       } else if (req.body.userType == "unRegistered") {
-        console.log("Unregistered triggering")
+        console.log("Unregistered triggering");
         let fail = false;
         const list = appointmentAttributeList.unRegBookingAttributes;
         Object.keys(req.body).forEach((key) => {
           if (!list.includes(key)) {
             fail = true;
-          
           }
         });
         if (fail) {
@@ -302,7 +308,7 @@ async function bookingAppointment(req, res) {
             .send("bad request , unknown attribute found in request");
         }
 
-        console.log("Return triggering unreg")
+        console.log("Return triggering unreg");
         if (
           req.body.hasOwnProperty("clinicDetails") == false ||
           req.body.clinicDetails == null ||
@@ -368,6 +374,8 @@ async function bookingAppointment(req, res) {
           req.body.pin == ""
         ) {
           res.status(400).send("bad request , pin cannot be empty");
+        } else if (req.body.hasOwnProperty("email") == false) {
+          res.status(400).send("bad request , email cannot be empty");
         } else if (
           req.body.hasOwnProperty("endTime") == false ||
           req.body.endTime == null ||
@@ -450,7 +458,6 @@ async function bookingAppointment(req, res) {
       } else {
         res.status(400).send("bad request , unknown userType");
       }
-      console.log("SACHIN RIGHT")
     } else {
       res.status(400).send("bad request , userType is mandatory");
     }
@@ -482,14 +489,15 @@ async function searchInBooking(req, res) {
       list = appointmentAttributeList.searchAttributes;
       Object.keys(req.body.search).forEach((key) => {
         if (!list.includes(key)) {
-          res
-            .status(400)
-            .send("bad request , unknown attribute found in search");
           fail = true;
         }
       });
     }
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in search");
+    }
 
     if (req.body.hasOwnProperty("filters") == true) {
       list = appointmentAttributeList.filterAttributes;
@@ -499,14 +507,15 @@ async function searchInBooking(req, res) {
         })
         .forEach((key) => {
           if (!list.includes(key)) {
-            res
-              .status(400)
-              .send("bad request , unknown attribute found in filter");
             fail = true;
           }
         });
     }
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in filter");
+    }
 
     if (req.body.hasOwnProperty("sort") == true) {
       list = appointmentAttributeList.sortAttributes;
@@ -516,14 +525,15 @@ async function searchInBooking(req, res) {
         })
         .forEach((key) => {
           if (!list.includes(key)) {
-            res
-              .status(400)
-              .send("bad request , unknown attribute found in sort");
             fail = true;
           }
         });
     }
-    if (fail) return;
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in sort");
+    }
 
     if (
       req.body.hasOwnProperty("pageSize") == false ||
@@ -584,15 +594,7 @@ async function delaySessionByDuration(req, res) {
       req.body.doctorId == ""
     ) {
       res.status(400).send("bad request , doctorId cannot be empty");
-    } 
-    // else if (
-    //   req.body.hasOwnProperty("sessionDate") == false ||
-    //   req.body.sessionDate == null ||
-    //   req.body.sessionDate == ""
-    // ) {
-    //   res.status(400).send("bad request , sessionDate cannot be empty");
-    // } 
-    else if (
+    } else if (
       req.body.hasOwnProperty("sessionId") == false ||
       req.body.sessionId == null ||
       req.body.sessionId == ""
@@ -642,6 +644,8 @@ async function queueManagement(req, res) {
       req.body.sessionId == ""
     ) {
       res.status(400).send("bad request , sessionId cannot be empty");
+    } else if (req.body.hasOwnProperty("lastEndedTime") == false) {
+      res.status(400).send("bad request , lastEndedTime is mandatory");
     } else {
       await controller
         .queueManagement(req.body)
