@@ -138,7 +138,8 @@ async function bookingAppointment(req, res) {
           _.isEmpty(req.body.clinicDetails) == true
         ) {
           res.status(400).send("bad request , clinicDetails cannot be empty");
-        } else if (
+        }
+         else if (
           req.body.hasOwnProperty("clinicId") == false ||
           req.body.clinicId == null ||
           req.body.clinicId == ""
@@ -309,20 +310,21 @@ async function bookingAppointment(req, res) {
         }
 
         console.log("Return triggering unreg");
-        if (
-          req.body.hasOwnProperty("clinicDetails") == false ||
-          req.body.clinicDetails == null ||
-          req.body.clinicDetails == "" ||
-          _.isEmpty(req.body.clinicDetails) == true
-        ) {
-          res.status(400).send("bad request , clinicDetails cannot be empty");
-        } else if (
-          req.body.hasOwnProperty("clinicId") == false ||
-          req.body.clinicId == null ||
-          req.body.clinicId == ""
-        ) {
-          res.status(400).send("bad request , clinicId cannot be empty");
-        } else if (
+        // if (
+        //   req.body.hasOwnProperty("clinicDetails") == false ||
+        //   req.body.clinicDetails == null ||
+        //   req.body.clinicDetails == "" ||
+        //   _.isEmpty(req.body.clinicDetails) == true
+        // ) {
+        //   res.status(400).send("bad request , clinicDetails cannot be empty");
+        // } else if (
+        //   req.body.hasOwnProperty("clinicId") == false ||
+        //   req.body.clinicId == null ||
+        //   req.body.clinicId == ""
+        // ) {
+        //   res.status(400).send("bad request , clinicId cannot be empty");
+        // } 
+         if (
           req.body.hasOwnProperty("paymentStatus") == false ||
           req.body.paymentStatus == null ||
           req.body.paymentStatus == ""
@@ -342,13 +344,15 @@ async function bookingAppointment(req, res) {
           req.body.sessionId == ""
         ) {
           res.status(400).send("bad request , sessionId cannot be empty");
-        } else if (
-          req.body.hasOwnProperty("doctorId") == false ||
-          req.body.doctorId == null ||
-          req.body.doctorId == ""
-        ) {
-          res.status(400).send("bad request , doctorId cannot be empty");
-        } else if (req.body.hasOwnProperty("reasonForVisit") == false) {
+        } 
+        // else if (
+        //   req.body.hasOwnProperty("doctorId") == false ||
+        //   req.body.doctorId == null ||
+        //   req.body.doctorId == ""
+        // ) {
+        //   res.status(400).send("bad request , doctorId cannot be empty");
+        // }
+         else if (req.body.hasOwnProperty("reasonForVisit") == false) {
           res.status(400).send("bad request , reasonForVisit is mandatory");
         } else if (
           req.body.hasOwnProperty("appointmentType") == false ||
@@ -362,35 +366,41 @@ async function bookingAppointment(req, res) {
           req.body.gender == ""
         ) {
           res.status(400).send("bad request , gender cannot be empty");
-        } else if (
-          req.body.hasOwnProperty("dob") == false ||
-          req.body.dob == null ||
-          req.body.dob == ""
-        ) {
-          res.status(400).send("bad request , dob cannot be empty");
-        } else if (
-          req.body.hasOwnProperty("pin") == false ||
-          req.body.pin == null ||
-          req.body.pin == ""
-        ) {
-          res.status(400).send("bad request , pin cannot be empty");
-        } else if (req.body.hasOwnProperty("email") == false) {
+        } 
+        // else if (
+        //   req.body.hasOwnProperty("dob") == false ||
+        //   req.body.dob == null ||
+        //   req.body.dob == ""
+        // ) {
+        //   res.status(400).send("bad request , dob cannot be empty");
+        // } 
+        // else if (
+        //   req.body.hasOwnProperty("pin") == false ||
+        //   req.body.pin == null ||
+        //   req.body.pin == ""
+        // ) {
+        //   res.status(400).send("bad request , pin cannot be empty");
+        // } 
+        else if (req.body.hasOwnProperty("email") == false) {
           res.status(400).send("bad request , email cannot be empty");
-        } else if (
-          req.body.hasOwnProperty("endTime") == false ||
-          req.body.endTime == null ||
-          req.body.endTime == ""
-        ) {
-          res.status(400).send("bad request , endTime cannot be empty");
-        } else if (
-          req.body.hasOwnProperty("predictedSlotTime") == false ||
-          req.body.predictedSlotTime == null ||
-          req.body.predictedSlotTime == ""
-        ) {
-          res
-            .status(400)
-            .send("bad request , predictedSlotTime cannot be empty");
-        } else if (
+        } 
+        // else if (
+        //   req.body.hasOwnProperty("endTime") == false ||
+        //   req.body.endTime == null ||
+        //   req.body.endTime == ""
+        // ) {
+        //   res.status(400).send("bad request , endTime cannot be empty");
+        // } else if (
+        //   req.body.hasOwnProperty("predictedSlotTime") == false ||
+        //   req.body.predictedSlotTime == null ||
+        //   req.body.predictedSlotTime == ""
+        // ) {
+        //   res
+        //     .status(400)
+        //     .send("bad request , predictedSlotTime cannot be empty");
+        // }
+        
+        else if (
           req.body.hasOwnProperty("slotDay") == false ||
           req.body.slotDay == null ||
           req.body.slotDay == ""
@@ -410,27 +420,30 @@ async function bookingAppointment(req, res) {
           req.body.appointmentDate == ""
         ) {
           res.status(400).send("bad request , appointmentDate cannot be empty");
-        } else if (
-          req.body.hasOwnProperty("sessionStartTime") == false ||
-          req.body.sessionStartTime == null ||
-          req.body.sessionStartTime == ""
-        ) {
-          res
-            .status(400)
-            .send("bad request , sessionStartTime cannot be empty");
-        } else if (
-          req.body.hasOwnProperty("sessionEndTime") == false ||
-          req.body.sessionEndTime == null ||
-          req.body.sessionEndTime == ""
-        ) {
-          res.status(400).send("bad request , sessionEndTime cannot be empty");
-        } else if (
-          req.body.hasOwnProperty("duration") == false ||
-          req.body.duration == null ||
-          req.body.duration == ""
-        ) {
-          res.status(400).send("bad request , duration cannot be empty");
-        } else if (
+        } 
+        // else if (
+        //   req.body.hasOwnProperty("sessionStartTime") == false ||
+        //   req.body.sessionStartTime == null ||
+        //   req.body.sessionStartTime == ""
+        // ) {
+        //   res
+        //     .status(400)
+        //     .send("bad request , sessionStartTime cannot be empty");
+        // } else if (
+        //   req.body.hasOwnProperty("sessionEndTime") == false ||
+        //   req.body.sessionEndTime == null ||
+        //   req.body.sessionEndTime == ""
+        // ) {
+        //   res.status(400).send("bad request , sessionEndTime cannot be empty");
+        // } else if (
+        //   req.body.hasOwnProperty("duration") == false ||
+        //   req.body.duration == null ||
+        //   req.body.duration == ""
+        // ) {
+        //   res.status(400).send("bad request , duration cannot be empty");
+        // } 
+        
+        else if (
           req.body.hasOwnProperty("mobile") == false ||
           req.body.mobile == null ||
           req.body.mobile == ""

@@ -412,9 +412,12 @@ async function bookingAppointment(body) {
         };
         query.query.bool.filter[0] = { term: { status: "booked" } };
         query.query.bool.filter[1] = { term: { slotType: "normal" } };
+        console.log("THE QUERY STRING IS ",JSON.stringify(query))
+        console.log("The quer iis " ,query.query.bool.filter)
         let resForUnRegUser = await esUtil.search(query, index);
-        console.log(resForUnRegUser.hits.hits[0]._source);
+        console.log("RS IS "+JSON.stringify(resForUnRegUser.hits.hits[0]._source));
         let slotDate = resForUnRegUser.hits.hits[0]._source.appointmentDate;
+        let duration = resForUnRegUser.hits.hits[0]._source.slotDuration;
         console.log(slotDate);
         let year = slotDate.toString().substring(0, 4);
         console.log(year);
@@ -436,10 +439,10 @@ async function bookingAppointment(body) {
         let currentDate = slotDayTime.toLocaleDateString();
         console.log("before  ", slotDayTime.toLocaleDateString());
         slotDayTime.setMinutes(
-          slotDayTime.getMinutes() + parseInt(body.duration)
+          slotDayTime.getMinutes() + parseInt( resForUnRegUser.hits.hits[0]._source.slotDuration)
         );
         let appointDate = slotDayTime.toLocaleDateString();
-
+console.log("SLOT DAY TIME "+resForUnRegUser.hits.hits[0]._source.slotDuration)
         console.log(
           "after  ",
           slotDayTime.toLocaleDateString().replaceAll("/", "-")
