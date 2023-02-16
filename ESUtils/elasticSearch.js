@@ -7,8 +7,8 @@ let elasticSearchClient = null;
 let esClient = null;
 //Akash Elastic pass
 
-var auth = "elastic" + ":" + "N=D14f7buQbu74p*iq3+";
-const connstring = "http://" + "localhost" + ":" + "9200";
+var auth = "elastic" + ":" + "8DJiecXAd+s=WaDGNF=E";
+const connstring = "https://" + "localhost" + ":" + "9200";
 
 const enable_password = true;
 function connectClient() {
@@ -87,46 +87,46 @@ function getData(queryBody, paramIndex) {
 }
 
 //update Profile Details
-function updateData(paramIndex, Identifier, body) {
-  if (elasticSearchClient == null) {
-    connectClient();
-  }
+// function updateData(paramIndex, Identifier, body) {
+//   if (elasticSearchClient == null) {
+//     connectClient();
+//   }
 
-  // return new Promise((resolve, reject) => {
-  //       elasticSearchClient.search({
-  //             index: paramIndex,
-  //             id: Identifier,
-  //             body: {
-  //   doc: body,
-  // },
+//   // return new Promise((resolve, reject) => {
+//   //       elasticSearchClient.search({
+//   //             index: paramIndex,
+//   //             id: Identifier,
+//   //             body: {
+//   //   doc: body,
+//   // },
 
-  //     }).then((result) => {
-  //         log.info('Results: ' + result);
-  //         resolve(result)
-  //     }).catch((err) => {
-  //         log.error('error: ' + err);
-  //         reject(err)
-  //     })
-  // })
+//   //     }).then((result) => {
+//   //         log.info('Results: ' + result);
+//   //         resolve(result)
+//   //     }).catch((err) => {
+//   //         log.error('error: ' + err);
+//   //         reject(err)
+//   //     })
+//   // })
 
-  return elasticSearchClient
-    .update({
-      index: paramIndex,
-      id: Identifier,
-      body: {
-        doc: body,
-      },
-    })
-    .then(function (resp) {
-      if (resp.result == "updated") {
-        console.log(resp);
-        console.log("Fields successfully updated");
-        return resp;
-      } else {
-        throw err;
-      }
-    });
-}
+//   return elasticSearchClient
+//     .update({
+//       index: paramIndex,
+//       id: Identifier,
+//       body: {
+//         doc: body,
+//       },
+//     })
+//     .then(function (resp) {
+//       if (resp.result == "updated") {
+//         console.log(resp);
+//         console.log("Fields successfully updated");
+//         return resp;
+//       } else {
+//         throw err;
+//       }
+//     });
+// }
 
 function createEntity(object, paramIndex) {
   //  //console.log("Esdb invoked perfectly",object)
@@ -162,6 +162,102 @@ function createEntity(object, paramIndex) {
   // }).catch(err=>{
   //     return   { statuscode: 404, message: "Doctor profile Creation Failed"}
   // });
+}
+
+async function updateData(queryBody, paramIndex, retry = 0) {
+  if (elasticSearchClient == null) {
+    connectClient();
+  }
+  if (queryBody.hasOwnProperty("body") && queryBody.body.hasOwnProperty("doc"))
+    return new Promise((resolve, reject) => {
+      elasticSearchClient
+        .update({
+          // index: indexDict[paramIndex],
+          index: paramIndex,
+          id: queryBody.id,
+          refresh: "true",
+          retry_on_conflict: 2,
+          doc_as_upsert: true,
+          body: queryBody.body,
+        })
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    }).catch((err) => {
+      if (retry <= 0) {
+        throw {
+          statuscode: 500,
+          err: "Elasticsearch Query failed",
+          message: "couldn't query the database",
+        };
+      } else {
+        return updateData(queryBody, paramIndex, Number(retry - 1));
+      }
+    });
+  else {
+    return new Promise((resolve, reject) => {
+      elasticSearchClient
+        .update({
+          // index: indexDict[paramIndex],
+          index: paramIndex,
+          id: queryBody.id,
+          refresh: "true",
+          retry_on_conflict: 2,
+          body: queryBody.body,
+        })
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    }).catch((err) => {
+      if (retry <= 0) {
+        throw {
+          statuscode: 500,
+          err: "Elasticsearch Query failed",
+          message: "couldn't query the database",
+        };
+      } else {
+        return updateData(queryBody, paramIndex, Number(retry - 1));
+      }
+    });
+  }
+}
+
+async function updateDataByQuery(queryBody, paramIndex, retry = 0) {
+  if (elasticSearchClient == null) {
+    connectClient();
+  }
+
+  return new Promise((resolve, reject) => {
+    elasticSearchClient
+      .updateByQuery({
+        // index: indexDict[paramIndex],
+        index: paramIndex,
+        refresh: "true",
+        body: queryBody,
+      })
+      .then((result) => {
+        resolve(result);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  }).catch((err) => {
+    if (retry <= 0) {
+      throw {
+        statuscode: 500,
+        err: "Elasticsearch Query failed",
+        message: "couldn't query the database",
+      };
+    } else {
+      return updateDataByQuery(queryBody, paramIndex, Number(retry - 1));
+    }
+  });
 }
 
 function templateSearch(queryBody, paramIndex, paramsTemplate) {
@@ -449,4 +545,5 @@ module.exports = {
   templateSearch,
   aggegrationsData,
   connectClient,
+  updateDataByQuery,
 };
