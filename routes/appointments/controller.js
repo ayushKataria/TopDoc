@@ -750,6 +750,7 @@ async function delaySessionByDuration(body) {
           if (Object.keys(slots[i]).includes("userId")) {
             userList[j] = {
               id: slots[i].userId,
+              name: slots[i].userName,
               mobile: slots[i].mobile,
               email: slots[i].email,
             };
@@ -1039,6 +1040,7 @@ async function cancelDoctorSession(body) {
           ++v;
           userList[v] = {
             id: e._source.userId,
+            name: e._source.userName,
             mobile: e._source.mobile,
             email: e._source.email,
           };
