@@ -165,6 +165,7 @@ const sessionDelayAttributes = [
   "doctorId",
   "sessionDelayDuration",
   "sessionId",
+  "sessionDate",
   "message",
 ];
 const weekday = [

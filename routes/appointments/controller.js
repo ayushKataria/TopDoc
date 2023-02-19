@@ -769,7 +769,7 @@ async function delaySessionByDuration(body) {
         message: `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
         time: moment().format("YYYY-MM-DDTHH:mm:ss"),
         status: "delivered",
-        medium: ["app", "sms"],
+        medium: ["app", "mail"],
         senderId: ["application", 7999411516],
       };
       await notificationWrapper.sessionAnnouncement(userList, notifBody);

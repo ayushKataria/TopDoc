@@ -1,5 +1,6 @@
 const uuid = require("uuid");
 const socketNotif = require("./notificationType/socket");
+const mailNotif = require("./notificationType/mail");
 const esdb = require("../../utils/es_util");
 
 async function createNotification(id, body) {
@@ -40,21 +41,37 @@ async function manualNotification(body) {
     if (body.id.length > 0) {
       let ids = body.id;
       if (body.medium.includes("app")) {
-        await socketNotif.userAnnouncement(ids, body.message);
-      } else if (body.medium.includes("sms")) {
-        // socketNotif.userAnnouncement(id, body.message);
-      } else {
-        // socketNotif.userAnnouncement(id, body.message);
+        let userId = [];
+        for (let i = 0; i < ids.length; i++) {
+          userId.push(ids[i].id);
+        }
+        await socketNotif.userAnnouncement(userId, body.message);
+      }
+      // if (body.medium.includes("sms")) {
+      // let data = [];
+      // for (let i = 0; i < ids.length; i++) {
+      //   data.push(ids[i].mobile, ids[i].name);
+      // }
+      // console.log("mobile and name", data);
+      // await socketNotif.userAnnouncementBySms(data, body.message);
+      // }
+      if (body.medium.includes("mail")) {
+        let data = [];
+        for (let i = 0; i < ids.length; i++) {
+          data.push(ids[i].email, ids[i].name);
+        }
+        console.log("email and name", data);
+        await mailNotif.userAnnouncementByMail(data, body.message);
       }
 
       console.log("notification delivered");
-      ids.forEach(async (key) => {
+      for (let i = 0; i < ids.length; i++) {
         // console.log("key", key);
         const newId = uuid.v1();
         // console.log("newId", newId);
         body.notificationId = newId;
         // console.log("body[notificationId]", body.notificationId);
-        body.id = key;
+        body.id = ids[i].id;
         console.log("The uuid is ", newId, body, "aaaaaaaaaaaaaaaaaaaaa");
         let entityCreationObj = await esdb.insert(body, newId, "notification");
         console.log("entityCreationObj", entityCreationObj);
@@ -65,7 +82,7 @@ async function manualNotification(body) {
             id: newId,
           };
         }
-      });
+      }
     }
   } catch (error) {
     console.log("error", error);
