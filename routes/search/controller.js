@@ -9,7 +9,15 @@ async function getSearchDetails(body) {
     let params = {};
     params.fromValue = body.pageNo * body.pageSize;
     params.sizeValue = body.pageSize;
-    params.queryValue = body.query;
+    // params.queryValue = body.query;
+
+    if (body.query == "all") {
+      params.boolMustMatchAll = true;
+    } else {
+      params.boolMustMultiMatch = true;
+      params.boolShould = true;
+      params.queryValue = body.query;
+    }
 
     //generating sort filters
     if (body.sort.length > 0) {
@@ -28,6 +36,12 @@ async function getSearchDetails(body) {
       (params.specializationAggregationComma = true),
       (params.cityAggregation = true),
       (params.cityAggregationComma = true),
+      (params.districtAggregation = true),
+      (params.districtAggregationComma = true),
+      (params.stateAggregation = true),
+      (params.stateAggregationComma = true),
+      (params.ailmentsTreatedAggregation = true),
+      (params.ailmentsTreatedAggregationComma = true),
       (params.countryAggregation = true),
       (params.countryAggregationComma = true),
       (params.yearsOfExperienceAggregation = true),
@@ -71,9 +85,16 @@ async function getSearchDetails(body) {
 
 function generateFilterStructure(params, key, value) {
   try {
-    params["filter" + key.charAt(0).toUpperCase() + key.slice(1)] = true;
-    params[key + "Value"] = value;
-    console.log("ssstring", params);
+    if (key == "yearsOfExperience" || key == "averageRating") {
+      params["filter" + key.charAt(0).toUpperCase() + key.slice(1)] = true;
+      params["gte" + key.charAt(0).toUpperCase() + key.slice(1) + "Value"] =
+        value;
+      console.log("ssstring", params);
+    } else {
+      params["filter" + key.charAt(0).toUpperCase() + key.slice(1)] = true;
+      params[key + "Value"] = value;
+      console.log("ssstring", params);
+    }
     return params;
   } catch (error) {
     log.error("error", error);
