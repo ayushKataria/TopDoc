@@ -5,13 +5,37 @@ let controller = require("./controller");
 async function createNotification(req, res) {
   console.log("inside createNotification router", req.body);
   try {
+    let ids = req.body.id;
+    if (ids.length > 0) {
+      for (let i = 0; i < ids.length; i++) {
+        if (
+          ids[i].hasOwnProperty("id") == false ||
+          ids[i].id == null ||
+          ids[i].id == ""
+        ) {
+          return res.status(400).send("bad request , id cannot be empty");
+        } else if (
+          ids[i].hasOwnProperty("name") == false ||
+          ids[i].name == null ||
+          ids[i].name == ""
+        ) {
+          return res.status(400).send("bad request , name cannot be empty");
+        } else if (
+          ids[i].hasOwnProperty("mobile") == false ||
+          ids[i].mobile == null ||
+          ids[i].mobile == ""
+        ) {
+          return res.status(400).send("bad request , mobile cannot be empty");
+        } else if (
+          ids[i].hasOwnProperty("email") == false ||
+          ids[i].email == null ||
+          ids[i].email == ""
+        ) {
+          return res.status(400).send("bad request , email cannot be empty");
+        }
+      }
+    }
     if (
-      req.body.hasOwnProperty("id") == false ||
-      req.body.hasOwnProperty("id") == null ||
-      req.body.hasOwnProperty("id") == ""
-    ) {
-      res.status(400).send("bad request , id cannot be empty");
-    } else if (
       req.body.hasOwnProperty("priority") == false ||
       req.body.hasOwnProperty("priority") == null ||
       req.body.hasOwnProperty("priority") == ""

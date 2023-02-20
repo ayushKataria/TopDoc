@@ -750,6 +750,7 @@ async function delaySessionByDuration(body) {
           if (Object.keys(slots[i]).includes("userId")) {
             userList[j] = {
               id: slots[i].userId,
+              name: slots[i].userName,
               mobile: slots[i].mobile,
               email: slots[i].email,
             };
@@ -768,7 +769,7 @@ async function delaySessionByDuration(body) {
         message: `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
         time: moment().format("YYYY-MM-DDTHH:mm:ss"),
         status: "delivered",
-        medium: ["app", "sms"],
+        medium: ["app", "mail"],
         senderId: ["application", 7999411516],
       };
       await notificationWrapper.sessionAnnouncement(userList, notifBody);
@@ -1039,6 +1040,7 @@ async function cancelDoctorSession(body) {
           ++v;
           userList[v] = {
             id: e._source.userId,
+            name: e._source.userName,
             mobile: e._source.mobile,
             email: e._source.email,
           };
