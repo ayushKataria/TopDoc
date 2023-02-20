@@ -6,6 +6,9 @@ const aggsDisplayName = {
   countryAggs: "Countries",
   yearsOfExperienceAggs: "Experience",
   averageRatingAggs: "Rating",
+  ailmentsTreatedAggs: "Ailments Treated",
+  stateAggs: "States",
+  districtAggs: "Districts",
 };
 function aggegrationsData(aggsMetaData) {
   try {
@@ -20,6 +23,7 @@ function aggegrationsData(aggsMetaData) {
           displayName: "",
           type: "",
           content: [],
+          buttonType: "checkBox",
         };
         aggsFilter.type = obj.replace("Aggs", "");
         aggsFilter.displayName = aggsDisplayName[obj];
@@ -41,6 +45,7 @@ function aggegrationsData(aggsMetaData) {
               aggsContent.from = value.from;
               aggsContent.to = value.to;
               aggsContent.count = value.doc_count;
+              aggsFilter.buttonType = "radio";
             } else if (obj == "genderAggs") {
               //gender aggregations
               aggsContent = {};
@@ -49,6 +54,7 @@ function aggegrationsData(aggsMetaData) {
               //   aggsContent.from=value.from
               //aggsContent.to=value.to
               aggsContent.count = value.doc_count;
+              aggsFilter.buttonType = "checkBox";
             } else if (obj == "languagesAggs") {
               //Language aggregations
               console.log("Value in lang is ", value);
@@ -58,6 +64,37 @@ function aggegrationsData(aggsMetaData) {
               //   aggsContent.from=value.from
               //aggsContent.to=value.to
               aggsContent.count = value.doc_count;
+              aggsFilter.buttonType = "checkBox";
+            } else if (obj == "districtAggs") {
+              //Language aggregations
+              console.log("Value in Dist is ", value);
+              aggsContent = {};
+              //creating content for average rating
+              aggsContent.displayName = value.key;
+              //   aggsContent.from=value.from
+              //aggsContent.to=value.to
+              aggsContent.count = value.doc_count;
+              aggsFilter.buttonType = "checkBox";
+            } else if (obj == "stateAggs") {
+              //Language aggregations
+              console.log("Value in state is ", value);
+              aggsContent = {};
+              //creating content for average rating
+              aggsContent.displayName = value.key;
+              //   aggsContent.from=value.from
+              //aggsContent.to=value.to
+              aggsContent.count = value.doc_count;
+              aggsFilter.buttonType = "checkBox";
+            } else if (obj == "ailmentsTreatedAggs") {
+              //Language aggregations
+              console.log("Value in ailment treated is ", value);
+              aggsContent = {};
+              //creating content for average rating
+              aggsContent.displayName = value.key;
+              //   aggsContent.from=value.from
+              //aggsContent.to=value.to
+              aggsContent.count = value.doc_count;
+              aggsFilter.buttonType = "checkBox";
             } else if (obj == "cityAggs") {
               //city aggregations
               aggsContent = {};
@@ -66,6 +103,7 @@ function aggegrationsData(aggsMetaData) {
               //   aggsContent.from=value.from
               //aggsContent.to=value.to
               aggsContent.count = value.doc_count;
+              aggsFilter.buttonType = "checkBox";
             } else if (obj == "specializationAggs") {
               //Specialization aggregations
               aggsContent = {};
@@ -74,6 +112,7 @@ function aggegrationsData(aggsMetaData) {
               //   aggsContent.from=value.from
               //aggsContent.to=value.to
               aggsContent.count = value.doc_count;
+              aggsFilter.buttonType = "checkBox";
             } else if (obj == "countryAggs") {
               //Countyr aggregations
               aggsContent = {};
@@ -82,14 +121,16 @@ function aggegrationsData(aggsMetaData) {
               //   aggsContent.from=value.from
               //aggsContent.to=value.to
               aggsContent.count = value.doc_count;
+              aggsFilter.buttonType = "checkBox";
             } else if (obj == "yearsOfExperienceAggs") {
               //Experience aggregations
               aggsContent = {};
               //creating content for average rating
               aggsContent.displayName = value.key;
-              //   aggsContent.from=value.from
+              aggsContent.from = value.from;
               //aggsContent.to=value.to
               aggsContent.count = value.doc_count;
+              aggsFilter.buttonType = "radio";
             } else {
               aggsContent.displayName = value["key"];
               aggsContent.type = value["key"];

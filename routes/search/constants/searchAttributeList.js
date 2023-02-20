@@ -1,23 +1,25 @@
 const searchFilterAttributes = [
-    "yearsOfExperience",
-    "languages",
-    "specialization",
-    "isVideoAllowed",
-    "gender",
-    "country",
-    "averageRating",
-    "city",
+  "yearsOfExperience",
+  "languages",
+  "specialization",
+  "state",
+  "district",
+  "ailmentsTreated",
+  "gender",
+  "country",
+  "averageRating",
+  "city",
 ];
 
 const searchSortAttributes = [
-    "yearsOfExperience",
-    "recommendation",
-    "relevence",
-    "earliestAvailable",
-    "price",
-  ];
-  
+  "yearsOfExperience",
+  "recommendation",
+  "relevence",
+  "earliestAvailable",
+  "price",
+];
+
 module.exports = {
-    searchFilterAttributes,
-    searchSortAttributes
-  };
+  searchFilterAttributes,
+  searchSortAttributes,
+};

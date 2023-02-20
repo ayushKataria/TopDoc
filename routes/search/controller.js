@@ -10,7 +10,7 @@ async function getSearchDetails(body) {
     params.fromValue = body.pageNo * body.pageSize;
     params.sizeValue = body.pageSize;
     // params.queryValue = body.query;
-
+    console.log("body.query", body.query);
     if (body.query == "all") {
       params.boolMustMatchAll = true;
     } else {
@@ -73,7 +73,7 @@ async function getSearchDetails(body) {
       return e._source;
     }); //.map ,.filter ,.reduce
     output.filters = searchFilterAggs;
-
+    console.log(output, "output is");
     return output;
   } catch (err) {
     console.log(err);
