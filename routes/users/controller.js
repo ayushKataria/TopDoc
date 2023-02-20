@@ -288,7 +288,11 @@ async function login(req, res) {
     return result;
   } catch (error) {
     if (error.statuscode) {
-      throw error;
+        throw {
+        statuscode: 401,
+        err: "access denied",
+        message: "Authorization failed",
+      };;
     } else {
       throw {
         statuscode: 500,
