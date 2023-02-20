@@ -55,7 +55,8 @@ async function getSearchDetails(body) {
       for (let i = 0; i < body.filters.length; i++) {
         if (body.filters.length > 0) {
           let key = Object.keys(body.filters[i])[0];
-          let value = Object.values(body.filters[i])[0][0];
+          let value = Object.values(body.filters[i])[0];
+          console.log("key value", key, value);
           params = generateFilterStructure(params, key, value);
         }
       }
