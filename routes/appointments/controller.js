@@ -171,7 +171,11 @@ function formatDateHHcolonMM(date) {
 async function createSessions(body) {
   try {
     // console.log("Fields to fetch 1", body);
-    let duration = body.duration;
+    let duration;
+    let minSlotDuration = 4;
+    let sessionDuration;
+    let minSessionDuration = 30;
+    let maxSessionDuration = 240;
     let days = body.days;
     let year;
     let month;
@@ -207,30 +211,29 @@ async function createSessions(body) {
           currentMinute
         );
         const end = new Date(year, month, day, endHour, endMinute);
-        slots = days[i].sessions[j].sessionSlots;
-        let prioritySlots = [];
-        for (let k = 1; k < 6; k++) {
-          let priorityBody = {};
-          priorityBody.status = "notBooked";
-          priorityBody.sessionId = days[i].sessions[j].sessionId;
-          priorityBody.sessionStartTime = days[i].sessions[j].startTime;
-          priorityBody.sessionEndTime = days[i].sessions[j].endTime;
-          priorityBody.clinicId = days[i].sessions[j].clinic.clinicId;
-          priorityBody.clinicDetails = days[i].sessions[j].clinic;
-          priorityBody.slotDuration = body.duration;
-          priorityBody.doctorId = body.doctorId;
-          priorityBody.appointmentDate = days[i].date;
-          priorityBody.slotDay =
-            appointmentAttributeList.weekday[currentTime.getDay()];
-          priorityBody.slotType = "priority";
-          priorityBody.paymentStatus = "default";
-          priorityBody.prioritySlotId = `ps0${k}${days[i].sessions[j].sessionId}`;
-          prioritySlots.push(`ps0${k}${days[i].sessions[j].sessionId}`);
-          await esUtil.insert(priorityBody, priorityBody.prioritySlotId, index);
-        }
-        days[i].sessions[j].prioritySlots = prioritySlots;
+        sessionDuration = (end - currentTime) / 60000;
+        duration = sessionDuration / days[i].sessions[j].slotsCount;
+        console.log(
+          "duration is  ",
+          duration,
+          "for slots Counts  ",
+          days[i].sessions[j].slotsCount
+        );
 
-        if (
+        slots = days[i].sessions[j].sessionSlots;
+        if (end <= currentTime) {
+          throw {
+            statuscode: 400,
+            err: "Bad Request",
+            message: `Conflict in session timings within a session for date = ${days[i].date}`,
+          };
+        } else if ((end - currentTime) / 60000 < parseInt(duration)) {
+          throw {
+            statuscode: 400,
+            err: "Bad Request",
+            message: `startTime and endTime difference is less than slot duration within a session for date = ${days[i].date}`,
+          };
+        } else if (
           j + 1 < days[i].sessions.length &&
           end >
             new Date(
@@ -248,9 +251,62 @@ async function createSessions(body) {
           throw {
             statuscode: 400,
             err: "Bad Request",
-            message: "Conflict in session timings",
+            message: `Conflict in session timings between sessions of date = ${days[i].date}`,
+          };
+        } else if (sessionDuration < minSessionDuration) {
+          throw {
+            statuscode: 400,
+            err: "Bad Request",
+            message: `Session Duration is less than the Minimum limit of ${minSessionDuration} minutes. Try Increasing the Session Duration for sessionId ${days[i].sessions[j].sessionId}`,
+          };
+        } else if (sessionDuration > maxSessionDuration) {
+          throw {
+            statuscode: 400,
+            err: "Bad Request",
+            message: `Session Duration is more than the Maximum limit of ${minSessionDuration} minutes. Try Reducing the Session Duration for sessionId ${days[i].sessions[j].sessionId}`,
+          };
+        } else if (duration < minSlotDuration) {
+          throw {
+            statuscode: 400,
+            err: "Bad Request",
+            message: `Slot Duration is less than the Minimum limit of ${minSlotDuration} minutes. Try reducing the number of slots OR Increase the Session Duration for sessionId ${days[i].sessions[j].sessionId}`,
+          };
+        } else if (duration > sessionDuration) {
+          throw {
+            statuscode: 400,
+            err: "Bad Request",
+            message: `Slot Duration is more than the Maximum limit of ${minSlotDuration} minutes. Try increasing the number of slots OR Reduce the Session Duration for sessionId ${days[i].sessions[j].sessionId}`,
           };
         } else {
+          let prioritySlots = [];
+          let prioritySlotsCount = Math.ceil(
+            days[i].sessions[j].slotsCount / 5
+          );
+          console.log("priority slots number are ", prioritySlotsCount);
+          for (let k = 1; k < prioritySlotsCount + 1; k++) {
+            let priorityBody = {};
+            priorityBody.status = "notBooked";
+            priorityBody.sessionId = days[i].sessions[j].sessionId;
+            priorityBody.sessionStartTime = days[i].sessions[j].startTime;
+            priorityBody.sessionEndTime = days[i].sessions[j].endTime;
+            priorityBody.clinicId = days[i].sessions[j].clinic.clinicId;
+            priorityBody.clinicDetails = days[i].sessions[j].clinic;
+            priorityBody.slotDuration = Math.round(duration);
+            priorityBody.doctorId = body.doctorId;
+            priorityBody.appointmentDate = days[i].date;
+            priorityBody.slotDay =
+              appointmentAttributeList.weekday[currentTime.getDay()];
+            priorityBody.slotType = "priority";
+            priorityBody.paymentStatus = "default";
+            priorityBody.prioritySlotId = `ps0${k}${days[i].sessions[j].sessionId}`;
+            prioritySlots.push(`ps0${k}${days[i].sessions[j].sessionId}`);
+            await esUtil.insert(
+              priorityBody,
+              priorityBody.prioritySlotId,
+              index
+            );
+          }
+          days[i].sessions[j].prioritySlots = prioritySlots;
           while (currentTime < end) {
             let hours = currentTime.getHours().toString().padStart(2, "0");
             let minutes = currentTime.getMinutes().toString().padStart(2, "0");
@@ -264,43 +320,84 @@ async function createSessions(body) {
             tempBody.sessionEndTime = days[i].sessions[j].endTime;
             tempBody.clinicId = days[i].sessions[j].clinic.clinicId;
             tempBody.clinicDetails = days[i].sessions[j].clinic;
-            tempBody.slotDuration = body.duration;
+            // tempBody.slotDuration = body.duration;
             tempBody.paymentStatus = "default";
             tempBody.slotDay =
               appointmentAttributeList.weekday[currentTime.getDay()];
             slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
             tempBody.slotId = `${hours}:${minutes}${days[i].sessions[j].sessionId}`;
-            currentTime.setMinutes(currentTime.getMinutes() + duration);
-            hours = currentTime.getHours().toString().padStart(2, "0");
-            minutes = currentTime.getMinutes().toString().padStart(2, "0");
-            tempBody.endTime = `${hours}:${minutes}`;
-            await esUtil.insert(tempBody, tempBody.slotId, index);
-            if (currentTime >= end) {
+            let tempCurrentTime = new Date(currentTime);
+            currentTime.setMilliseconds(
+              currentTime.getMilliseconds() + Math.round(duration * 60000)
+            );
+            console.log("current : ", currentTime, "end : ", end);
+            if (currentTime > end) {
+              console.log("hererererererer");
               currentTime = end;
-              hours = currentTime.getHours().toString().padStart(2, "0");
-              minutes = currentTime.getMinutes().toString().padStart(2, "0");
-              tempBody.doctorId = body.doctorId;
-              tempBody.sessionId = days[i].sessions[j].sessionId;
-              tempBody.slotTime = `${hours}:${minutes}`;
-              tempBody.predictedSlotTime = `${hours}:${minutes}`;
-              tempBody.appointmentDate = days[i].date;
-              tempBody.slotType = "normal";
-              tempBody.sessionStartTime = days[i].sessions[j].startTime;
-              tempBody.sessionEndTime = days[i].sessions[j].endTime;
-              tempBody.clinicId = days[i].sessions[j].clinic.clinicId;
-              tempBody.clinicDetails = days[i].sessions[j].clinic;
-              tempBody.slotDuration = body.duration;
-              tempBody.paymentStatus = "default";
-              tempBody.slotDay =
-                appointmentAttributeList.weekday[currentTime.getDay()];
-              slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
-              tempBody.slotId = `${hours}:${minutes}${days[i].sessions[j].sessionId}`;
-              currentTime.setMinutes(currentTime.getMinutes() + duration);
+            }
+
+            if (currentTime < end) {
+              console.log("inside if ", currentTime - tempCurrentTime);
               hours = currentTime.getHours().toString().padStart(2, "0");
               minutes = currentTime.getMinutes().toString().padStart(2, "0");
               tempBody.endTime = `${hours}:${minutes}`;
+              let endTimeMinutes =
+                parseInt(tempBody.endTime.toString().substring(0, 2)) * 60 +
+                parseInt(tempBody.endTime.toString().substring(3, 5));
+              let slotTimeMinutes =
+                parseInt(tempBody.slotTime.toString().substring(0, 2)) * 60 +
+                parseInt(tempBody.slotTime.toString().substring(3, 5));
+              tempBody.slotDuration = endTimeMinutes - slotTimeMinutes;
+              await esUtil.insert(tempBody, tempBody.slotId, index);
+            } else if (
+              currentTime.getTime() == end.getTime() &&
+              currentTime - tempCurrentTime >= 240000
+            ) {
+              console.log("inside else if ", currentTime - tempCurrentTime);
+
+              currentTime = end;
+              hours = currentTime.getHours().toString().padStart(2, "0");
+              minutes = currentTime.getMinutes().toString().padStart(2, "0");
+              tempBody.endTime = `${hours}:${minutes}`;
+              let endTimeMinutes =
+                parseInt(tempBody.endTime.toString().substring(0, 2)) * 60 +
+                parseInt(tempBody.endTime.toString().substring(3, 5));
+              let slotTimeMinutes =
+                parseInt(tempBody.slotTime.toString().substring(0, 2)) * 60 +
+                parseInt(tempBody.slotTime.toString().substring(3, 5));
+              tempBody.slotDuration = endTimeMinutes - slotTimeMinutes;
               await esUtil.insert(tempBody, tempBody.slotId, index);
             }
+            // hours = currentTime.getHours().toString().padStart(2, "0");
+            // minutes = currentTime.getMinutes().toString().padStart(2, "0");
+            // tempBody.endTime = `${hours}:${minutes}`;
+            // // if (currentTime > end) {
+            // //   currentTime = end;
+            // //   hours = currentTime.getHours().toString().padStart(2, "0");
+            // //   minutes = currentTime.getMinutes().toString().padStart(2, "0");
+            // //   tempBody.doctorId = body.doctorId;
+            // //   tempBody.sessionId = days[i].sessions[j].sessionId;
+            // //   tempBody.slotTime = `${hours}:${minutes}`;
+            // //   tempBody.predictedSlotTime = `${hours}:${minutes}`;
+            // //   tempBody.appointmentDate = days[i].date;
+            // //   tempBody.slotType = "normal";
+            // //   tempBody.sessionStartTime = days[i].sessions[j].startTime;
+            // //   tempBody.sessionEndTime = days[i].sessions[j].endTime;
+            // //   tempBody.clinicId = days[i].sessions[j].clinic.clinicId;
+            // //   tempBody.clinicDetails = days[i].sessions[j].clinic;
+            // //   tempBody.slotDuration = body.duration;
+            // //   tempBody.paymentStatus = "default";
+            // //   tempBody.slotDay =
+            // //     appointmentAttributeList.weekday[currentTime.getDay()];
+            // //   slots.push(`${hours}:${minutes}${days[i].sessions[j].sessionId}`);
+            // //   tempBody.slotId = `${hours}:${minutes}${days[i].sessions[j].sessionId}`;
+            // //   currentTime.setMinutes(currentTime.getMinutes() + duration);
+            // //   hours = currentTime.getHours().toString().padStart(2, "0");
+            // //   minutes = currentTime.getMinutes().toString().padStart(2, "0");
+            // //   tempBody.endTime = `${hours}:${minutes}`;
+            // //   await esUtil.insert(tempBody, tempBody.slotId, index);
+            // // }
+            // await esUtil.insert(tempBody, tempBody.slotId, index);
           }
           days[i].sessions[j].sessionSlots = slots;
         }
@@ -311,7 +408,7 @@ async function createSessions(body) {
     // console.log("body", body.days[1].sessions);
     let request = {};
     request.schedule = { schedule: body.days };
-    // console.log("schedule", request.schedule);
+    console.log("schedule", request.schedule);
     let data = await docController.updateProfileDetailsController(
       body.doctorId,
       "doctor",
@@ -1081,6 +1178,70 @@ async function cancelDoctorSession(body) {
     };
   }
 }
+async function changeBookingStatus(body) {
+  try {
+    let role = "booking";
+    let output = {};
+    let data = {};
+    body.timeStamp = new Date(body.timeStamp);
+    if (body.status == "ended" || body.status == "paused") {
+      let query = { slotId: body.slotId };
+      try {
+        data = await docController.updateProfileDetailsController(
+          body.currSlotId,
+          role,
+          query
+        );
+      } catch (error) {
+        output.status = "Some Error Occured !";
+      }
+
+      if (data.hasOwnProperty("results" == true)) {
+        output.status = data.results;
+      }
+    }
+
+    let predictedTime = await forecastQueueEndTime(
+      body.currSessionStartTime,
+      body.totalSlots,
+      body.completedSlots,
+      body.timeStamp,
+      body.appointmentDate
+    );
+
+    let areSessionClashing = await areSessionsClashing(
+      body.currSessionEndTime,
+      predictedTime.predictedSessionEndTime,
+      body.nextSessionStartTime,
+      body.appointmentDate
+    );
+
+    let hours = new Date(predictedTime.predictedSessionEndTime)
+      .getHours()
+      .toString()
+      .padStart(2, "0");
+    let minutes = new Date(predictedTime.predictedSessionEndTime)
+      .getMinutes()
+      .toString()
+      .padStart(2, "0");
+    output.askForDelay = areSessionClashing.askForDelay;
+    output.predictedSessionEndTime = `${hours}:${minutes}`;
+    output.currentSpeed = predictedTime.currentSpeed;
+    output.timeExceedingOrgEstimation =
+      areSessionClashing.timeExceedingOrgEstimation;
+
+    return output;
+  } catch (error) {
+    console.log(error);
+    if (error.statuscode) {
+      throw error;
+    }
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
 
 function returnDateTime(dateOfDay, timeOfDay) {
   let year = parseInt(dateOfDay.toString().substring(0, 4));
@@ -1097,6 +1258,60 @@ function returnDateTime(dateOfDay, timeOfDay) {
   return new Date(year, month, day, hour, minute);
 }
 
+async function forecastQueueEndTime(
+  currSessionStartTime,
+  totalSlots,
+  completedSlots,
+  timeStamp,
+  appointmentDate
+) {
+  let result = {};
+  currSessionStartTime = await returnDateTime(
+    appointmentDate,
+    currSessionStartTime
+  );
+  let timeElapsed = (timeStamp - currSessionStartTime) / 60000;
+  let currentSpeed =
+    Math.round((timeElapsed / completedSlots + Number.EPSILON) * 100) / 100;
+  let netTimeToComplete = currentSpeed * (totalSlots - completedSlots);
+  let predictedSessionEndTime = new Date(
+    timeStamp.setMinutes(timeStamp.getMinutes() + netTimeToComplete)
+  );
+  result.predictedSessionEndTime = predictedSessionEndTime;
+  result.currentSpeed = currentSpeed;
+
+  return result;
+}
+
+async function areSessionsClashing(
+  currSessionEndTime,
+  predictedSessionEndTime,
+  nextSessionStartTime,
+  appointmentDate
+) {
+  let result = {};
+  result.askForDelay = false;
+  currSessionEndTime = await returnDateTime(
+    appointmentDate,
+    currSessionEndTime
+  );
+  nextSessionStartTime = await returnDateTime(
+    appointmentDate,
+    nextSessionStartTime
+  );
+  let buffer = ((nextSessionStartTime - currSessionEndTime) * 0.5) / 60000;
+  if (
+    predictedSessionEndTime >
+    nextSessionStartTime.setMinutes(nextSessionStartTime.getMinutes() - buffer)
+  ) {
+    result.askForDelay = true;
+    result.timeExceedingOrgEstimation = Math.round(
+      (predictedSessionEndTime - nextSessionStartTime) / 60000
+    );
+  }
+  return result;
+}
+
 module.exports = {
   getSchedule,
   bookAppointment,
@@ -1106,4 +1321,8 @@ module.exports = {
   delaySessionByDuration,
   queueManagement,
   cancelDoctorSession,
+  changeBookingStatus,
+  returnDateTime,
+  forecastQueueEndTime,
+  areSessionsClashing,
 };

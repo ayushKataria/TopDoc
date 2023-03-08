@@ -24,6 +24,7 @@ const bookingAttributes = [
   "paymentStatus",
   "email",
   "mobile",
+  "doctorName",
 ];
 
 const bookingUpdateAttributes = [
@@ -60,6 +61,7 @@ const bookingUpdateAttributes = [
   "paymentStatus",
   "email",
   "mobile",
+  "doctorName",
 ];
 
 const searchInBooking = ["filters", "sort", "search", "pageNo", "pageSize"];
@@ -95,6 +97,8 @@ const searchAttributes = [
   "paymentStatus",
   "email",
   "mobile",
+  "doctorName",
+  "slotsCount",
 ];
 
 const filterAttributes = [
@@ -116,6 +120,8 @@ const filterAttributes = [
   "paymentStatus",
   "email",
   "mobile",
+  "doctorName",
+  "slotsCount",
 ];
 
 const unRegBookingAttributes = [
@@ -143,6 +149,7 @@ const unRegBookingAttributes = [
   "gender",
   "paymentStatus",
   "email",
+  "doctorName",
 ];
 
 const sortAttributes = [
@@ -160,6 +167,8 @@ const sortAttributes = [
   "paymentStatus",
   "email",
   "mobile",
+  "doctorName",
+  "slotsCount",
 ];
 const sessionDelayAttributes = [
   "doctorId",
@@ -178,6 +187,20 @@ const weekday = [
   "Saturday",
 ];
 const queueAttributes = ["sessionId", "lastEndedTime"];
+const changeBookingStatus = [
+  "status",
+  "currSessionStartTime",
+  "currSessionEndTime",
+  "currSessionId",
+  "totalSlots",
+  "completedSlots",
+  "nextSessionStartTime",
+  "nextSessionId",
+  "timeStamp",
+  "slotId",
+  "appointmentDate",
+  "doctorId",
+];
 
 module.exports = {
   bookingAttributes,
@@ -191,4 +214,5 @@ module.exports = {
   weekday,
   queueAttributes,
   cancelDoctorSession,
+  changeBookingStatus,
 };
