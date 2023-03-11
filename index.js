@@ -13,7 +13,7 @@ app.use(morgan("tiny"));
 app.use(compression());
 app.use(
   cors({
-    origin: "http://localhost:4200",
+    origin: "*",
   })
 );
 app.use(
