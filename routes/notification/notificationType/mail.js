@@ -1,9 +1,6 @@
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const mustache = require("mustache");
-// const templates = require("./constants/templates/forgetPassword.mustache");
-
-// const header = fs.readFileSync(templates, "utf8");
 const body = fs.readFileSync(
   "constants/templates/forgetPassword.mustache",
   "utf8"
@@ -25,31 +22,62 @@ const transporter = nodemailer.createTransport({
 });
 
 async function userAnnouncementByMail(data, message) {
-  let name = "Akash";
-  const mailBody = mustache.render(header + body + footer, { name });
-  console.log(mailBody, "mailbody");
+  const header = fs.readFileSync("constants/templates/header.mustache", "utf8");
+  const footer = fs.readFileSync("constants/templates/footer.mustache", "utf8");
+  if (data.tag.includes("delaySession")) {
+    const body = fs.readFileSync(
+      "constants/templates/sessionDelay.mustache",
+      "utf8"
+    );
+    message = header + body + footer;
+  }
+  if (data.tag.includes("cancelSession")) {
+    const body = fs.readFileSync(
+      "constants/templates/sessionCancel.mustache",
+      "utf8"
+    );
+    message = header + body + footer;
+  }
+  if (data.tag.includes("welcome")) {
+    const body = fs.readFileSync(
+      "constants/templates/welcome.mustache",
+      "utf8"
+    );
+    message = header + body + footer;
+  }
+  if (data.tag.includes("forgetPassword")) {
+    const body = fs.readFileSync(
+      "constants/templates/forgetPassword.mustache",
+      "utf8"
+    );
+    message = header + body + footer;
+  }
+  // let name = "Akash";
+
+  // console.log(mailBody, "mailbody");
   console.log("inside userAnnouncementByMail", data);
   let options = {};
-  // for (let i = 0; i < data.length; i++) {
-  options = {
-    from: "TopDoc_Official🩺 <topdoc.official22@gmail.com>",
-    // to: [`${data[i].email}`],
-    to: [
-      "akashneekhara20@gmail.com",
-      "shukla.1997.sachin@gmail.com",
-      "saisarthakmohanty1996@gmail.com",
-    ],
-    subject: "Welcome to TopDoc",
-    html: mailBody,
-  };
-  await transporter.sendMail(options, function (err, info) {
-    if (err) {
-      console.log(err);
-      return;
-    }
-    console.log("sent:  " + info.response);
-  });
-  // }
+  for (let i = 0; i < data.length; i++) {
+    const mailBody = mustache.render(message, { name });
+    options = {
+      from: "TopDoc_Official🩺 <topdoc.official22@gmail.com>",
+      to: [`${data[i].email}`],
+      // to: [
+      //   "akashneekhara20@gmail.com",
+      //   "shukla.1997.sachin@gmail.com",
+      //   "saisarthakmohanty1996@gmail.com",
+      // ],
+      subject: "Welcome to TopDoc",
+      html: mailBody,
+    };
+    await transporter.sendMail(options, function (err, info) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log("sent:  " + info.response);
+    });
+  }
 }
 userAnnouncementByMail("data", "message");
 module.exports = { userAnnouncementByMail };
