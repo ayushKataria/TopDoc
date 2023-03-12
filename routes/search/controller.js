@@ -73,7 +73,7 @@ async function getSearchDetails(body) {
       return e._source;
     }); //.map ,.filter ,.reduce
     output.filters = searchFilterAggs;
-    console.log(output, "output is");
+    console.log("output is", output);
     return output;
   } catch (err) {
     console.log(err);

@@ -862,6 +862,7 @@ async function delaySessionByDuration(body) {
       }
       output.result = "updated";
       let notifBody = {
+        tag: ["delay"],
         priority: "high",
         message: `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
         time: moment().format("YYYY-MM-DDTHH:mm:ss"),
@@ -1155,6 +1156,7 @@ async function cancelDoctorSession(body) {
       }
       output.result = "updated";
       let notifBody = {
+        tag: ["cancelSession"],
         priority: "high",
         message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
         time: moment().format("YYYY-MM-DDTHH:mm:ss"),
@@ -1196,9 +1198,71 @@ async function changeBookingStatus(body) {
         output.status = "Some Error Occured !";
       }
 
-     // if (data.hasOwnProperty("results" == true)) {
+      if (data.hasOwnProperty("results") == true) {
         output.status = data.results;
-     // }
+        if (data.results == "updated") {
+          let userList = [];
+          let totalSlots = [];
+          let output = {};
+          let Query = {
+            size: 10000,
+            sort: [
+              {
+                appointmentDate: "asc",
+              },
+              {
+                slotId: "asc",
+              },
+            ],
+            query: {
+              bool: {
+                must: [
+                  {
+                    term: {
+                      doctorId: body.doctorId,
+                    },
+                  },
+                ],
+                filter: [
+                  {
+                    term: {
+                      sessionId: body.currSessionId,
+                    },
+                  },
+                ],
+              },
+            },
+          };
+
+          let res = await esUtil.search(Query, role);
+          output.hits = res.hits.total.value;
+          if (res.hits.total.value > 0) {
+            let v = -1;
+            totalSlots = res.hits.hits.map((e) => {
+              if (e._source.hasOwnProperty("appointmentId")) {
+                ++v;
+                userList[v] = {
+                  id: e._source.userId,
+                  name: e._source.userName,
+                  mobile: e._source.mobile,
+                  email: e._source.email,
+                };
+              }
+              return e._source;
+            });
+            let notifBody = {
+              tag: ["QueueReload"],
+              priority: "high",
+              message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
+              time: moment().format("YYYY-MM-DDTHH:mm:ss"),
+              status: "delivered",
+              medium: ["app", "sms", "mail"],
+              senderId: ["application", 7999411516, "topdoc@gmail.com"],
+            };
+            await notificationWrapper.sessionAnnouncement(userList, notifBody);
+          }
+        }
+      }
     }
 
     let predictedTime = await forecastQueueEndTime(

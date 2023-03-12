@@ -57,15 +57,17 @@ async function createSessions(req, res) {
             return res
               .status(400)
               .send("bad request , startTime cannot be empty");
-          } else if (
-            days[i].sessions[j].hasOwnProperty("slotsCount") == false ||
-            days[i].sessions[j].slotsCount == null ||
-            days[i].sessions[j].slotsCount <= 0
-          ) {
-            return res
-              .status(400)
-              .send("bad request , slotsCount cannot be empty");
-          } else if (
+          }
+          // else if (
+          //   days[i].sessions[j].hasOwnProperty("slotsCount") == false ||
+          //   days[i].sessions[j].slotsCount == null ||
+          //   days[i].sessions[j].slotsCount <= 0
+          // ) {
+          //   return res
+          //     .status(400)
+          //     .send("bad request , slotsCount cannot be empty");
+          // }
+          else if (
             days[i].sessions[j].hasOwnProperty("endTime") == false ||
             days[i].sessions[j].endTime == null
           ) {
