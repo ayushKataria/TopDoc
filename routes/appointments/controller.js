@@ -1185,10 +1185,10 @@ async function changeBookingStatus(body) {
     let data = {};
     body.timeStamp = new Date(body.timeStamp);
     if (body.status == "ended" || body.status == "paused") {
-      let query = { slotId: body.slotId };
+      let query = { status: body.status };
       try {
         data = await docController.updateProfileDetailsController(
-          body.currSlotId,
+          body.slotId,
           role,
           query
         );
@@ -1196,9 +1196,9 @@ async function changeBookingStatus(body) {
         output.status = "Some Error Occured !";
       }
 
-      if (data.hasOwnProperty("results" == true)) {
+     // if (data.hasOwnProperty("results" == true)) {
         output.status = data.results;
-      }
+     // }
     }
 
     let predictedTime = await forecastQueueEndTime(
