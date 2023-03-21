@@ -30,5 +30,6 @@ app.use("/doctors", require("./routes/doctors/router"));
 app.use("/doctorsAds", require("./routes/ads/router"));
 app.use("/payments", require("./routes/payments/router"));
 app.use("/notification", require("./routes/notification/router"));
+app.use("/forgetPassword", require("./routes/notification/forgetPassword"));
 
 module.exports = app;

@@ -1,6 +1,10 @@
+const router = require("express").Router();
+
 const searchField = require("../ads/controller");
-const forgetMail = require("../appointments/controller");
-function forgetPassword(req, res) {
+// const forgetMail = require("../appointments/controller");
+const forgetMail = require("./notificationType/mail");
+async function forgetPassword(req, res) {
+  console.log("in forget password");
   try {
     if (
       req.body.hasOwnProperty("role") == false ||
@@ -17,9 +21,18 @@ function forgetPassword(req, res) {
       req.body.hasOwnProperty("mobile") == ""
     ) {
       res.status(400).send("bad request, email or mobile field is missing");
+    } else if (
+      req.body.hasOwnProperty("resetLink") == false ||
+      req.body.hasOwnProperty("resetLink") == null ||
+      req.body.hasOwnProperty("resetLink") == ""
+    ) {
+      res.status(400).send("bad request, resetLink field is missing");
     } else {
       console.log("inside else");
-      let output = searchField.searchFieldInIndex(req);
+      let resetLink = req.body.resetLink;
+      delete req.body.resetLink;
+      console.log("req.body ", req.body);
+      let output = await searchField.searchFieldInIndex(req.body);
       console.log("output : ", output);
       if (output.hits > 0) {
         let user = {
@@ -28,7 +41,14 @@ function forgetPassword(req, res) {
           mobile: output.results.mobile,
           email: output.results.email,
         };
-        forgetMail.triggerNotification("forgetPassword", message, user);
+        // let medium = [mail];
+        // forgetMail.triggerNotification(
+        //   "forgetPassword",
+        //   resetLink,
+        //   user,
+        //   medium
+        // );
+        forgetMail.forgetMail("forgetPassword", user, resetLink);
       } else {
         res.status(400).send("bad request, enter valid email or mobile number");
       }
@@ -46,4 +66,6 @@ function forgetPassword(req, res) {
   }
 }
 
-module.exports = { forgetPassword };
+router.post("/send", forgetPassword);
+// module.exports = router;
+module.exports = router;
