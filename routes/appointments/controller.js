@@ -862,7 +862,8 @@ async function delaySessionByDuration(body) {
       }
       output.result = "updated";
       let message = `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`;
-      triggerNotification("delaySession", message, userList);
+      let medium = [app, sms, mail];
+      triggerNotification("delaySession", message, userList, medium);
       // let notifBody = {
       //   tag: ["delay"],
       //   priority: "high",
@@ -1158,7 +1159,8 @@ async function cancelDoctorSession(body) {
       }
       output.result = "updated";
       let message = `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`;
-      triggerNotification("cancelSession", message, userList);
+      let medium = [app, sms, mail];
+      triggerNotification("cancelSession", message, userList, medium);
       // let notifBody = {
       //   tag: ["cancelSession"],
       //   priority: "high",
@@ -1255,7 +1257,8 @@ async function changeBookingStatus(body) {
               return e._source;
             });
             let message = `queue refreshed`;
-            triggerNotification("QueueReload", message, userList);
+            let medium = [app];
+            triggerNotification("QueueReload", message, userList, medium);
             // let notifBody = {
             //   tag: ["QueueReload"],
             //   priority: "high",
@@ -1381,14 +1384,14 @@ async function areSessionsClashing(
   }
   return result;
 }
-async function triggerNotification(tag, message, userList) {
+async function triggerNotification(tag, message, userList, medium) {
   let notifBody = {
     tag: tag,
     priority: "high",
     message: message,
     time: moment().format("YYYY-MM-DDTHH:mm:ss"),
     status: "not delivered",
-    medium: [],
+    medium: medium,
   };
   await notificationWrapper.sessionAnnouncement(userList, notifBody);
 }

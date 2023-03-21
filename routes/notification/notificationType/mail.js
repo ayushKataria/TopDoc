@@ -21,11 +21,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-function sendMailByTag(data) {
+function sendMailByTag(tag, data) {
   let message;
   const header = fs.readFileSync("constants/templates/header.mustache", "utf8");
   const footer = fs.readFileSync("constants/templates/footer.mustache", "utf8");
-  if (data.tag.includes("delaySession")) {
+  if (tag.includes("delaySession")) {
     const body = fs.readFileSync(
       "constants/templates/sessionDelay.mustache",
       "utf8"
@@ -33,7 +33,7 @@ function sendMailByTag(data) {
     message = header + body + footer;
     userAnnouncementByMail(data, message);
   }
-  if (data.tag.includes("cancelSession")) {
+  if (tag.includes("cancelSession")) {
     const body = fs.readFileSync(
       "constants/templates/sessionCancel.mustache",
       "utf8"
@@ -41,7 +41,7 @@ function sendMailByTag(data) {
     message = header + body + footer;
     userAnnouncementByMail(data, message);
   }
-  if (data.tag.includes("welcome")) {
+  if (tag.includes("welcome")) {
     const body = fs.readFileSync(
       "constants/templates/welcome.mustache",
       "utf8"
@@ -49,7 +49,7 @@ function sendMailByTag(data) {
     message = header + body + footer;
     userAnnouncementByMail(data, message);
   }
-  if (data.tag.includes("forgetPassword")) {
+  if (tag.includes("forgetPassword")) {
     const body = fs.readFileSync(
       "constants/templates/forgetPassword.mustache",
       "utf8"

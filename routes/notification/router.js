@@ -65,13 +65,15 @@ async function createNotification(req, res) {
       req.body.hasOwnProperty("medium") == ""
     ) {
       res.status(400).send("bad request, medium field is missing");
-    } else if (
-      req.body.hasOwnProperty("senderId") == false ||
-      req.body.hasOwnProperty("senderId") == null ||
-      req.body.hasOwnProperty("senderId") == ""
-    ) {
-      res.status(400).send("bad request, senderId field is missing");
-    } else {
+    }
+    // else if (
+    //   req.body.hasOwnProperty("senderId") == false ||
+    //   req.body.hasOwnProperty("senderId") == null ||
+    //   req.body.hasOwnProperty("senderId") == ""
+    // ) {
+    //   res.status(400).send("bad request, senderId field is missing");
+    // }
+    else {
       console.log("inside else");
 
       controller
