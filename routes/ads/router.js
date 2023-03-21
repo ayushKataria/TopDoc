@@ -349,26 +349,25 @@ async function searchFieldInIndex(req, res) {
       list = adsAttributeList.adsAttributes;
     } else if (req.body.role == "payment") {
       list = paymentAttributesList.paymentSearchList;
-    } 
-    else if (req.body.role == "notification") {
+    } else if (req.body.role == "notification") {
       list = notifList.notificationAttributes;
-    } 
-    
-    else {
+    } else if (req.body.role == "doctor") {
+      // list = notifList.notificationAttributes;
+    } else {
       return res.status(400).send("bad request , please enter a valid role");
     }
-    if(list!=undefined){
-    Object.keys(req.body).forEach((key) => {
-      if (!list.includes(key)) {
-        fail = true;
+    if (list != undefined) {
+      Object.keys(req.body).forEach((key) => {
+        if (!list.includes(key)) {
+          fail = true;
+        }
+      });
+      if (fail) {
+        return res
+          .status(400)
+          .send("bad request , unknown attribute found in request");
       }
-    });
-    if (fail) {
-      return res
-        .status(400)
-        .send("bad request , unknown attribute found in request");
     }
-  }
     if (
       req.body.hasOwnProperty("role") == false ||
       req.body.role == null ||

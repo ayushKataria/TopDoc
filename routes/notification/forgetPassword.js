@@ -45,3 +45,5 @@ function forgetPassword(req, res) {
     };
   }
 }
+
+module.exports = { forgetPassword };
