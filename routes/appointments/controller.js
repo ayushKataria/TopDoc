@@ -1253,10 +1253,10 @@ async function changeBookingStatus(body) {
             let notifBody = {
               tag: ["QueueReload"],
               priority: "high",
-              message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
+              message: `Please Reload`,
               time: moment().format("YYYY-MM-DDTHH:mm:ss"),
               status: "delivered",
-              medium: ["app", "sms", "mail"],
+              medium: ["app"],
               senderId: ["application", 7999411516, "topdoc@gmail.com"],
             };
             await notificationWrapper.sessionAnnouncement(userList, notifBody);

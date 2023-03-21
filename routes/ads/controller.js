@@ -306,6 +306,7 @@ async function searchFieldInIndex(body) {
       };
     }
 
+    console.log("query : ", JSON.stringify(Query));
     let adDataForGuestUser = await esdb.search(Query, esIndex);
     output.hits = adDataForGuestUser.hits.total.value;
     output.results = adDataForGuestUser.hits.hits.map((e) => {

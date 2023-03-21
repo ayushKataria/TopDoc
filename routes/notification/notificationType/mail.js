@@ -21,31 +21,32 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function userAnnouncementByMail(data, message) {
+async function userAnnouncementByMail(data, notifBody) {
+  let message;
   const header = fs.readFileSync("constants/templates/header.mustache", "utf8");
   const footer = fs.readFileSync("constants/templates/footer.mustache", "utf8");
-  if (data.tag.includes("delaySession")) {
+  if (notifBody.tag.includes("delaySession")) {
     const body = fs.readFileSync(
       "constants/templates/sessionDelay.mustache",
       "utf8"
     );
     message = header + body + footer;
   }
-  if (data.tag.includes("cancelSession")) {
+  if (notifBody.tag.includes("cancelSession")) {
     const body = fs.readFileSync(
       "constants/templates/sessionCancel.mustache",
       "utf8"
     );
     message = header + body + footer;
   }
-  if (data.tag.includes("welcome")) {
+  if (notifBody.tag.includes("welcome")) {
     const body = fs.readFileSync(
       "constants/templates/welcome.mustache",
       "utf8"
     );
     message = header + body + footer;
   }
-  if (data.tag.includes("forgetPassword")) {
+  if (notifBody.tag.includes("forgetPassword")) {
     const body = fs.readFileSync(
       "constants/templates/forgetPassword.mustache",
       "utf8"
@@ -58,7 +59,7 @@ async function userAnnouncementByMail(data, message) {
   console.log("inside userAnnouncementByMail", data);
   let options = {};
   for (let i = 0; i < data.length; i++) {
-    const mailBody = mustache.render(message, { name });
+    const mailBody = mustache.render(message, `${data[i].name}`);
     options = {
       from: "TopDoc_Official🩺 <topdoc.official22@gmail.com>",
       to: [`${data[i].email}`],
