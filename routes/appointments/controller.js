@@ -861,16 +861,18 @@ async function delaySessionByDuration(body) {
         }
       }
       output.result = "updated";
-      let notifBody = {
-        tag: ["delay"],
-        priority: "high",
-        message: `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
-        time: moment().format("YYYY-MM-DDTHH:mm:ss"),
-        status: "delivered",
-        medium: ["app", "mail"],
-        senderId: ["application", 7999411516],
-      };
-      await notificationWrapper.sessionAnnouncement(userList, notifBody);
+      let message = `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`;
+      triggerNotification("delaySession", message, userList);
+      // let notifBody = {
+      //   tag: ["delay"],
+      //   priority: "high",
+      //   message: `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`,
+      //   time: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      //   status: "delivered",
+      //   medium: ["app", "mail"],
+      //   senderId: ["application", 7999411516],
+      // };
+      // await notificationWrapper.sessionAnnouncement(userList, notifBody);
     } else if (res.hits.total.value == 0) {
       output.result = "No records found for the given sessionId";
     } else {
@@ -1155,16 +1157,18 @@ async function cancelDoctorSession(body) {
         );
       }
       output.result = "updated";
-      let notifBody = {
-        tag: ["cancelSession"],
-        priority: "high",
-        message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
-        time: moment().format("YYYY-MM-DDTHH:mm:ss"),
-        status: "delivered",
-        medium: ["app", "sms", "mail"],
-        senderId: ["application", 7999411516, "topdoc@gmail.com"],
-      };
-      await notificationWrapper.sessionAnnouncement(userList, notifBody);
+      let message = `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`;
+      triggerNotification("cancelSession", message, userList);
+      // let notifBody = {
+      //   tag: ["cancelSession"],
+      //   priority: "high",
+      //   message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
+      //   time: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      //   status: "delivered",
+      //   medium: ["app", "sms", "mail"],
+      //   senderId: ["application", 7999411516, "topdoc@gmail.com"],
+      // };
+      // await notificationWrapper.sessionAnnouncement(userList, notifBody);
     } else if (res.hits.total.value == 0) {
       output.result = "No records found for the given sessionId";
     } else {
@@ -1250,16 +1254,18 @@ async function changeBookingStatus(body) {
               }
               return e._source;
             });
-            let notifBody = {
-              tag: ["QueueReload"],
-              priority: "high",
-              message: `Please Reload`,
-              time: moment().format("YYYY-MM-DDTHH:mm:ss"),
-              status: "delivered",
-              medium: ["app"],
-              senderId: ["application", 7999411516, "topdoc@gmail.com"],
-            };
-            await notificationWrapper.sessionAnnouncement(userList, notifBody);
+            let message = `queue refreshed`;
+            triggerNotification("QueueReload", message, userList);
+            // let notifBody = {
+            //   tag: ["QueueReload"],
+            //   priority: "high",
+            //   message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
+            //   time: moment().format("YYYY-MM-DDTHH:mm:ss"),
+            //   status: "delivered",
+            //   medium: ["app", "sms", "mail"],
+            //   senderId: ["application", 7999411516, "topdoc@gmail.com"],
+            // };
+            // await notificationWrapper.sessionAnnouncement(userList, notifBody);
           }
         }
       }
@@ -1375,7 +1381,17 @@ async function areSessionsClashing(
   }
   return result;
 }
-
+async function triggerNotification(tag, message, userList) {
+  let notifBody = {
+    tag: tag,
+    priority: "high",
+    message: message,
+    time: moment().format("YYYY-MM-DDTHH:mm:ss"),
+    status: "not delivered",
+    medium: [],
+  };
+  await notificationWrapper.sessionAnnouncement(userList, notifBody);
+}
 module.exports = {
   getSchedule,
   bookAppointment,
@@ -1389,4 +1405,5 @@ module.exports = {
   returnDateTime,
   forecastQueueEndTime,
   areSessionsClashing,
+  triggerNotification,
 };

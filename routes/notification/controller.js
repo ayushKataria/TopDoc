@@ -65,24 +65,25 @@ async function manualNotification(body) {
       }
 
       console.log("notification delivered");
-      for (let i = 0; i < ids.length; i++) {
-        // console.log("key", key);
-        const newId = uuid.v1();
-        // console.log("newId", newId);
-        body.notificationId = newId;
-        // console.log("body[notificationId]", body.notificationId);
-        body.id = ids[i].id;
-        console.log("The uuid is ", newId, body, "aaaaaaaaaaaaaaaaaaaaa");
-        let entityCreationObj = await esdb.insert(body, newId, "notification");
-        console.log("entityCreationObj", entityCreationObj);
-        if (entityCreationObj.result == "created") {
-          return {
-            statuscode: 200,
-            message: "Notification created Successfully",
-            id: newId,
-          };
-        }
-      }
+      createNotification(id, body);
+      // for (let i = 0; i < ids.length; i++) {
+      //   // console.log("key", key);
+      //   const newId = uuid.v1();
+      //   // console.log("newId", newId);
+      //   body.notificationId = newId;
+      //   // console.log("body[notificationId]", body.notificationId);
+      //   body.id = ids[i].id;
+      //   console.log("The uuid is ", newId, body, "aaaaaaaaaaaaaaaaaaaaa");
+      //   let entityCreationObj = await esdb.insert(body, newId, "notification");
+      //   console.log("entityCreationObj", entityCreationObj);
+      //   if (entityCreationObj.result == "created") {
+      //     return {
+      //       statuscode: 200,
+      //       message: "Notification created Successfully",
+      //       id: newId,
+      //     };
+      //   }
+      // }
     }
   } catch (error) {
     console.log("error", error);
