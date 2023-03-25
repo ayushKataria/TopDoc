@@ -39,7 +39,7 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
     output.results = [];
     let dataOb = await esdb.search(queryBody, role);
     if (dataOb.hits.total.value == 0) {
-      throw err;
+      throw Error("no data present");
     }
     output.hits = dataOb.hits.total.value;
     output.results = dataOb.hits.hits.map((e) => {
