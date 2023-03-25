@@ -12,7 +12,7 @@ io.on("connection", (socket) => {
     // usersId.push(userId);
   });
 });
-function userAnnouncement(userIdList, message) {
+function userAnnouncement(userIdList, body) {
   console.log("Send message called", userIdList);
   let patient = [];
   console.log("usersid", usersId);
@@ -20,11 +20,19 @@ function userAnnouncement(userIdList, message) {
   console.log(keyarr, "keyarr", userIdList);
   patient = userIdList.filter((element) => keyarr.includes(element.toString()));
   console.log("patient", patient);
-  patient.forEach((user) => {
-    io.to(usersId.map((obj) => obj[user])).emit("notification", {
-      message: message,
+  if (body.tag.includes("QueueReload")) {
+    patient.forEach((user) => {
+      io.to(usersId.map((obj) => obj[user])).emit("QueueReload", {
+        message: body.message,
+      });
     });
-  });
+  } else {
+    patient.forEach((user) => {
+      io.to(usersId.map((obj) => obj[user])).emit("notification", {
+        message: body.message,
+      });
+    });
+  }
 }
 
 module.exports = {

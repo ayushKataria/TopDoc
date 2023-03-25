@@ -24,6 +24,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 function forgetMail(tag, data, resetLink) {
+  console.log("inside forgetmail function");
   if (tag.includes("forgetPassword")) {
     const body = fs.readFileSync(
       "constants/templates/forgetPassword.mustache",

@@ -43,7 +43,7 @@ const doctorUpdateAttributes = [
   "practiceStaff",
   "location",
   "name",
-  "phone",
+  "mobile",
   "schedule",
   "specialization",
   "state",

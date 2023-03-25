@@ -14,7 +14,7 @@ async function sessionAnnouncement(id, body) {
   await notifController.createNotification(userId, body);
   if (body.medium.includes("app")) {
     console.log("inside session announcement, send by app");
-    await socketNotif.userAnnouncement(userId, body.message);
+    await socketNotif.userAnnouncement(userId, body);
   }
   if (body.medium.includes("mail")) {
     await mailNotif.sendMailByTag(body.tag, data);
