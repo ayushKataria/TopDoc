@@ -170,7 +170,7 @@ async function bookingAppointment(req, res) {
         ) {
           res.status(400).send("bad request , mobile cannot be empty");
         } else if (req.body.hasOwnProperty("email") == false) {
-          res.status(400).send("bad request , email cannot be empty");
+          res.status(400).send("bad request , email field missing");
         } else if (
           req.body.hasOwnProperty("paymentStatus") == false ||
           req.body.paymentStatus == null ||

@@ -89,9 +89,9 @@ async function signup(req, res) {
     let result = {};
     let id = null;
     let hashpassword = null;
-    console.log("In signup block");
-    if (req.hasOwnProperty("emailId")) {
-      let userData = await getDocByemailId(req.emailId, "user");
+    console.log("In signup block",JSON.stringify(req));
+    if (req.hasOwnProperty("email")) {
+      let userData = await getDocByemailId(req.email, "user");
       if (userData["hits"]["total"]["value"] > 0) {
         throw {
           statuscode: 499,
@@ -108,10 +108,12 @@ async function signup(req, res) {
         let first_name = req.fullName.substring(0, req.fullName.indexOf(" "));
         let last_name = req.fullName.substring(req.fullName.indexOf(" ") + 1);
         let queryBody = userSchema();
-        queryBody.email = req.emailId;
+        queryBody.email = req.email;
         queryBody.id = id;
         queryBody.name = req.fullName;
         queryBody.first_name = first_name;
+        queryBody.mobile = req.mobileNumber;
+        queryBody.gender = req.gender;
         queryBody.last_name = last_name;
         queryBody.password = hashpassword;
         //queryBody.dtCreated = dtCreated
