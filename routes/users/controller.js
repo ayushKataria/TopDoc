@@ -89,14 +89,22 @@ async function signup(req, res) {
     let result = {};
     let id = null;
     let hashpassword = null;
-    console.log("In signup block",JSON.stringify(req));
-    if (req.hasOwnProperty("email")) {
+    console.log("In signup block", JSON.stringify(req));
+    if (req.hasOwnProperty("email") || req.hasOwnProperty("mobileNumber")) {
       let userData = await getDocByemailId(req.email, "user");
+      let userDataByMobile = await getDocByPhone(req.mobileNumber, "user");
+
       if (userData["hits"]["total"]["value"] > 0) {
         throw {
           statuscode: 499,
           err: "access denied",
           message: "This emailId is already registered",
+        };
+      } else if (userDataByMobile["hits"]["total"]["value"] > 0) {
+        throw {
+          statuscode: 499,
+          err: "access denied",
+          message: "This mobile number is already registered",
         };
       } else {
         hashpassword = await hashPassword(req.password);
@@ -135,50 +143,51 @@ async function signup(req, res) {
             }),
         ]);
       }
-    } else if (req.hasOwnProperty("mobileNumber")) {
-      let userData = await getDocByPhone(req.mobileNumber, "user");
-      if (userData["hits"]["total"]["value"] > 0) {
-        throw {
-          statuscode: 499,
-          err: "access denied",
-          message: "This mobile number is already registered",
-        };
-      } else {
-        hashpassword = await hashPassword(req.password);
-        id = uuid.v1();
-        //let emailId = req.emailId
-        //let password = hashpassword
-        //let dtCreated = new Date()
-        //let userQuery =  getUserQueryBody(req, id, emailId, hashpassword)
-        let first_name = req.fullName.substring(0, req.fullName.indexOf(" "));
-        let last_name = req.fullName.substring(req.fullName.indexOf(" ") + 1);
-        let queryBody = userSchema();
-        queryBody.mobile = req.mobileNumber;
-        queryBody.id = id;
-        queryBody.name = req.fullName;
-        queryBody.first_name = first_name;
-        queryBody.last_name = last_name;
-        queryBody.password = hashpassword;
-        //queryBody.dtCreated = dtCreated
-        console.log("userQuery is:", queryBody);
-        let userQueryUpdate = {
-          id: id,
-          body: {
-            doc: queryBody,
-          },
-        };
-        //let updateResult = await esdb.updateData(userQueryUpdate, "user").then(esResult => esResult).catch(err => {throw err})
-
-        let updateResult = await Promise.all([
-          esdb
-            .updateData(userQueryUpdate, "user")
-            .then((esResult) => esResult)
-            .catch((err) => {
-              throw err;
-            }),
-        ]);
-      }
     }
+    //  if (req.hasOwnProperty("mobileNumber")) {
+    //   let userData = await getDocByPhone(req.mobileNumber, "user");
+    //   if (userData["hits"]["total"]["value"] > 0) {
+    //     throw {
+    //       statuscode: 499,
+    //       err: "access denied",
+    //       message: "This mobile number is already registered",
+    //     };
+    //   } else {
+    //     hashpassword = await hashPassword(req.password);
+    //     id = uuid.v1();
+    //     //let emailId = req.emailId
+    //     //let password = hashpassword
+    //     //let dtCreated = new Date()
+    //     //let userQuery =  getUserQueryBody(req, id, emailId, hashpassword)
+    //     let first_name = req.fullName.substring(0, req.fullName.indexOf(" "));
+    //     let last_name = req.fullName.substring(req.fullName.indexOf(" ") + 1);
+    //     let queryBody = userSchema();
+    //     queryBody.mobile = req.mobileNumber;
+    //     queryBody.id = id;
+    //     queryBody.name = req.fullName;
+    //     queryBody.first_name = first_name;
+    //     queryBody.last_name = last_name;
+    //     queryBody.password = hashpassword;
+    //     //queryBody.dtCreated = dtCreated
+    //     console.log("userQuery is:", queryBody);
+    //     let userQueryUpdate = {
+    //       id: id,
+    //       body: {
+    //         doc: queryBody,
+    //       },
+    //     };
+    //     //let updateResult = await esdb.updateData(userQueryUpdate, "user").then(esResult => esResult).catch(err => {throw err})
+
+    //     let updateResult = await Promise.all([
+    //       esdb
+    //         .updateData(userQueryUpdate, "user")
+    //         .then((esResult) => esResult)
+    //         .catch((err) => {
+    //           throw err;
+    //         }),
+    //     ]);
+    //   }
+    // }
     result = { statuscode: 201, id: id, message: "registered successfully" };
 
     return result;
