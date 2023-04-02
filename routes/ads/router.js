@@ -355,7 +355,7 @@ async function searchFieldInIndex(req, res) {
     } else if (req.body.role == "doctor") {
       // list = notifList.notificationAttributes;
     } else if (req.body.role == "support") {
-      list = supportAttributesList.supportAttributes;
+      list = supportAttributesList.searchSupportAttributes;
     } else {
       return res.status(400).send("bad request , please enter a valid role");
     }

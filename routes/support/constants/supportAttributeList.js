@@ -17,6 +17,27 @@ const supportAttributes = [
   "escalatedTo",
   "escalationRemark",
   "chat",
+];
+
+const searchSupportAttributes = [
+  "ticketNumber",
+  "role",
+  "reporterID",
+  "priority",
+  "fullName",
+  "email",
+  "mobile",
+  "subject",
+  "description",
+  "supportingDocuments",
+  "raisedOn",
+  "resolvedOn",
+  "assignedTo",
+  "remarks",
+  "status",
+  "escalatedTo",
+  "escalationRemark",
+  "chat",
   "numberOfDocumentsToPick",
   "filter",
   "sortBy",
@@ -54,4 +75,5 @@ module.exports = {
   supportAttributes,
   createNewSupportAttributes,
   updateSupportAttributes,
+  searchSupportAttributes,
 };
