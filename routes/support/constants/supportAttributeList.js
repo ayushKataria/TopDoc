@@ -17,6 +17,9 @@ const supportAttributes = [
   "escalatedTo",
   "escalationRemark",
   "chat",
+  "numberOfDocumentsToPick",
+  "filter",
+  "sortBy",
 ];
 
 const updateSupportAttributes = [
