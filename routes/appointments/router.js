@@ -784,6 +784,12 @@ async function changeBookingStatus(req, res) {
     ) {
       res.status(400).send("bad request , slotId cannot be empty");
     } else if (
+      req.body.hasOwnProperty("userId") == false ||
+      req.body.userId == null ||
+      req.body.userId == ""
+    ) {
+      res.status(400).send("bad request , userId cannot be empty");
+    } else if (
       req.body.hasOwnProperty("appointmentDate") == false ||
       req.body.appointmentDate == null ||
       req.body.appointmentDate == ""
@@ -805,7 +811,7 @@ async function changeBookingStatus(req, res) {
         .send("bad request , nextSessionStartTime cannot be empty");
     } else if (
       req.body.hasOwnProperty("completedSlots") == false ||
-      req.body.completedSlots == null 
+      req.body.completedSlots == null
     ) {
       res.status(400).send("bad request , completedSlots cannot be empty");
     } else if (
