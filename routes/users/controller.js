@@ -89,53 +89,38 @@ async function signup(req, res) {
     let result = {};
     let id = null;
     let hashpassword = null;
-    console.log("In signup block");
-    if (req.hasOwnProperty("emailId")) {
-      let userData = await getDocByemailId(req.emailId, "user");
-      if (userData["hits"]["total"]["value"] > 0) {
+    let userData;
+    let singleFieldCheck = false;
+    if (req.hasOwnProperty("email") || req.hasOwnProperty("mobileNumber")) {
+      if (req.hasOwnProperty("email") && req.hasOwnProperty("mobileNumber")) {
+        console.log("inside both : ");
+        userDataemail = await getDocByemailId(req.email, "user");
+        console.log("mail data : ", JSON.stringify(userDataemail));
+        userDatamobile = await getDocByPhone(req.mobileNumber, "user");
+        console.log("mobile data : ", JSON.stringify(userDatamobile));
+      } else if (req.hasOwnProperty("email")) {
+        userData = await getDocByemailId(req.email, "user");
+        singleFieldCheck = true;
+        console.log("email only : ", JSON.stringify(userData));
+      } else if (req.hasOwnProperty("mobileNumber")) {
+        userData = await getDocByPhone(req.mobileNumber, "user");
+        singleFieldCheck = true;
+        console.log("mobile  only : ", JSON.stringify(userData));
+      }
+
+      if (singleFieldCheck && userData["hits"]["total"]["value"] > 0) {
         throw {
           statuscode: 499,
           err: "access denied",
-          message: "This emailId is already registered",
+          message: "This emailId or mobile is already registered",
         };
-      } else {
-        hashpassword = await hashPassword(req.password);
-        id = uuid.v1();
-        //let emailId = req.emailId
-        //let password = hashpassword
-        //let dtCreated = new Date()
-        //let userQuery =  getUserQueryBody(req, id, emailId, hashpassword)
-        let first_name = req.fullName.substring(0, req.fullName.indexOf(" "));
-        let last_name = req.fullName.substring(req.fullName.indexOf(" ") + 1);
-        let queryBody = userSchema();
-        queryBody.email = req.emailId;
-        queryBody.id = id;
-        queryBody.name = req.fullName;
-        queryBody.first_name = first_name;
-        queryBody.last_name = last_name;
-        queryBody.password = hashpassword;
-        //queryBody.dtCreated = dtCreated
-        console.log("userQuery is:", queryBody);
-        let userQueryUpdate = {
-          id: id,
-          body: {
-            doc: queryBody,
-          },
+      } else if (userDataemail["hits"]["total"]["value"] > 0) {
+        throw {
+          statuscode: 499,
+          err: "access denied",
+          message: "This email is already registered",
         };
-        //let updateResult = await esdb.updateData(userQueryUpdate, "user").then(esResult => esResult).catch(err => {throw err})
-
-        let updateResult = await Promise.all([
-          esdb
-            .updateData(userQueryUpdate, "user")
-            .then((esResult) => esResult)
-            .catch((err) => {
-              throw err;
-            }),
-        ]);
-      }
-    } else if (req.hasOwnProperty("mobileNumber")) {
-      let userData = await getDocByPhone(req.mobileNumber, "user");
-      if (userData["hits"]["total"]["value"] > 0) {
+      } else if (userDatamobile["hits"]["total"]["value"] > 0) {
         throw {
           statuscode: 499,
           err: "access denied",
@@ -151,10 +136,12 @@ async function signup(req, res) {
         let first_name = req.fullName.substring(0, req.fullName.indexOf(" "));
         let last_name = req.fullName.substring(req.fullName.indexOf(" ") + 1);
         let queryBody = userSchema();
-        queryBody.mobile = req.mobileNumber;
+        queryBody.email = req.email;
         queryBody.id = id;
         queryBody.name = req.fullName;
         queryBody.first_name = first_name;
+        queryBody.mobile = req.mobileNumber;
+        queryBody.gender = req.gender;
         queryBody.last_name = last_name;
         queryBody.password = hashpassword;
         //queryBody.dtCreated = dtCreated
@@ -177,10 +164,55 @@ async function signup(req, res) {
         ]);
       }
     }
+    //  if (req.hasOwnProperty("mobileNumber")) {
+    //   let userData = await getDocByPhone(req.mobileNumber, "user");
+    //   if (userData["hits"]["total"]["value"] > 0) {
+    //     throw {
+    //       statuscode: 499,
+    //       err: "access denied",
+    //       message: "This mobile number is already registered",
+    //     };
+    //   } else {
+    //     hashpassword = await hashPassword(req.password);
+    //     id = uuid.v1();
+    //     //let emailId = req.emailId
+    //     //let password = hashpassword
+    //     //let dtCreated = new Date()
+    //     //let userQuery =  getUserQueryBody(req, id, emailId, hashpassword)
+    //     let first_name = req.fullName.substring(0, req.fullName.indexOf(" "));
+    //     let last_name = req.fullName.substring(req.fullName.indexOf(" ") + 1);
+    //     let queryBody = userSchema();
+    //     queryBody.mobile = req.mobileNumber;
+    //     queryBody.id = id;
+    //     queryBody.name = req.fullName;
+    //     queryBody.first_name = first_name;
+    //     queryBody.last_name = last_name;
+    //     queryBody.password = hashpassword;
+    //     //queryBody.dtCreated = dtCreated
+    //     console.log("userQuery is:", queryBody);
+    //     let userQueryUpdate = {
+    //       id: id,
+    //       body: {
+    //         doc: queryBody,
+    //       },
+    //     };
+    //     //let updateResult = await esdb.updateData(userQueryUpdate, "user").then(esResult => esResult).catch(err => {throw err})
+
+    //     let updateResult = await Promise.all([
+    //       esdb
+    //         .updateData(userQueryUpdate, "user")
+    //         .then((esResult) => esResult)
+    //         .catch((err) => {
+    //           throw err;
+    //         }),
+    //     ]);
+    //   }
+    // }
     result = { statuscode: 201, id: id, message: "registered successfully" };
 
     return result;
   } catch (error) {
+    console.log("error :", error);
     if (error.statuscode) {
       throw error;
     } else {
