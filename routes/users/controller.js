@@ -244,7 +244,7 @@ async function login(req, res) {
             },
           };
         } else {
-          result = { statuscode: 401, message: "Authorization failed" };
+          throw { statuscode: 401, message: "Authorization failed" };
         }
       } else {
         throw {
@@ -287,7 +287,7 @@ async function login(req, res) {
             },
           };
         } else {
-          result = { statuscode: 401, message: "Authorization failed" };
+          throw{ statuscode: 401, message: "Authorization failed" };
         }
       } else {
         throw {
