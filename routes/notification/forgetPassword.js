@@ -15,32 +15,31 @@ async function forgetPassword(req, res) {
     } else if (
       req.body.hasOwnProperty("email") == false ||
       req.body.hasOwnProperty("email") == null ||
-      req.body.hasOwnProperty("email") == "" ||
-      req.body.hasOwnProperty("mobile") == false ||
-      req.body.hasOwnProperty("mobile") == null ||
-      req.body.hasOwnProperty("mobile") == ""
+      req.body.hasOwnProperty("email") == ""
+      // ||
+      // req.body.hasOwnProperty("mobile") == false ||
+      // req.body.hasOwnProperty("mobile") == null ||
+      // req.body.hasOwnProperty("mobile") == ""
     ) {
       res.status(400).send("bad request, email or mobile field is missing");
-    } else if (
-      req.body.hasOwnProperty("resetLink") == false ||
-      req.body.hasOwnProperty("resetLink") == null ||
-      req.body.hasOwnProperty("resetLink") == ""
-    ) {
-      res.status(400).send("bad request, resetLink field is missing");
     } else {
       console.log("inside else");
-      let resetLink = req.body.resetLink;
-      delete req.body.resetLink;
+      // let resetLink = req.body.resetLink;
+      // delete req.body.resetLink;
       console.log("req.body ", req.body);
       let output = await searchField.searchFieldInIndex(req.body);
       console.log("output : ", output);
       if (output.hits > 0) {
-        let user = {
-          id: output.results.id,
-          name: output.results.name,
-          mobile: output.results.mobile,
-          email: output.results.email,
-        };
+        let user = [
+          {
+            role: req.body.role,
+            id: output.results[0].id,
+            name: output.results[0].name,
+            mobile: output.results[0].mobile,
+            email: output.results[0].email,
+          },
+        ];
+        console.log("user: ", user);
         // let medium = [mail];
         // forgetMail.triggerNotification(
         //   "forgetPassword",
@@ -48,9 +47,13 @@ async function forgetPassword(req, res) {
         //   user,
         //   medium
         // );
-        forgetMail.forgetMail("forgetPassword", user, resetLink);
+        const mail = await forgetMail.userAnnouncementByMail(
+          "forgetPassword",
+          user
+        );
+        res.send(mail);
       } else {
-        res.status(400).send("bad request, enter valid email or mobile number");
+        res.status(400).send("bad request, enter valid email address");
       }
       //   controller
       //     .manualNotification(req.body)

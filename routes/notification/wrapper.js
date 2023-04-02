@@ -17,7 +17,7 @@ async function sessionAnnouncement(id, body) {
     await socketNotif.userAnnouncement(userId, body);
   }
   if (body.medium.includes("mail")) {
-    await mailNotif.sendMailByTag(body.tag, data);
+    await mailNotif.userAnnouncementByMail(body.tag, data);
   }
   // if (body.medium.includes("sms")) {
   // }
