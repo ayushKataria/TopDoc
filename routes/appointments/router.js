@@ -805,8 +805,7 @@ async function changeBookingStatus(req, res) {
         .send("bad request , nextSessionStartTime cannot be empty");
     } else if (
       req.body.hasOwnProperty("completedSlots") == false ||
-      req.body.completedSlots == null ||
-      req.body.completedSlots == ""
+      req.body.completedSlots == null 
     ) {
       res.status(400).send("bad request , completedSlots cannot be empty");
     } else if (

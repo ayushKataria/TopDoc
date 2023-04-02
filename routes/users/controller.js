@@ -63,6 +63,7 @@ async function hashPassword(org_password) {
   }
 }
 async function compareHashPassword(req_password, saved_Password) {
+  console.log("Req pwd is ",req_password+"saved pwd is",saved_Password)
   try {
     const comparehashedPassword = await bcrypt.compare(
       req_password,
@@ -145,6 +146,7 @@ async function signup(req, res) {
         };
       } else {
         hashpassword = await hashPassword(req.password);
+        console.log("Hashed pwd is",hashPassword)
         id = uuid.v1();
         //let emailId = req.emailId
         //let password = hashpassword
@@ -249,6 +251,7 @@ async function login(req, res) {
       let userDetailsRec = userData.hits.hits[0]._source;
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
+        console.log("Saved pwd from db  is ",savedPassword)
         isVerified = await compareHashPassword(req.password, savedPassword);
         if (isVerified) {
           const token = jwt.sign(
