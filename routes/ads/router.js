@@ -1,6 +1,7 @@
 "use strict";
 const adsAttributeList = require("./constants/adsAttributeList");
 const paymentAttributesList = require("../payments/constants/paymentAttributesList");
+const supportAttributesList = require("../support/constants/supportAttributeList");
 const notifList = require("../notification/notificationType/constants/notificationAttributeList");
 const _ = require("underscore");
 const docController = require("../doctors/controller");
@@ -353,7 +354,9 @@ async function searchFieldInIndex(req, res) {
       list = notifList.notificationAttributes;
     } else if (req.body.role == "doctor") {
       // list = notifList.notificationAttributes;
-    } else {
+    } else if (req.body.role == "support") {
+       list = supportAttributesList.supportAttributes;
+    }else {
       return res.status(400).send("bad request , please enter a valid role");
     }
     if (list != undefined) {
