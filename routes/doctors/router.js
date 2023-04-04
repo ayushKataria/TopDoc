@@ -5,6 +5,7 @@ const docAttributeList = require("./constants/docAttributeList");
 const userAttributeList = require("../users/constants/userAttributeList");
 const paymentAttributesList = require("../payments/constants/paymentAttributesList");
 const appointmentAttributeList = require("../appointments/constants/appointmentAttributeList");
+const supportAttributeList = require("../support/constants/supportAttributeList");
 const _ = require("underscore");
 const cloudinary = require("cloudinary").v2;
 
@@ -110,6 +111,47 @@ async function updateProfileDetails(req, res) {
       list = appointmentAttributeList.bookingUpdateAttributes;
     } else if (req.body.role == "payment") {
       list = paymentAttributesList.paymentUpdateAttributes;
+    } else if (req.body.role == "support") {
+      list = supportAttributeList.updateSupportAttributes;
+      if (!req.body.hasOwnProperty("ticketNumber")) {
+        return res
+          .status(400)
+          .send("bad request , ticketNumber attributes is missing");
+      }
+      req.body.id = req.body.ticketNumber;
+      req.body = _.omit(req.body, "ticketNumber");
+      if (req.body.hasOwnProperty("resolvedOn") == true) {
+        if (req.body.resolvedOn == null || req.body.resolvedOn == "") {
+          return res
+            .status(400)
+            .send("bad request , resolvedOn attributes cannot be empty");
+        } else {
+          req.body.resolvedOn = await controller.ConvertDateFormat(
+            req.body.resolvedOn
+          );
+        }
+      }
+      let isTimestampInvalid = false;
+      if (req.body.hasOwnProperty("chat") == true) {
+        for (let i = 0; i < req.body.chat.length; i++) {
+          if (
+            req.body.chat[i].timestamp == null ||
+            req.body.chat[i].timestamp == ""
+          ) {
+            isTimestampInvalid = true;
+            break;
+          } else {
+            req.body.chat[i].timestamp = await controller.ConvertDateFormat(
+              req.body.chat[i].timestamp
+            );
+          }
+        }
+      }
+      if (isTimestampInvalid) {
+        return res
+          .status(400)
+          .send("bad request , timestamp attributes cannot be empty");
+      }
     } else if (req.body.role == "staff") {
       list = docAttributeList.staffUpdateAttributes;
       if (
@@ -123,9 +165,7 @@ async function updateProfileDetails(req, res) {
       req.body.id = req.body.staffId;
       req.body = _.omit(req.body, "staffId");
     } else {
-      return res
-      .status(400)
-      .send("bad request , please enter a valid role");
+      return res.status(400).send("bad request , please enter a valid role");
     }
     console.log(req.body);
 
@@ -243,7 +283,7 @@ async function createDoctorReviews(req, res) {
   try {
     let role;
     let fail = false;
-    const list = docAttributeList.userReviewsAttributes;
+    const list = docAttributeList.userReviewsCreationAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
         fail = true;
@@ -303,61 +343,23 @@ async function createDoctorReviews(req, res) {
     ) {
       res.status(400).send("bad request , isVerifiedUser cannot be empty");
     } else if (
-      req.body.hasOwnProperty("reviewlastEditedOn") == false ||
-      req.body.reviewlastEditedOn == null ||
-      req.body.reviewlastEditedOn == ""
-    ) {
-      res.status(400).send("bad request , reviewlastEditedOn cannot be empty");
-    } else if (
       req.body.hasOwnProperty("userScheduleId") == false ||
       req.body.userScheduleId == null ||
       req.body.userScheduleId == ""
     ) {
       res.status(400).send("bad request , userScheduleId cannot be empty");
     } else if (
-      req.body.hasOwnProperty("patientEducationRating") == false ||
-      req.body.patientEducationRating == null ||
-      req.body.patientEducationRating == ""
+      req.body.hasOwnProperty("reviewTags") == false ||
+      req.body.reviewTags == null
     ) {
-      res
-        .status(400)
-        .send("bad request , patientEducationRating cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("staffCourteousnessRating") == false ||
-      req.body.staffCourteousnessRating == null ||
-      req.body.staffCourteousnessRating == ""
-    ) {
-      res
-        .status(400)
-        .send("bad request , staffCourteousnessRating cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("bedsideMannerismRating") == false ||
-      req.body.bedsideMannerismRating == null ||
-      req.body.bedsideMannerismRating == ""
-    ) {
-      res
-        .status(400)
-        .send("bad request , bedsideMannerismRating cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("friendlinessAndWaitTimeRating") == false ||
-      req.body.friendlinessAndWaitTimeRating == null ||
-      req.body.friendlinessAndWaitTimeRating == ""
-    ) {
-      res
-        .status(400)
-        .send("bad request , friendlinessAndWaitTimeRating cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("accurateDiagnosisRating") == false ||
-      req.body.accurateDiagnosisRating == null ||
-      req.body.accurateDiagnosisRating == ""
-    ) {
-      res
-        .status(400)
-        .send("bad request , accurateDiagnosisRating cannot be empty");
+      res.status(400).send("bad request , reviewTags cannot be empty");
     } else {
       role = req.body.role;
       let obj = req.body;
       obj = _.omit(obj, "role");
+      obj.reviewDate = await controller
+        .ConvertDateFormat(req.body.reviewDate)
+        .catch((err) => console.log(err));
       await controller
         .createNewReview(obj, role)
         .then((data) => res.send(data))
@@ -513,61 +515,30 @@ async function updateReviewDetails(req, res) {
     ) {
       res.status(400).send("bad request , isVerifiedUser cannot be empty");
     } else if (
-      req.body.hasOwnProperty("reviewlastEditedOn") == false ||
-      req.body.reviewlastEditedOn == null ||
-      req.body.reviewlastEditedOn == ""
-    ) {
-      res.status(400).send("bad request , reviewlastEditedOn cannot be empty");
-    } else if (
       req.body.hasOwnProperty("userScheduleId") == false ||
       req.body.userScheduleId == null ||
       req.body.userScheduleId == ""
     ) {
       res.status(400).send("bad request , userScheduleId cannot be empty");
     } else if (
-      req.body.hasOwnProperty("patientEducationRating") == false ||
-      req.body.patientEducationRating == null ||
-      req.body.patientEducationRating == ""
+      req.body.hasOwnProperty("reviewTags") == false ||
+      req.body.reviewTags == null
     ) {
-      res
-        .status(400)
-        .send("bad request , patientEducationRating cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("staffCourteousnessRating") == false ||
-      req.body.staffCourteousnessRating == null ||
-      req.body.staffCourteousnessRating == ""
-    ) {
-      res
-        .status(400)
-        .send("bad request , staffCourteousnessRating cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("bedsideMannerismRating") == false ||
-      req.body.bedsideMannerismRating == null ||
-      req.body.bedsideMannerismRating == ""
-    ) {
-      res
-        .status(400)
-        .send("bad request , bedsideMannerismRating cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("friendlinessAndWaitTimeRating") == false ||
-      req.body.friendlinessAndWaitTimeRating == null ||
-      req.body.friendlinessAndWaitTimeRating == ""
-    ) {
-      res
-        .status(400)
-        .send("bad request , friendlinessAndWaitTimeRating cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("accurateDiagnosisRating") == false ||
-      req.body.accurateDiagnosisRating == null ||
-      req.body.accurateDiagnosisRating == ""
-    ) {
-      res
-        .status(400)
-        .send("bad request , accurateDiagnosisRating cannot be empty");
+      res.status(400).send("bad request , reviewTags cannot be empty");
     } else {
       role = req.body.role;
       obj = req.body;
       obj = _.omit(obj, "role");
+      if (
+        obj.hasOwnProperty("reviewlastEditedOn") &&
+        obj.reviewlastEditedOn != "" &&
+        obj.reviewlastEditedOn != []
+      ) {
+        obj.reviewlastEditedOn = await controller
+          .ConvertDateFormat(req.body.reviewlastEditedOn)
+          .catch((err) => console.log(err));
+      }
+
       await controller
         .updateProfileDetailsController(id, role, obj)
         .then((data) => res.send(data))
