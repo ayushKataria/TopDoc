@@ -862,7 +862,7 @@ async function delaySessionByDuration(body) {
       }
       output.result = "updated";
       let message = `We regret to inform that, your doctor has been delayed the session by ${body.sessionDelayDuration} minutes, apologies for inconvenience`;
-      let medium = [app, sms, mail];
+      let medium = ["app", "sms", "mail"];
       triggerNotification("delaySession", message, userList, medium);
       // let notifBody = {
       //   tag: ["delay"],
@@ -1159,7 +1159,7 @@ async function cancelDoctorSession(body) {
       }
       output.result = "updated";
       let message = `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`;
-      let medium = [app, sms, mail];
+      let medium = ["app", "sms", "mail"];
       triggerNotification("cancelSession", message, userList, medium);
       // let notifBody = {
       //   tag: ["cancelSession"],

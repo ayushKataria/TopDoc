@@ -7,10 +7,10 @@ let elasticSearchClient = null;
 let esClient = null;
 //Akash Elastic pass
 
-var auth = "elastic" + ":" + "j*+44bej_O0ZsUlUxFH5";
-const connstring = "http://" + "localhost" + ":" + "9200";
+var auth = "elastic" + ":" + "N=D14f7buQbu74p*iq3+";
+const connstring = "https://" + "localhost" + ":" + "9200";
 
-const enable_password = false;
+const enable_password = true;
 function connectClient() {
   if (enable_password == true) {
     console.log("inside iffffffffffff");
@@ -19,7 +19,7 @@ function connectClient() {
         {
           host: "localhost",
           port: "9200",
-          protocol: "http",
+          protocol: "https",
           auth: auth,
           log: "trace",
           requestTimeout: 60000,
@@ -498,81 +498,101 @@ function aggegrationsData(aggsMetaData) {
   }
 }
 async function updateData(queryBody, paramIndex, retry = 0) {
-  console.log("paramIndex",paramIndex)
+  console.log("paramIndex", paramIndex);
   if (elasticSearchClient == null) {
-      connectClient();
+    connectClient();
   }
-  if(queryBody.hasOwnProperty('body') && queryBody.body.hasOwnProperty('doc'))
-      return new Promise((resolve, reject) => {
-          elasticSearchClient.update({
-         //     index: indexDict[paramIndex],  to be asked to Nitish
-              index: paramIndex,
-              id: queryBody.id,
-              refresh: 'true',
-              retry_on_conflict: 2,
-              doc_as_upsert: true,
-              body: queryBody.body
-          }).then((result) => {
-              resolve(result);
-          }).catch((err) => {
-              reject(err); 
-          })
-      }).catch((err) => {
-        console.log("The Error is ",err)
-          if (retry <= 0) {
-              throw { statuscode: 500, err: "Elasticsearch Query failed", message: "couldn't query the database" }
-          } else {
-              return updateData(queryBody, paramIndex, Number(retry - 1))
-          }
-      })
+  if (queryBody.hasOwnProperty("body") && queryBody.body.hasOwnProperty("doc"))
+    return new Promise((resolve, reject) => {
+      elasticSearchClient
+        .update({
+          //     index: indexDict[paramIndex],  to be asked to Nitish
+          index: paramIndex,
+          id: queryBody.id,
+          refresh: "true",
+          retry_on_conflict: 2,
+          doc_as_upsert: true,
+          body: queryBody.body,
+        })
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    }).catch((err) => {
+      console.log("The Error is ", err);
+      if (retry <= 0) {
+        throw {
+          statuscode: 500,
+          err: "Elasticsearch Query failed",
+          message: "couldn't query the database",
+        };
+      } else {
+        return updateData(queryBody, paramIndex, Number(retry - 1));
+      }
+    });
   else {
-      return new Promise((resolve, reject) => {
-          elasticSearchClient.update({
-              index: paramIndex,
-              id: queryBody.id,
-              refresh: 'true',
-              retry_on_conflict: 2,
-              body: queryBody.body
-          }).then((result) => {
-              resolve(result);
-          }).catch((err) => {
-              reject(err); 
-          })
-      }).catch((err) => {
-        console.log("The Error 2 is ",err)
-          if (retry <= 0) {
-              throw { statuscode: 500, err: "Elasticsearch Query failed", message: "couldn't query the database" }
-          } else {
-              return updateData(queryBody, paramIndex, Number(retry - 1))
-          }
-      })
+    return new Promise((resolve, reject) => {
+      elasticSearchClient
+        .update({
+          index: paramIndex,
+          id: queryBody.id,
+          refresh: "true",
+          retry_on_conflict: 2,
+          body: queryBody.body,
+        })
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    }).catch((err) => {
+      console.log("The Error 2 is ", err);
+      if (retry <= 0) {
+        throw {
+          statuscode: 500,
+          err: "Elasticsearch Query failed",
+          message: "couldn't query the database",
+        };
+      } else {
+        return updateData(queryBody, paramIndex, Number(retry - 1));
+      }
+    });
   }
 }
 
 async function updateDataByQuery(queryBody, paramIndex, retry = 0) {
   if (elasticSearchClient == null) {
-      connectClient();
+    connectClient();
   }
-  
+
   return new Promise((resolve, reject) => {
-      elasticSearchClient.updateByQuery({
-          index: paramIndex,
-          refresh: 'true',
-          body: queryBody
-      }).then((result) => {
-          resolve(result);
-      }).catch((err) => {
-          reject(err); 
+    elasticSearchClient
+      .updateByQuery({
+        index: paramIndex,
+        refresh: "true",
+        body: queryBody,
       })
+      .then((result) => {
+        resolve(result);
+      })
+      .catch((err) => {
+        reject(err);
+      });
   }).catch((err) => {
-    console.log("The Error 3 is ",err)
-      if (retry <= 0) {
-          throw { statuscode: 500, err: "Elasticsearch Query failed", message: "couldn't query the database" }
-      } else {
-          return updateDataByQuery(queryBody, paramIndex, Number(retry - 1))
-      }
-  })
-  
+    console.log("The Error 3 is ", err);
+    if (retry <= 0) {
+      throw {
+        statuscode: 500,
+        err: "Elasticsearch Query failed",
+        message: "couldn't query the database",
+      };
+    } else {
+      return updateDataByQuery(queryBody, paramIndex, Number(retry - 1));
+    }
+  });
 }
 
 module.exports = {
