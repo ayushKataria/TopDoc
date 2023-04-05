@@ -3,6 +3,7 @@
 const esdb = require("../../utils/es_util");
 const uuid = require("uuid");
 const _ = require("underscore");
+const doctorAttributes = require("./constants/docAttributeList");
 
 //get doctor data with the help of docId
 async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
@@ -121,9 +122,51 @@ async function createNewReview(object, role) {
       output.result = "NOT created";
       output.message = "Sorry , unable to post the review ";
     }
+    let getResult = await getProfileDetailsController(
+      object.doctorId,
+      "doctor",
+      ["noOfReviews", "reviewTags", "averageRating"]
+    );
+    console.log("getResult  : ", getResult);
+    let reviewTagsList = doctorAttributes.reviewTags;
+    let incomingReviewTags = object.reviewTags;
+    let incomingReviewTagsKeys = object.reviewTags;
+    let noOfReviews = getResult.results[0].noOfReviews;
+    let averageRating = getResult.results[0].averageRating;
+    averageRating =
+      (averageRating * noOfReviews + object.reviewRating) / (noOfReviews + 1);
+    noOfReviews = parseInt(noOfReviews) + 1;
+    let reviewTags = getResult.results[0].reviewTags;
+    let reviewTagsKeys = Object.keys(reviewTags);
+    console.log("tag list length : ", reviewTagsList.length);
+    for (let i = 0; i < reviewTagsList.length; i++) {
+      let currTag = reviewTagsList[i];
+      console.log("inside for loop : ", currTag);
+      if (incomingReviewTagsKeys.includes(currTag)) {
+        console.log("inside");
+        if (!reviewTagsKeys.includes(currTag)) {
+          reviewTags[currTag] = 1;
+          console.log("inside last if  : ", reviewTags[currTag]);
+        } else {
+          reviewTags[currTag] = parseInt(reviewTags[currTag]) + 1;
+          console.log("inside last else  : ", reviewTags[currTag]);
+        }
+      }
+    }
+
+    output.doctorUpdated = await updateProfileDetailsController(
+      object.doctorId,
+      "doctor",
+      {
+        reviewTags: reviewTags,
+        noOfReviews: noOfReviews,
+        averageRating: averageRating,
+      }
+    );
 
     return output;
   } catch (err) {
+    console.log(err);
     throw {
       statuscode: 404,
       message: "There was some error in creating Review",
@@ -247,8 +290,8 @@ async function getReviewsDetails(body) {
 }
 
 async function ConvertDateFormat(date) {
-  console.log("THE DATE IS ",date)
   try {
+    console.log("THE DATE IS ", date);
     let temp = new Date(date).toISOString();
     let timeZone = new Date(date).getTimezoneOffset();
     let finalFormat;
@@ -277,8 +320,8 @@ async function ConvertDateFormat(date) {
     }
     finalFormat = temp.replace("Z", finalTimeZone);
     return finalFormat;
-  } catch (err) {
-    console.log("Error is ",err)
+  } catch (error) {
+    console.log("Error is ", error);
     throw {
       statuscode: 400,
       message: "There was some error in converting Date Format",

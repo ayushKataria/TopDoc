@@ -1191,8 +1191,17 @@ async function changeBookingStatus(body) {
     let role = "booking";
     let output = {};
     let data = {};
+    output.userId = body.userId;
     body.timeStamp = new Date(body.timeStamp);
-    if (body.status == "ended" || body.status == "paused") {
+    if (
+      body.status == "ended" ||
+      body.status == "paused" ||
+      body.status == "started" ||
+      body.status == "rejoined" ||
+      body.status == "skipped" ||
+      body.status == "upNext" ||
+      body.status == "pinGenerated"
+    ) {
       let query = { status: body.status };
       try {
         data = await docController.updateProfileDetailsController(
@@ -1273,35 +1282,36 @@ async function changeBookingStatus(body) {
         }
       }
     }
+    if (body.completedSlots > 0) {
+      let predictedTime = await forecastQueueEndTime(
+        body.currSessionStartTime,
+        body.totalSlots,
+        body.completedSlots,
+        body.timeStamp,
+        body.appointmentDate
+      );
 
-    let predictedTime = await forecastQueueEndTime(
-      body.currSessionStartTime,
-      body.totalSlots,
-      body.completedSlots,
-      body.timeStamp,
-      body.appointmentDate
-    );
+      let areSessionClashing = await areSessionsClashing(
+        body.currSessionEndTime,
+        predictedTime.predictedSessionEndTime,
+        body.nextSessionStartTime,
+        body.appointmentDate
+      );
 
-    let areSessionClashing = await areSessionsClashing(
-      body.currSessionEndTime,
-      predictedTime.predictedSessionEndTime,
-      body.nextSessionStartTime,
-      body.appointmentDate
-    );
-
-    let hours = new Date(predictedTime.predictedSessionEndTime)
-      .getHours()
-      .toString()
-      .padStart(2, "0");
-    let minutes = new Date(predictedTime.predictedSessionEndTime)
-      .getMinutes()
-      .toString()
-      .padStart(2, "0");
-    output.askForDelay = areSessionClashing.askForDelay;
-    output.predictedSessionEndTime = `${hours}:${minutes}`;
-    output.currentSpeed = predictedTime.currentSpeed;
-    output.timeExceedingOrgEstimation =
-      areSessionClashing.timeExceedingOrgEstimation;
+      let hours = new Date(predictedTime.predictedSessionEndTime)
+        .getHours()
+        .toString()
+        .padStart(2, "0");
+      let minutes = new Date(predictedTime.predictedSessionEndTime)
+        .getMinutes()
+        .toString()
+        .padStart(2, "0");
+      output.askForDelay = areSessionClashing.askForDelay;
+      output.predictedSessionEndTime = `${hours}:${minutes}`;
+      output.currentSpeed = predictedTime.currentSpeed;
+      output.timeExceedingOrgEstimation =
+        areSessionClashing.timeExceedingOrgEstimation;
+    }
 
     return output;
   } catch (error) {

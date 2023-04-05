@@ -8,6 +8,7 @@ let esClient = null;
 //Akash Elastic pass
 
 var auth = "elastic" + ":" + "N=D14f7buQbu74p*iq3+";
+
 const connstring = "https://" + "localhost" + ":" + "9200";
 
 const enable_password = true;

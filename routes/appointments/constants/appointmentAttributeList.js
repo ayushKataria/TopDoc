@@ -200,6 +200,20 @@ const changeBookingStatus = [
   "slotId",
   "appointmentDate",
   "doctorId",
+  "userId",
+];
+
+const queueStatuses = [
+  "notBooked",
+  "booked",
+  "cancelled",
+  "pinGenerated",
+  "started",
+  "skipped",
+  "rejoined",
+  "upNext",
+  "paused",
+  "ended",
 ];
 
 module.exports = {
