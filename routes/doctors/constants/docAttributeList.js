@@ -10,11 +10,26 @@ const userReviewsAttributes = [
   "reviewlastEditedOn",
   "medical_details",
   "userScheduleId",
-  "accurateDiagnosisRating",
-  "friendlinessAndWaitTimeRating",
-  "bedsideMannerismRating",
-  "staffCourteousnessRating",
-  "patientEducationRating",
+  // "accurateDiagnosisRating",
+  // "friendlinessAndWaitTimeRating",
+  // "bedsideMannerismRating",
+  // "staffCourteousnessRating",
+  // "patientEducationRating",
+  "reviewTags",
+];
+
+const userReviewsCreationAttributes = [
+  "role",
+  "reviewRating",
+  "reviewMessage",
+  "reviewDate",
+  "userId",
+  "userName",
+  "isVerifiedUser",
+  "doctorId",
+  "medical_details",
+  "userScheduleId",
+  "reviewTags",
 ];
 
 const doctorUpdateAttributes = [
@@ -65,6 +80,14 @@ const doctorUpdateAttributes = [
   "associatedClinics",
 ];
 
+const reviewTags = [
+  "On Time",
+  "well-mannered",
+  "Explains lucidly",
+  "Great Staff",
+  "Accurate Diagnosis",
+  "Clean and Hygenic",
+];
 const getRequestAttributes = ["role", "doctorId", "fields"];
 
 const sortListForReview = ["reviewRating", "reviewDate", "reviewlastEditedOn"];
@@ -111,4 +134,6 @@ module.exports = {
   getRequestReviewAttributes,
   createNewStaffAttributes,
   staffUpdateAttributes,
+  userReviewsCreationAttributes,
+  reviewTags,
 };
