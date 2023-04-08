@@ -115,8 +115,8 @@ async function signup(req, res) {
         //let password = hashpassword
         //let dtCreated = new Date()
         //let userQuery =  getUserQueryBody(req, id, emailId, hashpassword)
-        let first_name = req.fullName.substring(0, req.fullName.indexOf(" "));
-        let last_name = req.fullName.substring(req.fullName.indexOf(" ") + 1);
+        let first_name = req.firstName;
+        let last_name = req.lastName;
         let queryBody = userSchema();
         queryBody.email = req.email;
         queryBody.id = id;
@@ -215,7 +215,7 @@ async function login(req, res) {
     console.log("In login block");
     if (req.hasOwnProperty("emailId")) {
       let userData = await getDocByemailId(req.emailId, "user");
-    
+    console.log("Userdata is ",userData)
       if(userData.hits.hits.length==0){
         throw { statuscode: 401, message: "Email not found" };
       }
@@ -366,7 +366,7 @@ async function loginDoc(req, res) {
             },
           };
         } else {
-          result = { statuscode: 401, message: "Authorization failed" };
+        throw { statuscode: 401, message: "Authorization failed" };
         }
       } else {
         throw {
