@@ -10,10 +10,11 @@ const adsController = require("../ads/controller");
 const { result } = require("underscore");
 
 function getDocByemailId(emailId, paramIndex) {
+  console.log("GetDoc by email reached")
   let queryBody = {
     query: {
       term: {
-        "email.keyword": emailId,
+        email: emailId,
       },
     },
   };
@@ -214,6 +215,10 @@ async function login(req, res) {
     console.log("In login block");
     if (req.hasOwnProperty("emailId")) {
       let userData = await getDocByemailId(req.emailId, "user");
+    
+      if(userData.hits.hits.length==0){
+        throw { statuscode: 401, message: "Email not found" };
+      }
       let userDetailsRec = userData.hits.hits[0]._source;
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
