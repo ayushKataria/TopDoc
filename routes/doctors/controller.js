@@ -4,7 +4,7 @@ const esdb = require("../../utils/es_util");
 const uuid = require("uuid");
 const _ = require("underscore");
 const doctorAttributes = require("./constants/docAttributeList");
-
+const bcrypt = require("bcrypt");
 //get doctor data with the help of docId
 async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
   try {
@@ -89,7 +89,7 @@ async function createNewDoctorAccount(object) {
     const role = object.role;
     object = _.omit(object, "role");
     console.log("The uuid is ", newId);
-
+object.password=await hashPassword(object.password);
     let entityCreationObj = await esdb.insert(object, newId, role);
     console.log(entityCreationObj);
     if (entityCreationObj.result == "created") {
@@ -102,13 +102,30 @@ async function createNewDoctorAccount(object) {
       throw err;
     }
   } catch (err) {
+    console.log("Error is "+JSON.stringify(err))
     throw {
+     
       statuscode: 404,
       message: "There was some error in creating profile",
     };
   }
 }
-
+async function hashPassword(org_password) {
+  try {
+    const hashedPassword = await bcrypt.hash(org_password, 10);
+    return hashedPassword;
+  } catch (error) {
+    if (error.statuscode) {
+      throw error;
+    } else {
+      throw {
+        statuscode: 500,
+        err: "internal server error",
+        message: "unexpected error",
+      };
+    }
+  }
+}
 async function createNewReview(object, role) {
   try {
     const { v4: uuidv4 } = require("uuid");
@@ -282,6 +299,8 @@ async function getReviewsDetails(body) {
     }
     return output;
   } catch (err) {
+    console.log("Review error is ",err
+    )
     throw {
       statuscode: 404,
       message: "There was some error in fetching Reviews",
