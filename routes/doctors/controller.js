@@ -127,9 +127,7 @@ async function createNewReview(object, role) {
       "doctor",
       ["noOfReviews", "reviewTags", "averageRating"]
     );
-    console.log("getResult  : ", getResult);
     let reviewTagsList = doctorAttributes.reviewTags;
-    let incomingReviewTags = object.reviewTags;
     let incomingReviewTagsKeys = object.reviewTags;
     let noOfReviews = getResult.results[0].noOfReviews;
     let averageRating = getResult.results[0].averageRating;
@@ -138,18 +136,13 @@ async function createNewReview(object, role) {
     noOfReviews = parseInt(noOfReviews) + 1;
     let reviewTags = getResult.results[0].reviewTags;
     let reviewTagsKeys = Object.keys(reviewTags);
-    console.log("tag list length : ", reviewTagsList.length);
     for (let i = 0; i < reviewTagsList.length; i++) {
       let currTag = reviewTagsList[i];
-      console.log("inside for loop : ", currTag);
       if (incomingReviewTagsKeys.includes(currTag)) {
-        console.log("inside");
         if (!reviewTagsKeys.includes(currTag)) {
           reviewTags[currTag] = 1;
-          console.log("inside last if  : ", reviewTags[currTag]);
         } else {
           reviewTags[currTag] = parseInt(reviewTags[currTag]) + 1;
-          console.log("inside last else  : ", reviewTags[currTag]);
         }
       }
     }
@@ -181,6 +174,14 @@ async function getReviewsDetails(body) {
     let params = {};
     params.fromValue = body.pageNo * body.pageSize;
     params.sizeValue = body.pageSize;
+
+    if (body.hasOwnProperty("sort") == true && body.sort.length > 0) {
+      params.boolSort = true;
+      params.sortVal = body.sort;
+    } else {
+      params.boolSort = false;
+    }
+
     if (body.hasOwnProperty("doctorId") && body.hasOwnProperty("userId")) {
       params.boolUserId = true;
       params.userIdValue = body.userId;
@@ -190,56 +191,22 @@ async function getReviewsDetails(body) {
       params.avgReviewRatingAggregation = true;
       params.rangeReviewRatingAggregation = true;
       params.rangeReviewRatingAggregationComma = true;
-      params.avgAccurateDiagnosisRatingAggregation = true;
-      params.avgAccurateDiagnosisRatingAggregationComma = true;
-      params.avgFriendlinessAndWaitTimeRatingAggregation = true;
-      params.avgFriendlinessAndWaitTimeRatingAggregationComma = true;
-      params.avgBedsideMannerismRatingAggregation = true;
-      params.avgBedsideMannerismRatingAggregationComma = true;
-      params.avgStaffCourteousnessRatingAggregation = true;
-      params.avgStaffCourteousnessRatingAggregationComma = true;
-      params.avgPatientEducationRatingAggregation = true;
-      params.avgPatientEducationRatingAggregationComma = true;
+      params.reviewTagsAggregationComma = true;
+      params.reviewTagsAggregation = true;
     } else if (body.hasOwnProperty("doctorId")) {
       params.boolDoctorId = true;
       params.doctorIdValue = body.doctorId;
       params.avgReviewRatingAggregation = true;
       params.rangeReviewRatingAggregation = true;
       params.rangeReviewRatingAggregationComma = true;
-      params.avgAccurateDiagnosisRatingAggregation = true;
-      params.avgAccurateDiagnosisRatingAggregationComma = true;
-      params.avgFriendlinessAndWaitTimeRatingAggregation = true;
-      params.avgFriendlinessAndWaitTimeRatingAggregationComma = true;
-      params.avgBedsideMannerismRatingAggregation = true;
-      params.avgBedsideMannerismRatingAggregationComma = true;
-      params.avgStaffCourteousnessRatingAggregation = true;
-      params.avgStaffCourteousnessRatingAggregationComma = true;
-      params.avgPatientEducationRatingAggregation = true;
-      params.avgPatientEducationRatingAggregationComma = true;
+      params.reviewTagsAggregationComma = true;
+      params.reviewTagsAggregation = true;
     } else if (body.hasOwnProperty("userId")) {
       params.boolUserId = true;
       params.userIdValue = body.userId;
       params.avgReviewRatingAggregation = false;
       params.rangeReviewRatingAggregation = false;
       params.rangeReviewRatingAggregationComma = false;
-      params.avgAccurateDiagnosisRatingAggregation = false;
-      params.avgAccurateDiagnosisRatingAggregationComma = false;
-      params.avgFriendlinessAndWaitTimeRatingAggregation = false;
-      params.avgFriendlinessAndWaitTimeRatingAggregationComma = false;
-      params.avgBedsideMannerismRatingAggregation = false;
-      params.avgBedsideMannerismRatingAggregationComma = false;
-      params.avgStaffCourteousnessRatingAggregation = false;
-      params.avgStaffCourteousnessRatingAggregationComma = false;
-      params.avgPatientEducationRatingAggregation = false;
-      params.avgPatientEducationRatingAggregationComma = false;
-    }
-
-    if (Object.keys(body.sort).length === 0) {
-      params.boolSort = false;
-    } else {
-      params.boolSort = true;
-      params.sortField = Object.keys(body.sort)[0];
-      params.sortOrder = Object.values(body.sort)[0];
     }
 
     let output = {};
@@ -252,36 +219,19 @@ async function getReviewsDetails(body) {
       return e._source;
     });
 
-    if (body.hasOwnProperty("doctorId")) {
-      output.avgReviewRating =
+    if (body.hasOwnProperty("doctorId") && output.hits > 0) {
+      output.reviewTagsAggs =
         dataOb.aggregations.TotalAggs.avgReviewRatingAggs.avgReviewRatingAggs.value.toFixed(
           1
         );
-      output.avgPatientEducationRating =
-        dataOb.aggregations.TotalAggs.avgPatientEducationRatingAggs.avgPatientEducationRatingAggs.value.toFixed(
-          1
-        );
-      output.avgStaffCourteousnessRating =
-        dataOb.aggregations.TotalAggs.avgStaffCourteousnessRatingAggs.avgStaffCourteousnessRatingAggs.value.toFixed(
-          1
-        );
-      output.avgFriendlinessAndWaitTimeRating =
-        dataOb.aggregations.TotalAggs.avgFriendlinessAndWaitTimeRatingAggs.avgFriendlinessAndWaitTimeRatingAggs.value.toFixed(
-          1
-        );
-      output.avgAccurateDiagnosisRating =
-        dataOb.aggregations.TotalAggs.avgAccurateDiagnosisRatingAggs.avgAccurateDiagnosisRatingAggs.value.toFixed(
-          1
-        );
-      output.avgBedsideMannerismRating =
-        dataOb.aggregations.TotalAggs.avgBedsideMannerismRatingAggs.avgBedsideMannerismRatingAggs.value.toFixed(
-          1
-        );
+      output.avgReviewRating =
+        dataOb.aggregations.TotalAggs.reviewTagsAggs.reviewTagsAggs.buckets;
       output.rangeReviewRating =
         dataOb.aggregations.TotalAggs.rangeReviewRatingAggs.rangeReviewRatingAggs.buckets;
     }
     return output;
   } catch (err) {
+    console.log("error is : ", err);
     throw {
       statuscode: 404,
       message: "There was some error in fetching Reviews",

@@ -569,11 +569,11 @@ async function getDoctorReviewsByUserIdOrDoctorId(req, res) {
         .send("bad request , unknown attribute found in request");
     }
 
-    let sortBy = Object.keys(req.body.sort);
+    let sortBy = req.body.sort;
 
     const sortList = docAttributeList.sortListForReview;
     for (let i = 0; i < sortBy.length; i++) {
-      if (!sortList.includes(sortBy[i])) {
+      if (!sortList.includes(Object.keys(sortBy[i])[0])) {
         res
           .status(400)
           .send(
@@ -628,8 +628,6 @@ async function getDoctorReviewsByUserIdOrDoctorId(req, res) {
       req.body.pageNo == null
     ) {
       res.status(400).send("bad request , pageNo cannot be empty");
-    } else if (req.body.hasOwnProperty("sort") == false) {
-      res.status(400).send("bad request , sort field required");
     } else {
       console.log("in router");
       await controller
