@@ -70,6 +70,15 @@ const createNewSupportAttributes = [
   "raisedOn",
   "status",
 ];
+const supportStatus = [
+  "waitingForSupport",
+  "inProgress",
+  "resolved",
+  "cancelled",
+  "escalated",
+  "closed",
+  "waitingForCustomer",
+];
 
 module.exports = {
   supportAttributes,
