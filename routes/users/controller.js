@@ -10,10 +10,11 @@ const adsController = require("../ads/controller");
 const { result } = require("underscore");
 
 function getDocByemailId(emailId, paramIndex) {
+  console.log("GetDoc by email reached")
   let queryBody = {
     query: {
       term: {
-        "email.keyword": emailId,
+        email: emailId,
       },
     },
   };
@@ -63,6 +64,7 @@ async function hashPassword(org_password) {
   }
 }
 async function compareHashPassword(req_password, saved_Password) {
+  console.log("Req pwd is ",req_password+"saved pwd is",saved_Password)
   try {
     const comparehashedPassword = await bcrypt.compare(
       req_password,
@@ -133,8 +135,8 @@ async function signup(req, res) {
         //let password = hashpassword
         //let dtCreated = new Date()
         //let userQuery =  getUserQueryBody(req, id, emailId, hashpassword)
-        let first_name = req.fullName.substring(0, req.fullName.indexOf(" "));
-        let last_name = req.fullName.substring(req.fullName.indexOf(" ") + 1);
+        let first_name = req.firstName;
+        let last_name = req.lastName;
         let queryBody = userSchema();
         queryBody.email = req.email;
         queryBody.id = id;
@@ -234,6 +236,10 @@ async function login(req, res) {
     console.log("In login block");
     if (req.hasOwnProperty("emailId")) {
       let userData = await getDocByemailId(req.emailId, "user");
+    console.log("Userdata is ",userData)
+      if(userData.hits.hits.length==0){
+        throw { statuscode: 401, message: "Email not found" };
+      }
       let userDetailsRec = userData.hits.hits[0]._source;
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
@@ -264,7 +270,7 @@ async function login(req, res) {
             },
           };
         } else {
-          result = { statuscode: 401, message: "Authorization failed" };
+          throw { statuscode: 401, message: "Authorization failed" };
         }
       } else {
         throw {
@@ -279,6 +285,7 @@ async function login(req, res) {
       let userDetailsRec = userData.hits.hits[0]._source;
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
+        console.log("Saved pwd from db  is ",savedPassword)
         isVerified = await compareHashPassword(req.password, savedPassword);
         if (isVerified) {
           const token = jwt.sign(
@@ -306,7 +313,7 @@ async function login(req, res) {
             },
           };
         } else {
-          result = { statuscode: 401, message: "Authorization failed" };
+          throw{ statuscode: 401, message: "Authorization failed" };
         }
       } else {
         throw {
@@ -380,7 +387,7 @@ async function loginDoc(req, res) {
             },
           };
         } else {
-          result = { statuscode: 401, message: "Authorization failed" };
+        throw { statuscode: 401, message: "Authorization failed" };
         }
       } else {
         throw {
