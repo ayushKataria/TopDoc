@@ -102,7 +102,6 @@ object.password=await hashPassword(object.password);
       throw err;
     }
   } catch (err) {
-    console.log("Error is "+JSON.stringify(err))
     throw {
      
       statuscode: 404,
@@ -261,6 +260,7 @@ async function getReviewsDetails(body) {
 
     let output = {};
     let dataOb = await esdb.templateSearch(params, esIndex, esTemplate);
+    console.log("Data ob is ",dataOb)
     output.hits = dataOb.hits.total.value;
     for (let i = 0; i < dataOb.hits.hits.length; i++) {
       dataOb.hits.hits[i]._source.id = dataOb.hits.hits[i]._id;
@@ -299,7 +299,7 @@ async function getReviewsDetails(body) {
     }
     return output;
   } catch (err) {
-    console.log("Review error is ",err
+    console.log("Review error is ",JSON.stringify(err)
     )
     throw {
       statuscode: 404,
