@@ -201,6 +201,7 @@ const changeBookingStatus = [
   "appointmentDate",
   "doctorId",
   "userId",
+  "reqFrom"
 ];
 
 const queueStatuses = [
