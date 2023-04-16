@@ -518,7 +518,10 @@ async function bookingAppointment(body) {
         query.query.bool.filter[0] = { term: { slotType: "normal" } };
         // console.log("query ", JSON.stringify(query));
         let resForUnRegUser = await esUtil.search(query, index);
-        console.log(resForUnRegUser.hits.hits[0]._source);
+        console.log("Unreg user"+JSON.stringify(resForUnRegUser));
+        if(resForUnRegUser.hits.total.value>0){
+          
+    
         let slotDate = resForUnRegUser.hits.hits[0]._source.appointmentDate;
         let slotDuration = resForUnRegUser.hits.hits[0]._source.slotDuration;
         console.log(slotDate);
@@ -605,6 +608,7 @@ async function bookingAppointment(body) {
           booking = { results: "some error occured while booking appointment" };
         }
       }
+      }
     }
 
     return booking;
@@ -616,6 +620,7 @@ async function bookingAppointment(body) {
         message: "Bad request , The slot is already booked",
       };
     } else {
+      console.log("ERROR IS ",err)
       throw {
         statuscode: 400,
         message: "There was some error in booking appointment",

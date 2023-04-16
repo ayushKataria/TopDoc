@@ -4,7 +4,7 @@ const esdb = require("../../utils/es_util");
 const uuid = require("uuid");
 const _ = require("underscore");
 const doctorAttributes = require("./constants/docAttributeList");
-
+const bcrypt = require("bcrypt");
 //get doctor data with the help of docId
 async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
   try {
@@ -89,7 +89,7 @@ async function createNewDoctorAccount(object) {
     const role = object.role;
     object = _.omit(object, "role");
     console.log("The uuid is ", newId);
-
+object.password=await hashPassword(object.password);
     let entityCreationObj = await esdb.insert(object, newId, role);
     console.log(entityCreationObj);
     if (entityCreationObj.result == "created") {
@@ -103,12 +103,28 @@ async function createNewDoctorAccount(object) {
     }
   } catch (err) {
     throw {
+     
       statuscode: 404,
       message: "There was some error in creating profile",
     };
   }
 }
-
+async function hashPassword(org_password) {
+  try {
+    const hashedPassword = await bcrypt.hash(org_password, 10);
+    return hashedPassword;
+  } catch (error) {
+    if (error.statuscode) {
+      throw error;
+    } else {
+      throw {
+        statuscode: 500,
+        err: "internal server error",
+        message: "unexpected error",
+      };
+    }
+  }
+}
 async function createNewReview(object, role) {
   try {
     const { v4: uuidv4 } = require("uuid");
@@ -211,6 +227,7 @@ async function getReviewsDetails(body) {
 
     let output = {};
     let dataOb = await esdb.templateSearch(params, esIndex, esTemplate);
+    console.log("Data ob is ",dataOb)
     output.hits = dataOb.hits.total.value;
     for (let i = 0; i < dataOb.hits.hits.length; i++) {
       dataOb.hits.hits[i]._source.id = dataOb.hits.hits[i]._id;

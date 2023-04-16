@@ -9,9 +9,9 @@ let esClient = null;
 
 var auth = "elastic" + ":" + "N=D14f7buQbu74p*iq3+";
 
-const connstring = "https://" + "localhost" + ":" + "9200";
+const connstring = "http://" + "localhost" + ":" + "9200";
 
-const enable_password = true;
+const enable_password = false;
 function connectClient() {
   if (enable_password == true) {
     console.log("inside iffffffffffff");
@@ -20,7 +20,7 @@ function connectClient() {
         {
           host: "localhost",
           port: "9200",
-          protocol: "https",
+          protocol: "http",
           auth: auth,
           log: "trace",
           requestTimeout: 60000,
