@@ -1270,7 +1270,7 @@ async function changeBookingStatus(body) {
               }
               return e._source;
             });
-            let message = `queue refreshed`;
+            let message = `queue refreshed ${body.status}`;
             let medium = ["app"];
             triggerNotification("QueueReload", message, userList, medium);
             // let notifBody = {

@@ -18,7 +18,7 @@ function getDocByemailId(emailId, paramIndex) {
       },
     },
   };
-  console.log("Query is ",queryBody);
+  console.log("Query is ", queryBody);
   return esdb1.search(queryBody, paramIndex);
 }
 async function getDocByPhone(mobile, paramIndex) {
