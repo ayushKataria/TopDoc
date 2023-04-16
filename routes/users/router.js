@@ -26,9 +26,9 @@ router.post("/signup", function (req, res) {
     (!req.body.hasOwnProperty("mobileNumber") ||
       req.body.mobileNumber == null ||
       req.body.mobileNumber == "") &&
-    (!req.body.hasOwnProperty("emailId") ||
-      req.body.emailId == null ||
-      req.body.emailId == "")
+    (!req.body.hasOwnProperty("email") ||
+      req.body.email == null ||
+      req.body.email == "")
   ) {
     res.status(400).send("one of Mobile Number or Email id is mandatory");
   } else if (!req.body.hasOwnProperty("password")) {

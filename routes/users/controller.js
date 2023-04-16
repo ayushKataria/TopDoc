@@ -10,7 +10,7 @@ const adsController = require("../ads/controller");
 const { result } = require("underscore");
 
 function getDocByemailId(emailId, paramIndex) {
-  console.log("GetDoc by email reached")
+  console.log("GetDoc by email reached");
   let queryBody = {
     query: {
       term: {
@@ -65,7 +65,7 @@ async function hashPassword(org_password) {
   }
 }
 async function compareHashPassword(req_password, saved_Password) {
-  console.log("Req pwd is ",req_password+"saved pwd is",saved_Password)
+  console.log("Req pwd is ", req_password + "saved pwd is", saved_Password);
   try {
     const comparehashedPassword = await bcrypt.compare(
       req_password,
@@ -216,8 +216,8 @@ async function login(req, res) {
     console.log("In login block");
     if (req.hasOwnProperty("emailId")) {
       let userData = await getDocByemailId(req.emailId, "user");
-    console.log("Userdata is ",userData)
-      if(userData.hits.hits.length==0){
+      console.log("Userdata is ", userData);
+      if (userData.hits.hits.length == 0) {
         throw { statuscode: 401, message: "Email not found" };
       }
       let userDetailsRec = userData.hits.hits[0]._source;
@@ -265,7 +265,7 @@ async function login(req, res) {
       let userDetailsRec = userData.hits.hits[0]._source;
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
-        console.log("Saved pwd from db  is ",savedPassword)
+        console.log("Saved pwd from db  is ", savedPassword);
         isVerified = await compareHashPassword(req.password, savedPassword);
         if (isVerified) {
           const token = jwt.sign(
@@ -293,7 +293,7 @@ async function login(req, res) {
             },
           };
         } else {
-          throw{ statuscode: 401, message: "Authorization failed" };
+          throw { statuscode: 401, message: "Authorization failed" };
         }
       } else {
         throw {
@@ -367,7 +367,7 @@ async function loginDoc(req, res) {
             },
           };
         } else {
-        throw { statuscode: 401, message: "Authorization failed" };
+          throw { statuscode: 401, message: "Authorization failed" };
         }
       } else {
         throw {
