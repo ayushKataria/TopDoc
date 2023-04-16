@@ -765,92 +765,139 @@ async function changeBookingStatus(req, res) {
         .send("bad request , unknown attribute found in request");
     }
 
-    if (
-      req.body.hasOwnProperty("status") == false ||
-      req.body.status == null ||
-      req.body.status == ""
-    ) {
-      res.status(400).send("bad request , status cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("timeStamp") == false ||
-      req.body.timeStamp == null ||
-      req.body.timeStamp == ""
-    ) {
-      res.status(400).send("bad request , timeStamp cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("slotId") == false ||
-      req.body.slotId == null ||
-      req.body.slotId == ""
-    ) {
-      res.status(400).send("bad request , slotId cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("userId") == false ||
-      req.body.userId == null ||
-      req.body.userId == ""
-    ) {
-      res.status(400).send("bad request , userId cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("appointmentDate") == false ||
-      req.body.appointmentDate == null ||
-      req.body.appointmentDate == ""
-    ) {
-      res.status(400).send("bad request , appointmentDate cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("nextSessionId") == false ||
-      req.body.nextSessionId == null ||
-      req.body.nextSessionId == ""
-    ) {
-      res.status(400).send("bad request , nextSessionId cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("nextSessionStartTime") == false ||
-      req.body.nextSessionStartTime == null ||
-      req.body.nextSessionStartTime == ""
-    ) {
-      res
-        .status(400)
-        .send("bad request , nextSessionStartTime cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("completedSlots") == false ||
-      req.body.completedSlots == null
-    ) {
-      res.status(400).send("bad request , completedSlots cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("totalSlots") == false ||
-      req.body.totalSlots == null ||
-      req.body.totalSlots == ""
-    ) {
-      res.status(400).send("bad request , totalSlots cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("currSessionId") == false ||
-      req.body.currSessionId == null ||
-      req.body.currSessionId == ""
-    ) {
-      res.status(400).send("bad request , currSessionId cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("currSessionEndTime") == false ||
-      req.body.currSessionEndTime == null ||
-      req.body.currSessionEndTime == ""
-    ) {
-      res.status(400).send("bad request , currSessionEndTime cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("doctorId") == false ||
-      req.body.doctorId == null ||
-      req.body.doctorId == ""
-    ) {
-      res.status(400).send("bad request , doctorId cannot be empty");
-    } else if (
-      req.body.hasOwnProperty("currSessionStartTime") == false ||
-      req.body.currSessionStartTime == null ||
-      req.body.currSessionStartTime == ""
-    ) {
-      res
-        .status(400)
-        .send("bad request , currSessionStartTime cannot be empty");
+    if (req.body.hasOwnProperty("reqFrom")) {
+      if (req.body.reqFrom == "user") {
+        if (
+          req.body.hasOwnProperty("status") == false ||
+          req.body.status == null ||
+          req.body.status == ""
+        ) {
+          res.status(400).send("bad request , status cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("slotId") == false ||
+          req.body.slotId == null ||
+          req.body.slotId == ""
+        ) {
+          res.status(400).send("bad request , slotId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("userId") == false ||
+          req.body.userId == null ||
+          req.body.userId == ""
+        ) {
+          res.status(400).send("bad request , userId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("currSessionId") == false ||
+          req.body.currSessionId == null ||
+          req.body.currSessionId == ""
+        ) {
+          res.status(400).send("bad request , currSessionId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("doctorId") == false ||
+          req.body.doctorId == null ||
+          req.body.doctorId == ""
+        ) {
+          res.status(400).send("bad request , doctorId cannot be empty");
+        } else {
+          await controller
+            .changeBookingStatus(req.body)
+            .then((data) => res.send(data))
+            .catch((err) => res.status(err.statuscode).send(err));
+        }
+      } else if (req.body.reqFrom == "doctor") {
+        if (
+          req.body.hasOwnProperty("status") == false ||
+          req.body.status == null ||
+          req.body.status == ""
+        ) {
+          res.status(400).send("bad request , status cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("timeStamp") == false ||
+          req.body.timeStamp == null ||
+          req.body.timeStamp == ""
+        ) {
+          res.status(400).send("bad request , timeStamp cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("slotId") == false ||
+          req.body.slotId == null ||
+          req.body.slotId == ""
+        ) {
+          res.status(400).send("bad request , slotId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("userId") == false ||
+          req.body.userId == null ||
+          req.body.userId == ""
+        ) {
+          res.status(400).send("bad request , userId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("appointmentDate") == false ||
+          req.body.appointmentDate == null ||
+          req.body.appointmentDate == ""
+        ) {
+          res.status(400).send("bad request , appointmentDate cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("nextSessionId") == false ||
+          req.body.nextSessionId == null ||
+          req.body.nextSessionId == ""
+        ) {
+          res.status(400).send("bad request , nextSessionId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("nextSessionStartTime") == false ||
+          req.body.nextSessionStartTime == null ||
+          req.body.nextSessionStartTime == ""
+        ) {
+          res
+            .status(400)
+            .send("bad request , nextSessionStartTime cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("completedSlots") == false ||
+          req.body.completedSlots == null
+        ) {
+          res.status(400).send("bad request , completedSlots cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("totalSlots") == false ||
+          req.body.totalSlots == null ||
+          req.body.totalSlots == ""
+        ) {
+          res.status(400).send("bad request , totalSlots cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("currSessionId") == false ||
+          req.body.currSessionId == null ||
+          req.body.currSessionId == ""
+        ) {
+          res.status(400).send("bad request , currSessionId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("currSessionEndTime") == false ||
+          req.body.currSessionEndTime == null ||
+          req.body.currSessionEndTime == ""
+        ) {
+          res
+            .status(400)
+            .send("bad request , currSessionEndTime cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("doctorId") == false ||
+          req.body.doctorId == null ||
+          req.body.doctorId == ""
+        ) {
+          res.status(400).send("bad request , doctorId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("currSessionStartTime") == false ||
+          req.body.currSessionStartTime == null ||
+          req.body.currSessionStartTime == ""
+        ) {
+          res
+            .status(400)
+            .send("bad request , currSessionStartTime cannot be empty");
+        } else {
+          await controller
+            .changeBookingStatus(req.body)
+            .then((data) => res.send(data))
+            .catch((err) => res.status(err.statuscode).send(err));
+        }
+      } else {
+        res.status(400).send("bad request , invalid value in field 'reqFrom'");
+      }
     } else {
-      await controller
-        .changeBookingStatus(req.body)
-        .then((data) => res.send(data))
-        .catch((err) => res.status(err.statuscode).send(err));
+      res.status(400).send("bad request , reqFrom field is mandatory");
     }
   } catch (error) {
     console.log(error);

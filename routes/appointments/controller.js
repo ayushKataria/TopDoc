@@ -1192,7 +1192,7 @@ async function changeBookingStatus(body) {
     let output = {};
     let data = {};
     output.userId = body.userId;
-    body.timeStamp = new Date(body.timeStamp);
+
     if (
       body.status == "ended" ||
       body.status == "paused" ||
@@ -1282,7 +1282,9 @@ async function changeBookingStatus(body) {
         }
       }
     }
-    if (body.completedSlots > 0) {
+    if (body.reqFrom == "doctor" && body.completedSlots > 0) {
+      body.timeStamp = new Date(body.timeStamp);
+
       let predictedTime = await forecastQueueEndTime(
         body.currSessionStartTime,
         body.totalSlots,
