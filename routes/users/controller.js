@@ -91,18 +91,38 @@ async function signup(req, res) {
     let result = {};
     let id = null;
     let hashpassword = null;
-    console.log("In signup block", JSON.stringify(req));
+    let userData;
+    let singleFieldCheck = false;
     if (req.hasOwnProperty("email") || req.hasOwnProperty("mobileNumber")) {
-      let userData = await getDocByemailId(req.email, "user");
-      let userDataByMobile = await getDocByPhone(req.mobileNumber, "user");
+      if (req.hasOwnProperty("email") && req.hasOwnProperty("mobileNumber")) {
+        console.log("inside both : ");
+        userDataemail = await getDocByemailId(req.email, "user");
+        console.log("mail data : ", JSON.stringify(userDataemail));
+        userDatamobile = await getDocByPhone(req.mobileNumber, "user");
+        console.log("mobile data : ", JSON.stringify(userDatamobile));
+      } else if (req.hasOwnProperty("email")) {
+        userData = await getDocByemailId(req.email, "user");
+        singleFieldCheck = true;
+        console.log("email only : ", JSON.stringify(userData));
+      } else if (req.hasOwnProperty("mobileNumber")) {
+        userData = await getDocByPhone(req.mobileNumber, "user");
+        singleFieldCheck = true;
+        console.log("mobile  only : ", JSON.stringify(userData));
+      }
 
-      if (userData["hits"]["total"]["value"] > 0) {
+      if (singleFieldCheck && userData["hits"]["total"]["value"] > 0) {
         throw {
           statuscode: 499,
           err: "access denied",
-          message: "This emailId is already registered",
+          message: "This emailId or mobile is already registered",
         };
-      } else if (userDataByMobile["hits"]["total"]["value"] > 0) {
+      } else if (userDataemail["hits"]["total"]["value"] > 0) {
+        throw {
+          statuscode: 499,
+          err: "access denied",
+          message: "This email is already registered",
+        };
+      } else if (userDatamobile["hits"]["total"]["value"] > 0) {
         throw {
           statuscode: 499,
           err: "access denied",
@@ -194,6 +214,7 @@ async function signup(req, res) {
 
     return result;
   } catch (error) {
+    console.log("error :", error);
     if (error.statuscode) {
       throw error;
     } else {
