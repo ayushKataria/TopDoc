@@ -643,6 +643,58 @@ async function getDoctorReviewsByUserIdOrDoctorId(req, res) {
     };
   }
 }
+async function getRecommendedDoctors(req, res) {
+  try {
+    let fail = false;
+    const list = docAttributeList.getRecommendedDoctors;
+    Object.keys(req.body).forEach((key) => {
+      if (!list.includes(key)) {
+        fail = true;
+      }
+    });
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
+
+    if (
+      req.body.hasOwnProperty("userId") == false ||
+      req.body.userId == null ||
+      req.body.userId == ""
+    ) {
+      res.status(400).send("bad request , userId cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("size") == false ||
+      req.body.size == null ||
+      req.body.size < 0
+    ) {
+      res.status(400).send("bad request , size cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("isRegional") &&
+      (!Object.keys(req.body.isRegional).includes("districts") ||
+        !Object.keys(req.body.isRegional).includes("state"))
+    ) {
+      res
+        .status(400)
+        .send(
+          "bad request , state or district field missing inside isRegional"
+        );
+    } else {
+      console.log("in router");
+      await controller
+        .getRecommendedDoctors(req.body)
+        .then((data) => res.send(data))
+        .catch((err) => res.status(err.statuscode).send(err));
+    }
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
 
 router.post("/doctorDetail", getProfileDetails);
 router.post("/doctorDetail/imageUpload", uploadProfileImage);
@@ -652,4 +704,5 @@ router.post("/doctorReviews/updateDetails", updateReviewDetails);
 router.post("/doctorReviews/create", createDoctorReviews);
 router.post("/doctorReviews", getDoctorReviewsByUserIdOrDoctorId);
 router.post("/staff/create", createNewStaff);
+router.post("/recommendeddoctors", getRecommendedDoctors);
 module.exports = router;

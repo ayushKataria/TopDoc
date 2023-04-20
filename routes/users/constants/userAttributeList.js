@@ -9,6 +9,21 @@ const userAttributes = [
   "role",
   "medicalDetails",
 ];
+const userAttributesAll = [
+  "bmi",
+  "orderDate",
+  "fbcStatus",
+  "heartRate",
+  "name",
+  "weight",
+  "id",
+  "role",
+  "medicalDetails",
+  "sortBy",
+  "filter",
+  "numberOfDocumentsToPick",
+];
+const userAttributesMatchSearch = ["name"];
 
 const userMedicalDetailsAttributes = [
   "bmi",
@@ -66,4 +81,6 @@ module.exports = {
   userMedicalDetailsAttributes,
   userUpdateAttributes,
   staffRegistredAttributes,
+  userAttributesMatchSearch,
+  userAttributesAll,
 };

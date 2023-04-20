@@ -2,7 +2,9 @@ const esdb = require("../../utils/es_util");
 const search = require("../search/controller");
 const adsAttributeList = require("./constants/adsAttributeList");
 const docController = require("../doctors/controller");
+const userAttributesList = require("../users/constants/userAttributeList");
 const _ = require("underscore");
+const { json } = require("express");
 
 async function createNewDoctorAds(object) {
   try {
@@ -292,18 +294,37 @@ async function searchFieldInIndex(body) {
       }
     });
 
-    if (termToSearch.length != 0) {
-      Query.query.bool.must = [];
-      Query.query.bool.must[0] = {
-        term: {
-          [termToSearch[0]]: body[termToSearch[0]],
-        },
-      };
+    if (
+      esIndex == "user" &&
+      userAttributesList.userAttributesMatchSearch.includes(termToSearch[0])
+    ) {
+      if (termToSearch.length != 0) {
+        Query.query.bool.must = [];
+        Query.query.bool.must[0] = {
+          match: {
+            [termToSearch[0]]: body[termToSearch[0]],
+          },
+        };
+      } else {
+        throw {
+          statuscode: 400,
+          message: "please enter a field to search",
+        };
+      }
     } else {
-      throw {
-        statuscode: 400,
-        message: "please enter a field to search",
-      };
+      if (termToSearch.length != 0) {
+        Query.query.bool.must = [];
+        Query.query.bool.must[0] = {
+          term: {
+            [termToSearch[0]]: body[termToSearch[0]],
+          },
+        };
+      } else {
+        throw {
+          statuscode: 400,
+          message: "please enter a field to search",
+        };
+      }
     }
 
     console.log("query : ", JSON.stringify(Query));
