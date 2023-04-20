@@ -8,7 +8,7 @@ const notificationAttributes = [
   "role",
   "status",
   "medium",
-  "id",
+  "userId",
   "senderId",
 ];
 

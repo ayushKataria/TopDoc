@@ -76,6 +76,7 @@ function templateSearch(queryBody, indexName, templateName) {
   if (!esClient) {
     setClient();
   }
+  console.log("Query is "+JSON.stringify(queryBody));
 
   return esClient.searchTemplate({
     index: indexName,
