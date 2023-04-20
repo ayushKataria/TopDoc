@@ -10,19 +10,20 @@ function test(req, res) {
 router.get("/users", test);
 router.post("/signup", function (req, res) {
   console.log(req.body);
+  req.body.profileCreationDate = docController.ConvertDateFormat(new Date());
   if (
     req.body.hasOwnProperty("firstName") == false ||
     req.body.firstName == null ||
     req.body.firstName == ""
   ) {
     res.status(400).send("First Name is mandatory");
-  } else  if (
+  } else if (
     req.body.hasOwnProperty("lastName") == false ||
     req.body.lastName == null ||
     req.body.lastName == ""
   ) {
     res.status(400).send("Last Name is mandatory");
-  }else if (
+  } else if (
     (!req.body.hasOwnProperty("mobileNumber") ||
       req.body.mobileNumber == null ||
       req.body.mobileNumber == "") &&

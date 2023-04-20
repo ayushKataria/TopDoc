@@ -231,6 +231,9 @@ function uploadProfileImage(req, res) {
 //Create new Doctor Account
 async function createNewDoctorAccount(req, res) {
   try {
+    req.body.profileCreationDate = await controller.ConvertDateFormat(
+      new Date()
+    );
     if (req.body.hasOwnProperty("address") == false) {
       res.status(400).send("bad request, address field is missing");
     } else if (req.body.hasOwnProperty("city") == false) {
@@ -378,6 +381,9 @@ async function createDoctorReviews(req, res) {
 async function createNewStaff(req, res) {
   try {
     let fail = false;
+    req.body.profileCreationDate = await controller.ConvertDateFormat(
+      new Date()
+    );
     const list = docAttributeList.createNewStaffAttributes;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {

@@ -109,6 +109,7 @@ const createNewStaffAttributes = [
   "lastName",
   "firstName",
   "role",
+  "profileCreationDate",
 ];
 const getRecommendedDoctors = [
   "userId",
