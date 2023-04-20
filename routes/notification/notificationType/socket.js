@@ -16,7 +16,7 @@ function userAnnouncement(userIdList, body) {
   console.log("Send message called", userIdList);
   try {
     let patient = [];
-    console.log("usersid", usersId);
+    console.log("usersid inside socket", usersId);
     let keyarr = usersId.map((obj) => Object.keys(obj)[0]);
     console.log(keyarr, "keyarr", userIdList);
     patient = userIdList.filter((element) =>
@@ -36,6 +36,7 @@ function userAnnouncement(userIdList, body) {
       patient.forEach((user) => {
         io.to(usersId.map((obj) => obj[user])).emit("notification", {
           message: body.message,
+          time:body.time
         });
       });
     }

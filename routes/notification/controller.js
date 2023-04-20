@@ -13,7 +13,8 @@ async function createNotification(id, body) {
         // console.log("newId", newId);
         body.notificationId = newId;
         // console.log("body[notificationId]", body.notificationId);
-        body.id = key.id;
+        console.log("Key is ",key)
+        body.userId = key;
         console.log("The uuid is ", newId, body, "aaaaaaaaaaaaaaaaaaaaa");
         let entityCreationObj = await esdb.insert(body, newId, "notification");
         console.log("entityCreationObj", entityCreationObj);
