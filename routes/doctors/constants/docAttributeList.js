@@ -110,6 +110,14 @@ const createNewStaffAttributes = [
   "firstName",
   "role",
 ];
+const getRecommendedDoctors = [
+  "userId",
+  "size",
+  "isRandom",
+  "isLatestProfiles",
+  "isRegional",
+  "isSpecialisation",
+];
 const staffUpdateAttributes = [
   "id",
   "staffId",
@@ -136,4 +144,5 @@ module.exports = {
   staffUpdateAttributes,
   userReviewsCreationAttributes,
   reviewTags,
+  getRecommendedDoctors,
 };

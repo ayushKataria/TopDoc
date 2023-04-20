@@ -2,6 +2,7 @@
 const adsAttributeList = require("./constants/adsAttributeList");
 const paymentAttributesList = require("../payments/constants/paymentAttributesList");
 const supportAttributesList = require("../support/constants/supportAttributeList");
+const userAttributesList = require("../users/constants/userAttributeList");
 const notifList = require("../notification/notificationType/constants/notificationAttributeList");
 const _ = require("underscore");
 const docController = require("../doctors/controller");
@@ -356,6 +357,8 @@ async function searchFieldInIndex(req, res) {
       // list = notifList.notificationAttributes;
     } else if (req.body.role == "support") {
       list = supportAttributesList.searchSupportAttributes;
+    } else if (req.body.role == "user") {
+      list = userAttributesList.userAttributesAll;
     } else {
       return res.status(400).send("bad request , please enter a valid role");
     }

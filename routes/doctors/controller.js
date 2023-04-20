@@ -5,6 +5,7 @@ const uuid = require("uuid");
 const _ = require("underscore");
 const doctorAttributes = require("./constants/docAttributeList");
 const bcrypt = require("bcrypt");
+const { log } = require("winston");
 //get doctor data with the help of docId
 async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
   try {
@@ -89,7 +90,7 @@ async function createNewDoctorAccount(object) {
     const role = object.role;
     object = _.omit(object, "role");
     console.log("The uuid is ", newId);
-object.password=await hashPassword(object.password);
+    object.password = await hashPassword(object.password);
     let entityCreationObj = await esdb.insert(object, newId, role);
     console.log(entityCreationObj);
     if (entityCreationObj.result == "created") {
@@ -103,7 +104,6 @@ object.password=await hashPassword(object.password);
     }
   } catch (err) {
     throw {
-     
       statuscode: 404,
       message: "There was some error in creating profile",
     };
@@ -227,7 +227,7 @@ async function getReviewsDetails(body) {
 
     let output = {};
     let dataOb = await esdb.templateSearch(params, esIndex, esTemplate);
-    console.log("Data ob is ",dataOb)
+    console.log("Data ob is ", dataOb);
     output.hits = dataOb.hits.total.value;
     for (let i = 0; i < dataOb.hits.hits.length; i++) {
       dataOb.hits.hits[i]._source.id = dataOb.hits.hits[i]._id;
@@ -252,6 +252,92 @@ async function getReviewsDetails(body) {
     throw {
       statuscode: 404,
       message: "There was some error in fetching Reviews",
+    };
+  }
+}
+async function getRecommendedDoctors(body) {
+  try {
+    let esIndex = "doctor";
+    let query = {};
+    let output = {};
+    let response;
+    query = {
+      size: body.size,
+      sort: [],
+      query: {
+        bool: {
+          must: [
+            {
+              exists: {
+                field: "profileCreationDate",
+              },
+            },
+          ],
+          filter: [],
+        },
+      },
+    };
+
+    if (body.isLatestProfiles) {
+      query.sort.push({ profileCreationDate: "desc" });
+    }
+
+    if (body.hasOwnProperty("isRegional")) {
+      query.query.bool.filter[0] = {
+        terms: { district: body.isRegional.districts },
+      };
+    }
+
+    let res = await esdb.search(query, esIndex);
+
+    output.hits = res.hits.hits.length;
+    output.results = res.hits.hits.map((e) => {
+      return e._source;
+    });
+    let results = output.results;
+    let i = 0;
+    while (body.hasOwnProperty("isRegional") && results.length < body.size) {
+      if (i == 0) {
+        query.query.bool.must_not = [];
+        query.query.bool.must_not[i] = query.query.bool.filter[0];
+        query.query.bool.filter[0] = {
+          terms: { state: body.isRegional.state },
+        };
+        i++;
+      } else if (i == 1) {
+        query.query.bool.must_not[i] = query.query.bool.filter[0];
+        query.query.bool.filter[0] = {
+          term: { country: "India" },
+        };
+        i++;
+      } else {
+        break;
+      }
+      response = await esdb.search(query, esIndex);
+      response = response.hits.hits.map((e) => {
+        return e._source;
+      });
+      results.push(...response.slice(0, body.size - results.length));
+      output.hits = results.length;
+      output.results = results;
+    }
+
+    if (body.isRandom) {
+      for (let i = output.results.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [output.results[i], output.results[j]] = [
+          output.results[j],
+          output.results[i],
+        ];
+      }
+    }
+
+    return output;
+  } catch (err) {
+    console.log("error is : ", err);
+    throw {
+      statuscode: 404,
+      message: "There was some error in fetching the recommended doctors",
     };
   }
 }
@@ -303,4 +389,5 @@ module.exports = {
   createNewReview,
   getReviewsDetails,
   ConvertDateFormat,
+  getRecommendedDoctors,
 };
