@@ -151,6 +151,7 @@ async function createNewReview(object, role) {
       (averageRating * noOfReviews + object.reviewRating) / (noOfReviews + 1);
     noOfReviews = parseInt(noOfReviews) + 1;
     let reviewTags = getResult.results[0].reviewTags;
+    console.log("Review TAGS ",reviewTags)
     let reviewTagsKeys = Object.keys(reviewTags);
     for (let i = 0; i < reviewTagsList.length; i++) {
       let currTag = reviewTagsList[i];

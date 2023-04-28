@@ -6,6 +6,7 @@ const bookingAttributes = [
   "slotId",
   "reasonForVisit",
   "appointmentType",
+  "appointmentId",
   "slotTime",
   "slotDay",
   "userId",
@@ -62,6 +63,8 @@ const bookingUpdateAttributes = [
   "email",
   "mobile",
   "doctorName",
+  "status",
+  "appointmentId"
 ];
 
 const searchInBooking = ["filters", "sort", "search", "pageNo", "pageSize"];

@@ -284,7 +284,7 @@ async function login(req, res) {
             token: token,
             userDetails: {
               mobile: userDetailsRec.mobile,
-              name: userDetailsRec.name,
+              name: userDetailsRec.first_name +" "+ userDetailsRec.last_name,
               profImageUrl: userDetailsRec.profImageUrl,
               userId: userDetailsRec.id,
               email: userDetailsRec.email,
