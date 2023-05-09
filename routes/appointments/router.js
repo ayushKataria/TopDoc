@@ -313,7 +313,9 @@ async function bookingAppointment(req, res) {
         ) {
           res.status(400).send("bad request , slotType cannot be empty");
         } else {
-          console.log("in router");
+          console.log("in router before", new Date());
+          await sleep(1000);
+          // console.log("in route after",new Date());
           await controller
             .bookingAppointment(req.body)
             .then((data) => res.send(data))
@@ -492,7 +494,9 @@ async function bookingAppointment(req, res) {
         ) {
           res.status(400).send("bad request , slotType cannot be empty");
         } else {
-          console.log("in router");
+          console.log("in router pppp", new Date());
+          await sleep(1000);
+
           await controller
             .bookingAppointment(req.body)
             .then((data) => res.send(data))
@@ -560,18 +564,18 @@ async function searchInBooking(req, res) {
         .send("bad request , unknown attribute found in filter");
     }
 
-    if (req.body.hasOwnProperty("sort") == true) {
-      list = appointmentAttributeList.sortAttributes;
-      req.body.sort
-        .map((e) => {
-          return Object.keys(e)[0];
-        })
-        .forEach((key) => {
-          if (!list.includes(key)) {
-            fail = true;
-          }
-        });
-    }
+    // if (req.body.hasOwnProperty("sort") == true) {
+    //   list = appointmentAttributeList.sortAttributes;
+    //   req.body.sort
+    //     .map((e) => {
+    //       return Object.keys(e)[0];
+    //     })
+    //     .forEach((key) => {
+    //       if (!list.includes(key)) {
+    //         fail = true;
+    //       }
+    //     });
+    // }
     if (fail) {
       return res
         .status(400)
@@ -803,7 +807,7 @@ async function changeBookingStatus(req, res) {
             .then((data) => res.send(data))
             .catch((err) => res.status(err.statuscode).send(err));
         }
-      } else if (req.body.reqFrom == "doctor") {
+      } else if (req.body.reqFrom == "doctor" && req.body.status == "ended") {
         if (
           req.body.hasOwnProperty("status") == false ||
           req.body.status == null ||
@@ -893,6 +897,43 @@ async function changeBookingStatus(req, res) {
             .then((data) => res.send(data))
             .catch((err) => res.status(err.statuscode).send(err));
         }
+      } else if (req.body.reqFrom == "doctor") {
+        if (
+          req.body.hasOwnProperty("status") == false ||
+          req.body.status == null ||
+          req.body.status == ""
+        ) {
+          res.status(400).send("bad request , status cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("slotId") == false ||
+          req.body.slotId == null ||
+          req.body.slotId == ""
+        ) {
+          res.status(400).send("bad request , slotId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("userId") == false ||
+          req.body.userId == null ||
+          req.body.userId == ""
+        ) {
+          res.status(400).send("bad request , userId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("currSessionId") == false ||
+          req.body.currSessionId == null ||
+          req.body.currSessionId == ""
+        ) {
+          res.status(400).send("bad request , currSessionId cannot be empty");
+        } else if (
+          req.body.hasOwnProperty("doctorId") == false ||
+          req.body.doctorId == null ||
+          req.body.doctorId == ""
+        ) {
+          res.status(400).send("bad request , doctorId cannot be empty");
+        } else {
+          await controller
+            .changeBookingStatus(req.body)
+            .then((data) => res.send(data))
+            .catch((err) => res.status(err.statuscode).send(err));
+        }
       } else {
         res.status(400).send("bad request , invalid value in field 'reqFrom'");
       }
@@ -907,6 +948,11 @@ async function changeBookingStatus(req, res) {
     };
   }
 }
+function sleep(arg0) {
+  console.log("Awaitinggggg");
+  return new Promise((resolve) => setTimeout(resolve, arg0));
+}
+
 async function cancelBooking(req, res) {
   try {
     let fail = false;

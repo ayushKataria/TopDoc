@@ -58,6 +58,7 @@ const userUpdateAttributes = [
   "last_name",
   "medicalDetails",
   "blood_group",
+  "rights"
 ];
 
 const staffRegistredAttributes = ["mobile", "role"];

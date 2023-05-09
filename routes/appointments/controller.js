@@ -439,6 +439,7 @@ async function createSessions(body) {
 
 async function bookingAppointment(body) {
   try {
+    console.log("Here in controller ",new Date())
     let index = "booking";
     body.appointmentId = uuid.v4();
     body.status = "booked";
