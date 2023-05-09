@@ -439,7 +439,7 @@ async function createSessions(body) {
 
 async function bookingAppointment(body) {
   try {
-    console.log("Here in controller ",new Date())
+    console.log("Here in controller ", new Date());
     let index = "booking";
     body.appointmentId = uuid.v4();
     body.status = "booked";
@@ -1379,9 +1379,8 @@ async function cancelBooking(body) {
   try {
     let index = "booking";
     let output = {};
-    let data = {};
     let slotId = body.slotId;
-    console.log("body is   : ", body);
+
     let changeStatus = {
       status: "notBooked",
       doctorId: body.doctorId,
@@ -1402,136 +1401,91 @@ async function cancelBooking(body) {
     };
 
     let response = await esUtil.insert(changeStatus, slotId, index);
-    console.log("response for insert is ", response);
-
-    if (response.result == "") body.slotId = "cancelled" + slotId;
+    if (response.result == "updated") {
+      output.result = "cancelled";
+    } else {
+      output.result = "Unable to cancel the booking";
+    }
+    body.slotId = "cancelled" + slotId;
     body.status = "cancelled";
     let responseNewDoc = await esUtil.insert(body, body.slotId, index);
-    console.log("responseNewDoc for insert is ", responseNewDoc);
+    if (
+      responseNewDoc.result == "created" ||
+      responseNewDoc.result == "updated"
+    ) {
+      output.replica = "created";
+    } else {
+      output.replica = "notCreated";
+    }
 
-    // if (
-    //   body.status == "ended" ||
-    //   body.status == "paused" ||
-    //   body.status == "started" ||
-    //   body.status == "rejoined" ||
-    //   body.status == "skipped" ||
-    //   body.status == "upNext" ||
-    //   body.status == "pinGenerated"
-    // ) {
-    //   let query = { status: body.status };
-    //   try {
-    //     data = await docController.updateProfileDetailsController(
-    //       body.slotId,
-    //       role,
-    //       query
-    //     );
-    //   } catch (error) {
-    //     output.status = "Some Error Occured !";
-    //   }
+    let userList = [];
+    let totalSlots = [];
 
-    //   if (data.hasOwnProperty("results") == true) {
-    //     output.status = data.results;
-    //     if (data.results == "updated") {
-    //       let userList = [];
-    //       let totalSlots = [];
-    //       let output = {};
-    //       let Query = {
-    //         size: 10000,
-    //         sort: [
-    //           {
-    //             appointmentDate: "asc",
-    //           },
-    //           {
-    //             slotId: "asc",
-    //           },
-    //         ],
-    //         query: {
-    //           bool: {
-    //             must: [
-    //               {
-    //                 term: {
-    //                   doctorId: body.doctorId,
-    //                 },
-    //               },
-    //             ],
-    //             filter: [
-    //               {
-    //                 term: {
-    //                   sessionId: body.currSessionId,
-    //                 },
-    //               },
-    //             ],
-    //           },
-    //         },
-    //       };
+    let Query = {
+      size: 10000,
+      sort: [
+        {
+          appointmentDate: "asc",
+        },
+        {
+          slotId: "asc",
+        },
+      ],
+      query: {
+        bool: {
+          must: [
+            {
+              term: {
+                doctorId: body.doctorId,
+              },
+            },
+          ],
+          filter: [
+            {
+              term: {
+                sessionId: body.sessionId,
+              },
+            },
+          ],
+        },
+      },
+    };
 
-    //       let res = await esUtil.search(Query, role);
-    //       output.hits = res.hits.total.value;
-    //       if (res.hits.total.value > 0) {
-    //         let v = -1;
-    //         totalSlots = res.hits.hits.map((e) => {
-    //           if (e._source.hasOwnProperty("appointmentId")) {
-    //             ++v;
-    //             userList[v] = {
-    //               id: e._source.userId,
-    //               name: e._source.userName,
-    //               mobile: e._source.mobile,
-    //               email: e._source.email,
-    //             };
-    //           }
-    //           return e._source;
-    //         });
-    //         let message = `queue refreshed ${body.status}`;
-    //         let medium = ["app"];
-    //         triggerNotification("QueueReload", message, userList, medium);
-    // let notifBody = {
-    //   tag: ["QueueReload"],
-    //   priority: "high",
-    //   message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
-    //   time: moment().format("YYYY-MM-DDTHH:mm:ss"),
-    //   status: "delivered",
-    //   medium: ["app", "sms", "mail"],
-    //   senderId: ["application", 7999411516, "topdoc@gmail.com"],
-    // };
-    // await notificationWrapper.sessionAnnouncement(userList, notifBody);
-    //     }
-    //   }
-    // }
-    // }
-    // if (body.reqFrom == "doctor" && body.completedSlots > 0) {
-    //   body.timeStamp = new Date(body.timeStamp);
+    let res = await esUtil.search(Query, index);
+    if (res.hits.total.value > 0) {
+      let v = -1;
+      totalSlots = res.hits.hits.map((e) => {
+        if (e._source.hasOwnProperty("appointmentId")) {
+          ++v;
+          userList[v] = {
+            id: e._source.userId,
+            name: e._source.userName,
+            mobile: e._source.mobile,
+            email: e._source.email,
+          };
+        }
+        return e._source;
+      });
 
-    //   let predictedTime = await forecastQueueEndTime(
-    //     body.currSessionStartTime,
-    //     body.totalSlots,
-    //     body.completedSlots,
-    //     body.timeStamp,
-    //     body.appointmentDate
-    //   );
+      let message = `you have cancelled your session with ${body.doctorName} having appointment Id as ${body.appointmentId}:${body.userId}`;
+      let medium = ["app"];
+      triggerNotification("CancelBooking", message, userList, medium);
+      // let notifBody = {
+      //   tag: ["QueueReload"],
+      //   priority: "high",
+      //   message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
+      //   time: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      //   status: "delivered",
+      //   medium: ["app", "sms", "mail"],
+      //   senderId: ["application", 7999411516, "topdoc@gmail.com"],
+      // };
+      // await notificationWrapper.sessionAnnouncement(userList, notifBody);
+      //     }
+      //   }
+      // }
+    }
 
-    //   let areSessionClashing = await areSessionsClashing(
-    //     body.currSessionEndTime,
-    //     predictedTime.predictedSessionEndTime,
-    //     body.nextSessionStartTime,
-    //     body.appointmentDate
-    //   );
-
-    //   let hours = new Date(predictedTime.predictedSessionEndTime)
-    //     .getHours()
-    //     .toString()
-    //     .padStart(2, "0");
-    //   let minutes = new Date(predictedTime.predictedSessionEndTime)
-    //     .getMinutes()
-    //     .toString()
-    //     .padStart(2, "0");
-    //   output.askForDelay = areSessionClashing.askForDelay;
-    //   output.predictedSessionEndTime = `${hours}:${minutes}`;
-    //   output.currentSpeed = predictedTime.currentSpeed;
-    //   output.timeExceedingOrgEstimation =
-    //     areSessionClashing.timeExceedingOrgEstimation;
-    // }
-
-    return responseNewDoc;
+    return output;
   } catch (error) {
     console.log(error);
     if (error.statuscode) {
