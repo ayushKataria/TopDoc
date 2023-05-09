@@ -907,6 +907,131 @@ async function changeBookingStatus(req, res) {
     };
   }
 }
+async function cancelBooking(req, res) {
+  try {
+    let fail = false;
+    const list = appointmentAttributeList.cancelBooking;
+    Object.keys(req.body).forEach((key) => {
+      if (!list.includes(key)) {
+        fail = true;
+      }
+    });
+    if (fail) {
+      return res
+        .status(400)
+        .send("bad request , unknown attribute found in request");
+    }
+
+    if (
+      req.body.hasOwnProperty("status") == false ||
+      req.body.status == null ||
+      req.body.status == ""
+    ) {
+      res.status(400).send("bad request , status cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("appointmentDate") == false ||
+      req.body.appointmentDate == null ||
+      req.body.appointmentDate == ""
+    ) {
+      res.status(400).send("bad request , appointmentDate cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("predictedSlotTime") == false ||
+      req.body.predictedSlotTime == null ||
+      req.body.predictedSlotTime == ""
+    ) {
+      res.status(400).send("bad request , predictedSlotTime cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("slotTime") == false ||
+      req.body.slotTime == null ||
+      req.body.slotTime == ""
+    ) {
+      res.status(400).send("bad request , slotTime cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("sessionId") == false ||
+      req.body.sessionId == null ||
+      req.body.sessionId == ""
+    ) {
+      res.status(400).send("bad request , sessionId cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("doctorId") == false ||
+      req.body.doctorId == null ||
+      req.body.doctorId == ""
+    ) {
+      res.status(400).send("bad request , doctorId cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("slotDuration") == false ||
+      req.body.slotDuration == null ||
+      req.body.slotDuration == ""
+    ) {
+      res.status(400).send("bad request , slotDuration cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("endTime") == false ||
+      req.body.endTime == null ||
+      req.body.endTime == ""
+    ) {
+      res.status(400).send("bad request , endTime cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("slotId") == false ||
+      req.body.slotId == null ||
+      req.body.slotId == ""
+    ) {
+      res.status(400).send("bad request , slotId cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("slotDay") == false ||
+      req.body.slotDay == null ||
+      req.body.slotDay == ""
+    ) {
+      res.status(400).send("bad request , slotDay cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("paymentStatus") == false ||
+      req.body.paymentStatus == null ||
+      req.body.paymentStatus == ""
+    ) {
+      res.status(400).send("bad request , paymentStatus cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("clinicDetails") == false ||
+      req.body.clinicDetails == null ||
+      req.body.clinicDetails == ""
+    ) {
+      res.status(400).send("bad request , clinicDetails cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("clinicId") == false ||
+      req.body.clinicId == null ||
+      req.body.clinicId == ""
+    ) {
+      res.status(400).send("bad request , clinicId cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("sessionEndTime") == false ||
+      req.body.sessionEndTime == null ||
+      req.body.sessionEndTime == ""
+    ) {
+      res.status(400).send("bad request , sessionEndTime cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("sessionStartTime") == false ||
+      req.body.sessionStartTime == null ||
+      req.body.sessionStartTime == ""
+    ) {
+      res.status(400).send("bad request , sessionStartTime cannot be empty");
+    } else if (
+      req.body.hasOwnProperty("slotType") == false ||
+      req.body.slotType == null ||
+      req.body.slotType == ""
+    ) {
+      res.status(400).send("bad request , slotType cannot be empty");
+    } else {
+      await controller
+        .cancelBooking(req.body)
+        .then((data) => res.send(data))
+        .catch((err) => res.status(err.statuscode).send(err));
+    }
+  } catch (error) {
+    console.log(error);
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occuredwhile canceling the slot",
+    };
+  }
+}
 
 router.get("/v1/appointment/schedule/:doctorId", getSchedule);
 
@@ -918,5 +1043,6 @@ router.post("/v1/appointment/sessiondelay/", delaySessionByDuration);
 router.post("/v1/appointment/queue/", queueManagement);
 router.post("/v1/appointment/cancel/", cancelDoctorSession);
 router.post("/v1/appointment/statusChange/", changeBookingStatus);
+router.post("/v1/appointment/cancelSlot/", cancelBooking);
 
 module.exports = router;

@@ -59,6 +59,22 @@ function update(indexName, identifier, body) {
     },
   });
 }
+//update Profile Details
+function updateForBooking(indexName, identifier, body, seqNo, primaryTerm) {
+  if (!esClient) {
+    setClient();
+  }
+
+  return esClient.update({
+    index: indexName,
+    id: identifier,
+    body: {
+      doc: body,
+      if_seq_no: seqNo,
+      if_primary_term: primaryTerm,
+    },
+  });
+}
 
 function insert(object, identifier, indexName) {
   if (!esClient) {
@@ -76,7 +92,7 @@ function templateSearch(queryBody, indexName, templateName) {
   if (!esClient) {
     setClient();
   }
-  console.log("Query is "+JSON.stringify(queryBody));
+  console.log("Query is " + JSON.stringify(queryBody));
 
   return esClient.searchTemplate({
     index: indexName,
@@ -105,4 +121,5 @@ module.exports = {
   insert,
   templateSearch,
   searchAll,
+  updateForBooking,
 };

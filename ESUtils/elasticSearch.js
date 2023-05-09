@@ -7,11 +7,11 @@ let elasticSearchClient = null;
 let esClient = null;
 //Akash Elastic pass
 
-var auth = "elastic" + ":" + "N=D14f7buQbu74p*iq3+";
+var auth = "elastic" + ":" + "8DJiecXAd+s=WaDGNF=E";
 
-const connstring = "http://" + "localhost" + ":" + "9200";
+const connstring = "https://" + "localhost" + ":" + "9200";
 
-const enable_password = false;
+const enable_password = true;
 function connectClient() {
   if (enable_password == true) {
     console.log("inside iffffffffffff");
@@ -20,7 +20,7 @@ function connectClient() {
         {
           host: "localhost",
           port: "9200",
-          protocol: "http",
+          protocol: "https",
           auth: auth,
           log: "trace",
           requestTimeout: 60000,

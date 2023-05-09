@@ -100,7 +100,43 @@ const searchAttributes = [
   "doctorName",
   "slotsCount",
 ];
+const cancelBooking = [
+  "status",
+  "doctorId",
+  "sessionId",
+  "slotTime",
+  "predictedSlotTime",
+  "appointmentDate",
+  "slotType",
+  "sessionStartTime",
+  "sessionEndTime",
+  "clinicId",
+  "clinicDetails",
+  "paymentStatus",
+  "slotDay",
+  "slotId",
+  "endTime",
+  "slotDuration",
 
+  "doctorName",
+  "appointmentType",
+  "userId",
+  "userName",
+  "mobile",
+  "email",
+  "gender",
+  "dob",
+  "pin",
+  "queueId",
+  "userType",
+  "nextApptDate",
+  "bookingTimeStamp",
+  "diagnosis",
+  "symptoms",
+  "tests",
+  "medicine",
+  "reasonForVisit",
+];
 const filterAttributes = [
   "doctorId",
   "status",
@@ -201,7 +237,7 @@ const changeBookingStatus = [
   "appointmentDate",
   "doctorId",
   "userId",
-  "reqFrom"
+  "reqFrom",
 ];
 
 const queueStatuses = [
@@ -230,4 +266,5 @@ module.exports = {
   queueAttributes,
   cancelDoctorSession,
   changeBookingStatus,
+  cancelBooking,
 };
