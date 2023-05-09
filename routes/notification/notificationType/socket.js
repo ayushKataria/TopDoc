@@ -12,7 +12,7 @@ io.on("connection", (socket) => {
     // usersId.push(userId);
   });
 });
-function userAnnouncement(userIdList, body) {
+async function userAnnouncement(userIdList, body) {
   console.log("Send message called", userIdList);
   try {
     let patient = [];
@@ -32,11 +32,20 @@ function userAnnouncement(userIdList, body) {
           id: user,
         });
       });
+    }
+    if (body.tag.includes("CancelBooking")) {
+      console.log("CancelBooking triggered");
+      patient.forEach((user) => {
+        io.to(usersId.map((obj) => obj[user])).emit("CancelBooking", {
+          message: body.message,
+          id: user,
+        });
+      });
     } else {
       patient.forEach((user) => {
         io.to(usersId.map((obj) => obj[user])).emit("notification", {
           message: body.message,
-          time:body.time
+          time: body.time,
         });
       });
     }
