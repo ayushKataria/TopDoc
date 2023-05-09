@@ -196,6 +196,13 @@ async function createSessions(body) {
       day = days[i].date.toString().substring(8);
 
       for (let j = 0; j < days[i].sessions.length; j++) {
+        if (
+          days[i].sessions[j].hasOwnProperty("disabled") &&
+          days[i].sessions[j].disabled
+        ) {
+          continue;
+        }
+
         // console.log("for loop 2", days[i].sessions[j]);
         if (days[i].sessions[j].hasOwnProperty("disabled") &&     
           days[i].sessions[j].disabled          
@@ -444,6 +451,7 @@ async function bookingAppointment(body) {
     body.appointmentId = uuid.v4();
     body.status = "booked";
     let booking = {};
+    let isNotBooked = true;
     let slotId;
     body.bookingTimeStamp = await docController.ConvertDateFormat(
       body.bookingTimeStamp
@@ -455,24 +463,32 @@ async function bookingAppointment(body) {
         body.appointmentDate.replaceAll("-", "") +
         body.slotId.substring(0, 2) +
         body.slotId.substring(3, 5);
-      let res1 = await docController.getProfileDetailsController(
-        slotId,
-        index,
-        ["status"]
-      );
-      if (res1.results[0].status == "booked") {
+      let res1 = await esUtil.getById(index, slotId);
+      console.log("get res is ", res1);
+      let seqNo = res1._seq_no;
+      let primaryTerm = res1._primary_term;
+      if (res1._source.status == "booked") {
         throw {
           statuscode: 400,
           message: "Bad request , The slot is already booked",
         };
       } else {
-        booking = await docController.updateProfileDetailsController(
-          slotId,
+        let bookingRegistered = await esUtil.updateForBooking(
           index,
-          body
+          slotId,
+          body,
+          seqNo,
+          primaryTerm
         );
-        if (booking.results == "updated") {
+        console.log("booking for registered  : ", bookingRegistered);
+        if (bookingRegistered.result == "updated") {
+          booking.result = bookingRegistered.result;
           booking.appointmentId = body.appointmentId;
+        } else {
+          throw {
+            statuscode: 400,
+            message: "Bad request , The slot is already booked",
+          };
         }
       }
     } else {
@@ -487,135 +503,157 @@ async function bookingAppointment(body) {
       } else {
         body.userId = "userProfileNotCreated";
       }
-      let query = {};
-      query.size = 10000;
-      query.sort = [];
-      query.sort[0] = { slotId: "asc" };
-      query.query = {};
-      query.query.bool = {};
-      query.query.bool.must = [];
-      query.query.bool.filter = [];
-      query.query.bool.must[0] = { term: { sessionId: body.sessionId } };
-      query.query.bool.filter[0] = { term: { status: "notBooked" } };
-      query.query.bool.filter[1] = { term: { slotType: "normal" } };
-      let res = await esUtil.search(query, index);
-      console.log(res);
-      if (res.hits.total.value > 0) {
-        slotId = res.hits.hits[0]._source.slotId;
-        body.slotId = slotId;
-        body = _.omit(body, "duration", "appointmentDate", "slotDay");
-        body.slotTime = res.hits.hits[0]._source.slotTime;
-        body.queueId =
-          res.hits.hits[0]._source.appointmentDate.replaceAll("-", "") +
-          slotId.substring(0, 2) +
-          body.slotId.substring(3, 5);
-        booking = await docController.updateProfileDetailsController(
-          slotId,
-          index,
-          body
-        );
-        if (booking.results == "updated") {
-          booking.appointmentId = body.appointmentId;
-        }
-      } else {
-        query.sort[1] = { slotTime: "desc" };
-        query.sort[0] = {
-          appointmentDate: "desc",
-        };
-        // query.query.bool.filter[0] = { term: { status: "booked" } };
-        query.query.bool.filter[0] = { term: { slotType: "normal" } };
-        // console.log("query ", JSON.stringify(query));
-        let resForUnRegUser = await esUtil.search(query, index);
-        console.log("Unreg user"+JSON.stringify(resForUnRegUser));
-        if(resForUnRegUser.hits.total.value>0){
-          
-    
-        let slotDate = resForUnRegUser.hits.hits[0]._source.appointmentDate;
-        let slotDuration = resForUnRegUser.hits.hits[0]._source.slotDuration;
-        console.log(slotDate);
-        let year = slotDate.toString().substring(0, 4);
-        console.log(year);
-        let month = (parseInt(slotDate.toString().substring(5, 7)) - 1)
-          .toString()
-          .padStart(2, "0");
-        console.log(month);
-        let day = slotDate.toString().substring(8);
-        let hour = resForUnRegUser.hits.hits[0]._source.slotTime
-          .toString()
-          .substring(0, 2);
-        console.log(hour);
-        let minute = resForUnRegUser.hits.hits[0]._source.slotTime
-          .toString()
-          .substring(3);
-        console.log(minute);
-        let slotDayTime = new Date(year, month, day, hour, minute);
-        console.log(slotDayTime);
-        let currentDate = slotDayTime.toLocaleDateString();
-        console.log("before  ", slotDayTime.toLocaleDateString());
-        slotDayTime.setMinutes(
-          slotDayTime.getMinutes() + parseInt(slotDuration)
-        );
-        let appointDate = slotDayTime.toLocaleDateString();
+      while (isNotBooked) {
+        let query = {};
+        query.size = 10000;
+        query.sort = [];
+        query.sort[0] = { slotId: "asc" };
+        query.query = {};
+        query.query.bool = {};
+        query.query.bool.must = [];
+        query.query.bool.filter = [];
+        query.query.bool.must[0] = { term: { sessionId: body.sessionId } };
+        query.query.bool.filter[0] = { term: { status: "notBooked" } };
+        query.query.bool.filter[1] = { term: { slotType: "normal" } };
+        let res = await esUtil.search(query, index);
+        console.log(res);
+        if (res.hits.total.value > 0) {
+          slotId = res.hits.hits[0]._source.slotId;
+          body.slotId = slotId;
+          body = _.omit(body, "duration", "appointmentDate", "slotDay");
+          body.slotTime = res.hits.hits[0]._source.slotTime;
+          body.queueId =
+            res.hits.hits[0]._source.appointmentDate.replaceAll("-", "") +
+            slotId.substring(0, 2) +
+            body.slotId.substring(3, 5);
+          let seqNo = res.hits.hits[0]._seq_no;
+          let primaryTerm = res.hits.hits[0]._primary_term;
+          console.log("body iss : ", body);
+          console.log("update res body  : ");
 
-        console.log(
-          "after  ",
-          slotDayTime.toLocaleDateString().replaceAll("/", "-")
-        );
-        // if (currentDate < appointDate || body.appointmentDate != currentDate) {
-        body.appointmentDate = `${slotDayTime.getFullYear()}-${(
-          slotDayTime.getMonth() + 1
-        )
-          .toString()
-          .padStart(2, "0")}-${slotDayTime
-          .getDate()
-          .toString()
-          .padStart(2, "0")}`;
-
-        console.log(slotDayTime.getDay());
-        body.slotDay = appointmentAttributeList.weekday[slotDayTime.getDay()];
-        // }
-        let newHour = slotDayTime.getHours().toString().padStart(2, "0");
-        let newMinutes = slotDayTime.getMinutes().toString().padStart(2, "0");
-        let slotTime = `${newHour}:${newMinutes}`;
-        console.log(slotTime);
-        body.slotTime = slotTime;
-        body.predictedSlotTime = slotTime;
-        let slotId = slotTime + body.sessionId;
-        body.slotId = slotId;
-        body.doctorId = resForUnRegUser.hits.hits[0]._source.doctorId;
-        body.sessionId = resForUnRegUser.hits.hits[0]._source.sessionId;
-        body.sessionStartTime =
-          resForUnRegUser.hits.hits[0]._source.sessionStartTime;
-        body.sessionEndTime =
-          resForUnRegUser.hits.hits[0]._source.sessionEndTime;
-        body.clinicId = resForUnRegUser.hits.hits[0]._source.clinicId;
-        body.clinicDetails = resForUnRegUser.hits.hits[0]._source.clinicDetails;
-        body.slotDuration = slotDuration;
-        body.queueId =
-          body.appointmentDate.replaceAll("-", "") +
-          slotId.substring(0, 2) +
-          body.slotId.substring(3, 5);
-        slotDayTime.setMinutes(
-          slotDayTime.getMinutes() + parseInt(slotDuration)
-        );
-        newHour = slotDayTime.getHours().toString().padStart(2, "0");
-        newMinutes = slotDayTime.getMinutes().toString().padStart(2, "0");
-        body.endTime = `${newHour}:${newMinutes}`;
-        let dataObj = await esUtil.insert(body, slotId, index);
-        console.log(dataObj);
-        if (dataObj.hasOwnProperty("result") == true) {
-          if (dataObj.result == "noop") {
-            booking = { results: "please enter a new Field Values to update" };
-          } else {
-            booking = {
-              results: "created",
-              appointmentId: body.appointmentId,
-            };
+          let bookingUnReg = await esUtil.updateForBooking(
+            index,
+            slotId,
+            body,
+            seqNo,
+            primaryTerm
+          );
+          console.log("update res body  : ", booking);
+          if (bookingUnReg.result == "updated") {
+            isNotBooked = false;
+            booking.results = "updated";
+            booking.appointmentId = body.appointmentId;
           }
         } else {
-          booking = { results: "some error occured while booking appointment" };
+          query.sort[1] = { slotTime: "desc" };
+          query.sort[0] = {
+            appointmentDate: "desc",
+          };
+          // query.query.bool.filter[0] = { term: { status: "booked" } };
+          query.query.bool.filter[0] = { term: { slotType: "normal" } };
+          // console.log("query ", JSON.stringify(query));
+          let resForUnRegUser = await esUtil.search(query, index);
+          console.log("Unreg user" + JSON.stringify(resForUnRegUser));
+          if (resForUnRegUser.hits.total.value > 0) {
+            let slotDate = resForUnRegUser.hits.hits[0]._source.appointmentDate;
+            let slotDuration =
+              resForUnRegUser.hits.hits[0]._source.slotDuration;
+            console.log(slotDate);
+            let year = slotDate.toString().substring(0, 4);
+            console.log(year);
+            let month = (parseInt(slotDate.toString().substring(5, 7)) - 1)
+              .toString()
+              .padStart(2, "0");
+            console.log(month);
+            let day = slotDate.toString().substring(8);
+            let hour = resForUnRegUser.hits.hits[0]._source.slotTime
+              .toString()
+              .substring(0, 2);
+            console.log(hour);
+            let minute = resForUnRegUser.hits.hits[0]._source.slotTime
+              .toString()
+              .substring(3);
+            console.log(minute);
+            let slotDayTime = new Date(year, month, day, hour, minute);
+            console.log(slotDayTime);
+            let currentDate = slotDayTime.toLocaleDateString();
+            console.log("before  ", slotDayTime.toLocaleDateString());
+            slotDayTime.setMinutes(
+              slotDayTime.getMinutes() + parseInt(slotDuration)
+            );
+            let appointDate = slotDayTime.toLocaleDateString();
+
+            console.log(
+              "after  ",
+              slotDayTime.toLocaleDateString().replaceAll("/", "-")
+            );
+            // if (currentDate < appointDate || body.appointmentDate != currentDate) {
+            body.appointmentDate = `${slotDayTime.getFullYear()}-${(
+              slotDayTime.getMonth() + 1
+            )
+              .toString()
+              .padStart(2, "0")}-${slotDayTime
+              .getDate()
+              .toString()
+              .padStart(2, "0")}`;
+
+            console.log(slotDayTime.getDay());
+            body.slotDay =
+              appointmentAttributeList.weekday[slotDayTime.getDay()];
+            // }
+            let newHour = slotDayTime.getHours().toString().padStart(2, "0");
+            let newMinutes = slotDayTime
+              .getMinutes()
+              .toString()
+              .padStart(2, "0");
+            let slotTime = `${newHour}:${newMinutes}`;
+            console.log(slotTime);
+            body.slotTime = slotTime;
+            body.predictedSlotTime = slotTime;
+            let slotId = slotTime + body.sessionId;
+            body.slotId = slotId;
+            body.doctorId = resForUnRegUser.hits.hits[0]._source.doctorId;
+            body.sessionId = resForUnRegUser.hits.hits[0]._source.sessionId;
+            body.sessionStartTime =
+              resForUnRegUser.hits.hits[0]._source.sessionStartTime;
+            body.sessionEndTime =
+              resForUnRegUser.hits.hits[0]._source.sessionEndTime;
+            body.clinicId = resForUnRegUser.hits.hits[0]._source.clinicId;
+            body.clinicDetails =
+              resForUnRegUser.hits.hits[0]._source.clinicDetails;
+            body.slotDuration = slotDuration;
+            body.queueId =
+              body.appointmentDate.replaceAll("-", "") +
+              slotId.substring(0, 2) +
+              body.slotId.substring(3, 5);
+            slotDayTime.setMinutes(
+              slotDayTime.getMinutes() + parseInt(slotDuration)
+            );
+            newHour = slotDayTime.getHours().toString().padStart(2, "0");
+            newMinutes = slotDayTime.getMinutes().toString().padStart(2, "0");
+            body.endTime = `${newHour}:${newMinutes}`;
+            let dataObj = await esUtil.insert(body, slotId, index);
+            console.log(dataObj);
+            if (dataObj.hasOwnProperty("result") == true) {
+              isNotBooked = false;
+              if (dataObj.result == "noop") {
+                booking = {
+                  results: "please enter a new Field Values to update",
+                };
+              } else {
+                booking = {
+                  results: "created",
+                  slotId: slotId,
+                };
+              }
+            } else {
+              isNotBooked = false;
+              booking = {
+                results: "some error occured while booking appointment",
+              };
+            }
+          }
         }
-      }
       }
     }
 
@@ -628,7 +666,7 @@ async function bookingAppointment(body) {
         message: "Bad request , The slot is already booked",
       };
     } else {
-      console.log("ERROR IS ",err)
+      console.log("ERROR IS ", err);
       throw {
         statuscode: 400,
         message: "There was some error in booking appointment",
@@ -690,6 +728,7 @@ async function searchInBooking(body) {
       params.boolFilter = false;
     }
     let output = {};
+    console.log("template is :  ", params);
     let dataOb = await esUtil.templateSearch(params, esIndex, esTemplate);
     output.hits = dataOb.hits.total.value;
     let searchAggs = dataOb["aggregations"]["TotalAggs"];
@@ -1150,7 +1189,7 @@ console.log("THE FAUKLT IS ");
     if (res.hits.total.value > 0) {
       let v = -1;
       totalSlots = res.hits.hits.map((e) => {
-        e._source.status = "cancelled";
+        e._source.status = "sessionCancelled";
         if (e._source.hasOwnProperty("appointmentId")) {
           ++v;
           userList[v] = {
@@ -1166,13 +1205,14 @@ console.log("THE FAUKLT IS ");
       esbody.status = body.status;
       console.log("Total slots is ",totalSlots+"length os "+totalSlots.length);
       for (let i = 0; i < totalSlots.length; i++) {
-        console.log("In the right place",esbody+" index is "+i);
-      let data=  await docController.updateProfileDetailsController(
-          totalSlots[i].slotId.toString(),
-          index,
-          esbody
-        );
-        console.log("Data is",data);
+        let id;
+        if (totalSlots[i].hasOwnProperty("prioritySlotId")) {
+          id = totalSlots[i].prioritySlotId;
+        }
+        if (totalSlots[i].hasOwnProperty("slotId")) {
+          id = totalSlots[i].slotId;
+        }
+        await docController.updateProfileDetailsController(id, index, esbody);
       }
 
       console.log("In the right place 2");
@@ -1346,6 +1386,174 @@ async function changeBookingStatus(body) {
     };
   }
 }
+async function cancelBooking(body) {
+  try {
+    let index = "booking";
+    let output = {};
+    let data = {};
+    let slotId = body.slotId;
+    console.log("body is   : ", body);
+    let changeStatus = {
+      status: "notBooked",
+      doctorId: body.doctorId,
+      sessionId: body.sessionId,
+      slotTime: body.slotTime,
+      predictedSlotTime: body.predictedSlotTime,
+      appointmentDate: body.appointmentDate,
+      slotType: body.slotType,
+      sessionStartTime: body.sessionStartTime,
+      sessionEndTime: body.sessionEndTime,
+      clinicId: body.clinicId,
+      clinicDetails: body.clinicDetails,
+      paymentStatus: "default",
+      slotDay: body.slotDay,
+      slotId: body.slotId,
+      endTime: body.endTime,
+      slotDuration: body.slotDuration,
+    };
+
+    let response = await esUtil.insert(changeStatus, slotId, index);
+    console.log("response for insert is ", response);
+
+    if (response.result == "") body.slotId = "cancelled" + slotId;
+    body.status = "cancelled";
+    let responseNewDoc = await esUtil.insert(body, body.slotId, index);
+    console.log("responseNewDoc for insert is ", responseNewDoc);
+
+    // if (
+    //   body.status == "ended" ||
+    //   body.status == "paused" ||
+    //   body.status == "started" ||
+    //   body.status == "rejoined" ||
+    //   body.status == "skipped" ||
+    //   body.status == "upNext" ||
+    //   body.status == "pinGenerated"
+    // ) {
+    //   let query = { status: body.status };
+    //   try {
+    //     data = await docController.updateProfileDetailsController(
+    //       body.slotId,
+    //       role,
+    //       query
+    //     );
+    //   } catch (error) {
+    //     output.status = "Some Error Occured !";
+    //   }
+
+    //   if (data.hasOwnProperty("results") == true) {
+    //     output.status = data.results;
+    //     if (data.results == "updated") {
+    //       let userList = [];
+    //       let totalSlots = [];
+    //       let output = {};
+    //       let Query = {
+    //         size: 10000,
+    //         sort: [
+    //           {
+    //             appointmentDate: "asc",
+    //           },
+    //           {
+    //             slotId: "asc",
+    //           },
+    //         ],
+    //         query: {
+    //           bool: {
+    //             must: [
+    //               {
+    //                 term: {
+    //                   doctorId: body.doctorId,
+    //                 },
+    //               },
+    //             ],
+    //             filter: [
+    //               {
+    //                 term: {
+    //                   sessionId: body.currSessionId,
+    //                 },
+    //               },
+    //             ],
+    //           },
+    //         },
+    //       };
+
+    //       let res = await esUtil.search(Query, role);
+    //       output.hits = res.hits.total.value;
+    //       if (res.hits.total.value > 0) {
+    //         let v = -1;
+    //         totalSlots = res.hits.hits.map((e) => {
+    //           if (e._source.hasOwnProperty("appointmentId")) {
+    //             ++v;
+    //             userList[v] = {
+    //               id: e._source.userId,
+    //               name: e._source.userName,
+    //               mobile: e._source.mobile,
+    //               email: e._source.email,
+    //             };
+    //           }
+    //           return e._source;
+    //         });
+    //         let message = `queue refreshed ${body.status}`;
+    //         let medium = ["app"];
+    //         triggerNotification("QueueReload", message, userList, medium);
+    // let notifBody = {
+    //   tag: ["QueueReload"],
+    //   priority: "high",
+    //   message: `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`,
+    //   time: moment().format("YYYY-MM-DDTHH:mm:ss"),
+    //   status: "delivered",
+    //   medium: ["app", "sms", "mail"],
+    //   senderId: ["application", 7999411516, "topdoc@gmail.com"],
+    // };
+    // await notificationWrapper.sessionAnnouncement(userList, notifBody);
+    //     }
+    //   }
+    // }
+    // }
+    // if (body.reqFrom == "doctor" && body.completedSlots > 0) {
+    //   body.timeStamp = new Date(body.timeStamp);
+
+    //   let predictedTime = await forecastQueueEndTime(
+    //     body.currSessionStartTime,
+    //     body.totalSlots,
+    //     body.completedSlots,
+    //     body.timeStamp,
+    //     body.appointmentDate
+    //   );
+
+    //   let areSessionClashing = await areSessionsClashing(
+    //     body.currSessionEndTime,
+    //     predictedTime.predictedSessionEndTime,
+    //     body.nextSessionStartTime,
+    //     body.appointmentDate
+    //   );
+
+    //   let hours = new Date(predictedTime.predictedSessionEndTime)
+    //     .getHours()
+    //     .toString()
+    //     .padStart(2, "0");
+    //   let minutes = new Date(predictedTime.predictedSessionEndTime)
+    //     .getMinutes()
+    //     .toString()
+    //     .padStart(2, "0");
+    //   output.askForDelay = areSessionClashing.askForDelay;
+    //   output.predictedSessionEndTime = `${hours}:${minutes}`;
+    //   output.currentSpeed = predictedTime.currentSpeed;
+    //   output.timeExceedingOrgEstimation =
+    //     areSessionClashing.timeExceedingOrgEstimation;
+    // }
+
+    return responseNewDoc;
+  } catch (error) {
+    console.log(error);
+    if (error.statuscode) {
+      throw error;
+    }
+    throw {
+      statuscode: 500,
+      message: "Unexpected error occured",
+    };
+  }
+}
 
 function returnDateTime(dateOfDay, timeOfDay) {
   let year = parseInt(dateOfDay.toString().substring(0, 4));
@@ -1440,4 +1648,5 @@ module.exports = {
   forecastQueueEndTime,
   areSessionsClashing,
   triggerNotification,
+  cancelBooking,
 };
