@@ -204,6 +204,13 @@ async function createSessions(body) {
         }
 
         // console.log("for loop 2", days[i].sessions[j]);
+        if (
+          days[i].sessions[j].hasOwnProperty("disabled") &&
+          days[i].sessions[j].disabled
+        ) {
+          //isdiabled is true in case the session was previously created , so we skip adding that
+          continue;
+        }
         currentHour = parseInt(days[i].sessions[j].startTime);
         currentMinute = Number(
           days[i].sessions[j].startTime.toString().substring(3)
@@ -440,6 +447,7 @@ async function createSessions(body) {
 async function bookingAppointment(body) {
   try {
     console.log("Here in controller ", new Date());
+    console.log("Here in controller ", new Date() + "bodys ", body);
     let index = "booking";
     body.appointmentId = uuid.v4();
     body.status = "booked";
@@ -1175,8 +1183,9 @@ async function cancelDoctorSession(body) {
         },
       },
     };
-
+    console.log("THE FAUKLT IS ");
     let res = await esUtil.search(Query, index);
+    console.log("Res is ", res);
     output.hits = res.hits.total.value;
     if (res.hits.total.value > 0) {
       let v = -1;
@@ -1195,6 +1204,10 @@ async function cancelDoctorSession(body) {
       });
       let esbody = {};
       esbody.status = body.status;
+      console.log(
+        "Total slots is ",
+        totalSlots + "length os " + totalSlots.length
+      );
       for (let i = 0; i < totalSlots.length; i++) {
         let id;
         if (totalSlots[i].hasOwnProperty("prioritySlotId")) {
@@ -1205,6 +1218,8 @@ async function cancelDoctorSession(body) {
         }
         await docController.updateProfileDetailsController(id, index, esbody);
       }
+
+      console.log("In the right place 2");
       output.result = "updated";
       let message = `We regret to inform that, your doctor has been cancelled the session, apologies for inconvenience`;
       let medium = ["app", "sms", "mail"];
@@ -1313,7 +1328,7 @@ async function changeBookingStatus(body) {
               }
               return e._source;
             });
-            let message = `queue refreshed ${body.status}`;
+            let message = `queue refreshed ${body.status}:${body.userId}`;
             let medium = ["app"];
             triggerNotification("QueueReload", message, userList, medium);
             // let notifBody = {
