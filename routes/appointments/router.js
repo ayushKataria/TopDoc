@@ -314,7 +314,7 @@ async function bookingAppointment(req, res) {
           res.status(400).send("bad request , slotType cannot be empty");
         } else {
           console.log("in router before", new Date());
-          await sleep(1000);
+        //  await sleep(1000);
           // console.log("in route after",new Date());
           await controller
             .bookingAppointment(req.body)
@@ -494,15 +494,9 @@ async function bookingAppointment(req, res) {
         ) {
           res.status(400).send("bad request , slotType cannot be empty");
         } else {
-<<<<<<< HEAD
           console.log("in router pppp",new Date());
-          await sleep(2000);
+          // await sleep(1000);
         
-=======
-          console.log("in router pppp", new Date());
-          await sleep(1000);
-
->>>>>>> 7369c5530f0f570a3b1625982a62ff9c93a02242
           await controller
             .bookingAppointment(req.body)
             .then((data) => res.send(data))
