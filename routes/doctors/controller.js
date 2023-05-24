@@ -9,7 +9,7 @@ const { log } = require("winston");
 //get doctor data with the help of docId
 async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
   try {
-    console.log("try");
+    console.log("try",Identifier);
     let queryBody;
     if (fieldsToFetch[0] === "all") {
       queryBody = {
@@ -36,7 +36,7 @@ async function getProfileDetailsController(Identifier, role, fieldsToFetch) {
         },
       };
     }
-    console.log("esdb");
+    console.log("esdb",queryBody);
     let output = {};
     output.results = [];
     let dataOb = await esdb.search(queryBody, role);
@@ -103,6 +103,7 @@ async function createNewDoctorAccount(object) {
       throw err;
     }
   } catch (err) {
+    console.log("ERROR IS",err)
     throw {
       statuscode: 404,
       message: "There was some error in creating profile",
@@ -151,7 +152,7 @@ async function createNewReview(object, role) {
       (averageRating * noOfReviews + object.reviewRating) / (noOfReviews + 1);
     noOfReviews = parseInt(noOfReviews) + 1;
     let reviewTags = getResult.results[0].reviewTags;
-    console.log("Review TAGS ",reviewTags)
+    console.log("Review TAGS ",getResult)
     let reviewTagsKeys = Object.keys(reviewTags);
     for (let i = 0; i < reviewTagsList.length; i++) {
       let currTag = reviewTagsList[i];

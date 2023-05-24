@@ -119,14 +119,17 @@ async function signup(req, res) {
         let first_name = req.firstName;
         let last_name = req.lastName;
         let queryBody = userSchema();
+        queryBody.name = req.name;
         queryBody.email = req.email;
         queryBody.id = id;
-        queryBody.name = req.fullName;
+        // queryBody.name = req.fullName;
         queryBody.first_name = first_name;
         queryBody.mobile = req.mobileNumber;
         queryBody.gender = req.gender;
         queryBody.last_name = last_name;
         queryBody.password = hashpassword;
+        queryBody.userType = req.userType;
+        queryBody.rights =[];
         //queryBody.dtCreated = dtCreated
         console.log("userQuery is:", queryBody);
         let userQueryUpdate = {
@@ -262,7 +265,9 @@ async function login(req, res) {
     }
     if (req.hasOwnProperty("mobileNumber")) {
       let userData = await getDocByPhone(req.mobileNumber, "user");
+     
       let userDetailsRec = userData.hits.hits[0]._source;
+      console.log("USERDATA RECEIVED FROM mobileNUm is",userDetailsRec);
       if (userData["hits"]["total"]["value"] > 0) {
         let savedPassword = userData["hits"]["hits"][0]["_source"]["password"];
         console.log("Saved pwd from db  is ", savedPassword);
@@ -290,6 +295,7 @@ async function login(req, res) {
               email: userDetailsRec.email,
               gender: userDetailsRec.gender,
               userType: userDetailsRec.userType,
+              rights:userDetailsRec.rights
             },
           };
         } else {

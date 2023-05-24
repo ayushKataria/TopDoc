@@ -204,13 +204,7 @@ async function createSessions(body) {
         }
 
         // console.log("for loop 2", days[i].sessions[j]);
-        if (
-          days[i].sessions[j].hasOwnProperty("disabled") &&
-          days[i].sessions[j].disabled
-        ) {
-          //isdiabled is true in case the session was previously created , so we skip adding that
-          continue;
-        }
+
         currentHour = parseInt(days[i].sessions[j].startTime);
         currentMinute = Number(
           days[i].sessions[j].startTime.toString().substring(3)
@@ -450,7 +444,12 @@ async function bookingAppointment(body) {
     console.log("Here in controller ", new Date() + "bodys ", body);
     let index = "booking";
     body.appointmentId = uuid.v4();
-    body.status = "booked";
+    if(body.userType=='unRegistered'){
+      body.status = "pinGenerated";
+    }else{
+      body.status = "booked";
+    }
+   
     let booking = {};
     let isNotBooked = true;
     let slotId;
@@ -1186,7 +1185,7 @@ async function cancelDoctorSession(body) {
     console.log("THE FAUKLT IS ");
     let res = await esUtil.search(Query, index);
     console.log("Res is ", res);
-    output.hits = res.hits.total.value;
+   
     if (res.hits.total.value > 0) {
       let v = -1;
       totalSlots = res.hits.hits.map((e) => {
@@ -1202,6 +1201,7 @@ async function cancelDoctorSession(body) {
         }
         return e._source;
       });
+      output.hits = userList.length;
       let esbody = {};
       esbody.status = body.status;
       console.log(
