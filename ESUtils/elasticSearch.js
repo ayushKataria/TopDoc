@@ -18,7 +18,7 @@ function connectClient() {
     elasticSearchClient = new elasticsearch.Client({
       host: [
         {
-          host: "https://topdoc-testing.es.ap-south-1.aws.elastic-cloud.com",
+          host: "topdoc-testing.es.ap-south-1.aws.elastic-cloud.com",
           port: "443",
           protocol: "https",
           auth: auth,
