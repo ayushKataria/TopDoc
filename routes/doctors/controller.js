@@ -348,9 +348,7 @@ async function ConvertDateFormat(date) {
   try {
     console.log("THE DATE IS ", date);
     let temp = new Date(date).toISOString();
-    console.log("after toISOString --> ",temp)
     let timeZone = new Date(date).getTimezoneOffset();
-     console.log("after timeZone --> ",timeZone)
     let finalFormat;
     let finalTimeZone;
     let isNegative;
@@ -368,12 +366,9 @@ async function ConvertDateFormat(date) {
     if (Math.floor(rminutes / 10) == 0) {
       rminutes = "0" + rminutes;
     } 
-//     else {
-//       finalTimeZone = rhours + rminutes;
-//     }
+
     finalTimeZone = rhours + rminutes;
-     console.log("after finalTimeZone --> ",finalTimeZone)
-     console.log("rhours --> ",rhours,"   rminutes --> ",rminutes)
+
     if (isNegative) {
       finalTimeZone = "-" + finalTimeZone;
     } else {
