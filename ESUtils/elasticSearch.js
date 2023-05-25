@@ -11,7 +11,7 @@ var auth = "elastic" + ":" + "5w9JA7EuCEbLw2Ihw1hV11IF";
 
 const connstring = "https://topdoc-testing.es.ap-south-1.aws.elastic-cloud.com";
 
-const enable_password = false;
+const enable_password = true;
 function connectClient() {
   if (enable_password == true) {
     console.log("inside iffffffffffff");
