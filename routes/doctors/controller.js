@@ -374,6 +374,7 @@ async function ConvertDateFormat(date) {
       finalTimeZone = "+" + finalTimeZone;
     }
     finalFormat = temp.replace("Z", finalTimeZone);
+    console.log("final date format --> ",finalFormat)
     return finalFormat;
   } catch (error) {
     console.log("Error is ", error);
