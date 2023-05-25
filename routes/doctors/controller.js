@@ -364,11 +364,13 @@ async function ConvertDateFormat(date) {
     let rminutes = Math.round(minutes);
     if (Math.floor(rhours / 10) == 0) {
       rhours = "0" + rhours;
-    } else if (Math.floor(rminutes / 10) == 0) {
+    } 
+    if (Math.floor(rminutes / 10) == 0) {
       rminutes = "0" + rminutes;
-    } else {
-      finalTimeZone = rhours + rminutes;
-    }
+    } 
+//     else {
+//       finalTimeZone = rhours + rminutes;
+//     }
     finalTimeZone = rhours + rminutes;
      console.log("after finalTimeZone --> ",finalTimeZone)
      console.log("rhours --> ",rhours,"   rminutes --> ",rminutes)
