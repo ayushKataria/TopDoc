@@ -232,7 +232,7 @@ function uploadProfileImage(req, res) {
 async function createNewDoctorAccount(req, res) {
   try {
     req.body.profileCreationDate = await controller.ConvertDateFormat(
-      new Date()
+      req.body.profileCreationDate
     );
     if (req.body.hasOwnProperty("address") == false) {
       res.status(400).send("bad request, address field is missing");

@@ -362,18 +362,20 @@ async function ConvertDateFormat(date) {
     let rminutes = Math.round(minutes);
     if (Math.floor(rhours / 10) == 0) {
       rhours = "0" + rhours;
-    } else if (Math.floor(rminutes / 10) == 0) {
+    } 
+    if (Math.floor(rminutes / 10) == 0) {
       rminutes = "0" + rminutes;
-    } else {
-      finalTimeZone = rhours + rminutes;
-    }
+    } 
+
     finalTimeZone = rhours + rminutes;
+
     if (isNegative) {
       finalTimeZone = "-" + finalTimeZone;
     } else {
       finalTimeZone = "+" + finalTimeZone;
     }
     finalFormat = temp.replace("Z", finalTimeZone);
+    console.log("final date format --> ",finalFormat)
     return finalFormat;
   } catch (error) {
     console.log("Error is ", error);
