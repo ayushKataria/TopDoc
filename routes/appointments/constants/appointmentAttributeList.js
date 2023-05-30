@@ -116,6 +116,7 @@ const cancelBooking = [
   "sessionEndTime",
   "clinicId",
   "clinicDetails",
+  "prioritySlotId",
   "paymentStatus",
   "slotDay",
   "slotId",
