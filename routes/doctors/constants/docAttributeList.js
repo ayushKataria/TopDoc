@@ -65,7 +65,7 @@ const doctorUpdateAttributes = [
   "yearsOfExperience",
   "id",
   "role",
-  "docImageUrl",
+  "profImageUrl",
   "tags",
   "noOfReviews",
   "consultations",
