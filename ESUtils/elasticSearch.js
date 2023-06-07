@@ -7,9 +7,9 @@ let elasticSearchClient = null;
 let esClient = null;
 //Akash Elastic pass
 
-var auth = "elastic" + ":" + "5w9JA7EuCEbLw2Ihw1hV11IF";
+var auth = "elastic" + ":" + "NUk2M68CP5cJrG9EF2xCFgak";
 
-const connstring = "https://topdoc-testing.es.ap-south-1.aws.elastic-cloud.com";
+const connstring = "https://my-deployment-4c163c.es.ap-south-1.aws.elastic-cloud.com";
 
 const enable_password = true;
 function connectClient() {
@@ -18,7 +18,7 @@ function connectClient() {
     elasticSearchClient = new elasticsearch.Client({
       host: [
         {
-          host: "topdoc-testing.es.ap-south-1.aws.elastic-cloud.com",
+          host: "my-deployment-4c163c.es.ap-south-1.aws.elastic-cloud.com",
           port: "443",
           protocol: "https",
           auth: auth,
