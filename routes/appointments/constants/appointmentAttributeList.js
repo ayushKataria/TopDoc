@@ -26,6 +26,7 @@ const bookingAttributes = [
   "paymentStatus",
   "email",
   "mobile",
+  "timeGap",
   "doctorName",
 ];
 

@@ -959,6 +959,7 @@ async function cancelBooking(req, res) {
     const list = appointmentAttributeList.cancelBooking;
     Object.keys(req.body).forEach((key) => {
       if (!list.includes(key)) {
+        console.log("Missing key is ",key)
         fail = true;
       }
     });
