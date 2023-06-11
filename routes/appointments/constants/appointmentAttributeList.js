@@ -142,6 +142,7 @@ const cancelBooking = [
   "tests",
   "medicine",
   "reasonForVisit",
+  "timeGap",
 ];
 const filterAttributes = [
   "doctorId",
