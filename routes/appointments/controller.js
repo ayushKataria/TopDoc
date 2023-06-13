@@ -1263,6 +1263,7 @@ async function changeBookingStatus(body) {
       body.status == "rejoined" ||
       body.status == "skipped" ||
       body.status == "upNext" ||
+      body.status == "booked" ||
       body.status == "pinGenerated"
     ) {
       let query = { status: body.status };
