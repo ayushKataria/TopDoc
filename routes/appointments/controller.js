@@ -1315,7 +1315,13 @@ async function changeBookingStatus(body) {
           let res = await esUtil.search(Query, role);
           output.hits = res.hits.total.value;
           if (res.hits.total.value > 0) {
-            let v = -1;
+            let v = 0;
+            userList[0] = {
+              id: body.doctorId,
+              name: "",
+              mobile: "",
+              email: "",
+            };
             totalSlots = res.hits.hits.map((e) => {
               if (e._source.hasOwnProperty("appointmentId")) {
                 ++v;
